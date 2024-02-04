@@ -1,5 +1,5 @@
 ![Bot](https://github.com/Fics3/Tink_Java_Backend_Course_Spring/actions/workflows/bot.yml/badge.svg)
-![Scrapper](https://github.com//Fics3/Tink_Java_Backend_Course_Spring/actions/workflows/scrapper.yml/badge.svg)
+![Scrapper](https://github.com/Fics3/Tink_Java_Backend_Course_Spring/actions/workflows/scrapper.yml/badge.svg)
 
 # Link Tracker
 
