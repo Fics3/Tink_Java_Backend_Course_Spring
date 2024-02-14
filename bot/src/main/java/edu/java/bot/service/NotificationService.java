@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Getter
 @Service
 public class NotificationService {
-    private static final String ERROR_MESSAGE = "Такой команды не существует, введите /help, чтобы увидеть список доступных команд";
+    private static final String ERROR_MESSAGE =
+        "Такой команды не существует, введите /help, чтобы увидеть список доступных команд";
     private final Map<Long, User> linkMap;
     private final Map<String, Command> commandMap;
 
