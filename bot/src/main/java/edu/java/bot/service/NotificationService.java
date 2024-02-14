@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @Getter
 @Service
 public class NotificationService {
+    private static final String ERROR_MESSAGE = "Такой команды не существует, введите /help, чтобы увидеть список доступных команд";
     private final Map<Long, User> linkMap;
-
     private final Map<String, Command> commandMap;
 
     public NotificationService(Map<String, Command> commandMap) {
@@ -25,7 +25,7 @@ public class NotificationService {
             Command command = commandMap.get(parsedMessage[0]);
             return command.execute(chatId, message, this);
         } catch (NullPointerException e) {
-            return "Такой команды не существует, введите /help, чтобы увидеть список доступных команд";
+            return ERROR_MESSAGE;
         }
     }
 
