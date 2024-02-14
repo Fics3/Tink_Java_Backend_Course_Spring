@@ -1,14 +1,20 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import java.util.stream.Collectors;
 
 public class ListCommand implements Command {
+    private static final String NAME = "/help";
+    private static final String DESCRIPTION = "show all bot commands";
+    private static final String NO_SAVED_LINKS = "Нет сохраненных ссылок";
+    private static final String SAVED_LINKS = "Сохраненные ссылки:\n";
+    private static final String NO_REGISTERED_MESSAGE = "Для просмотра ссылок необходимо зарегестрироваться /start";
+
     @Override
     public String execute(long chatId, String message, NotificationService updateListener) {
         if (updateListener.getLinkMap().get(chatId) == null) {
-            return "Для просмотра ссылок необходимо зарегестрироваться /start";
+            return NO_REGISTERED_MESSAGE;
         }
         return getLinks(updateListener.getLinkMap().get(chatId));
     }
@@ -16,9 +22,9 @@ public class ListCommand implements Command {
     private String getLinks(User user) {
         String result;
         if (user.getLinks().isEmpty()) {
-            result = "Нет сохраненных ссылок";
+            result = NO_SAVED_LINKS;
         } else {
-            result = "Сохраненные ссылки:\n" + user.getLinks().stream()
+            result = SAVED_LINKS + user.getLinks().stream()
                 .map(link -> link.uri().toString())
                 .collect(Collectors.joining("\n"));
         }
@@ -27,11 +33,11 @@ public class ListCommand implements Command {
 
     @Override
     public String getName() {
-        return "/list";
+        return NAME;
     }
 
     @Override
     public String getDescription() {
-        return "show all tracking links";
+        return DESCRIPTION;
     }
 }

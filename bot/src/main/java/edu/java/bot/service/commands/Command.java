@@ -1,4 +1,4 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.service.NotificationService;
 

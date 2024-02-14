@@ -1,4 +1,4 @@
-package edu.java.bot.model.commands.resourcesHandlers;
+package edu.java.bot.service.commands.resourcesHandlers;
 
 import lombok.extern.log4j.Log4j2;
 

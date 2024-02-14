@@ -1,8 +1,5 @@
-package edu.java.bot.commands;
+package edu.java.bot.service.commands;
 
-import edu.java.bot.model.commands.Command;
-import edu.java.bot.model.commands.CommandManager;
-import edu.java.bot.model.commands.HelpCommand;
 import edu.java.bot.service.NotificationService;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,15 +17,13 @@ public class HelpCommandTest {
         // Arrange
         long chatId = 123456L;
         NotificationService notificationService = mock(NotificationService.class);
-        CommandManager commandManager = mock(CommandManager.class);
 
         // Mocking the command map
         Map<String, Command> commandMap = new HashMap<>();
         commandMap.put("/command1", mock(Command.class));
         commandMap.put("/command2", mock(Command.class));
 
-        when(notificationService.getCommandManager()).thenReturn(commandManager);
-        when(commandManager.getCommandMap()).thenReturn(commandMap);
+        when(notificationService.getCommandMap()).thenReturn(commandMap);
 
         HelpCommand helpCommand = new HelpCommand();
 

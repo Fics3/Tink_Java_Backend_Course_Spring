@@ -1,7 +1,6 @@
 package edu.java.bot.service;
 
-import edu.java.bot.model.commands.Command;
-import edu.java.bot.model.commands.CommandManager;
+import edu.java.bot.service.commands.Command;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +13,12 @@ import static org.mockito.Mockito.when;
 public class NotificationServiceTest {
 
     private NotificationService notificationService;
-    private CommandManager commandManagerMock;
+    private Map<String, Command> commandMapMock;
 
     @BeforeEach
     public void setup() {
-        commandManagerMock = mock(CommandManager.class);
-        notificationService = new NotificationService(commandManagerMock);
+        commandMapMock = new HashMap<>();
+        notificationService = new NotificationService(commandMapMock);
     }
 
     @Test
@@ -32,7 +31,7 @@ public class NotificationServiceTest {
         when(listCommandMock.getName()).thenReturn("/list");
         when(listCommandMock.execute(chatId, message, notificationService)).thenReturn(
             "List command executed successfully");
-        when(commandManagerMock.getCommandMap()).thenReturn(Map.of("/list", listCommandMock));
+        commandMapMock.put("/list", listCommandMock);
 
         // Act
         String result = notificationService.getCommand(chatId, message);
@@ -47,7 +46,7 @@ public class NotificationServiceTest {
         // Arrange
         long chatId = 123;
         String message = "/invalid";
-        when(commandManagerMock.getCommandMap()).thenReturn(new HashMap<>());
+        commandMapMock.clear();
 
         // Act
         String result = notificationService.getCommand(chatId, message);
@@ -62,7 +61,7 @@ public class NotificationServiceTest {
         // Arrange
         long chatId = 123;
         String message = "/list";
-        when(commandManagerMock.getCommandMap()).thenReturn(null);
+        commandMapMock = null;
 
         // Act
         String result = notificationService.getCommand(chatId, message);
@@ -77,9 +76,7 @@ public class NotificationServiceTest {
         // Arrange
         long chatId = 123;
         String message = "/list";
-        Map<String, Command> commandMap = new HashMap<>();
-        commandMap.put("/list", null);
-        when(commandManagerMock.getCommandMap()).thenReturn(commandMap);
+        commandMapMock.put("/list", null);
 
         // Act
         String result = notificationService.getCommand(chatId, message);

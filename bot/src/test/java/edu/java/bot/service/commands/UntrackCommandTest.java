@@ -1,9 +1,8 @@
-package edu.java.bot.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.model.User;
-import edu.java.bot.model.commands.UntrackCommand;
-import edu.java.bot.model.commands.resourcesHandlers.Link;
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;

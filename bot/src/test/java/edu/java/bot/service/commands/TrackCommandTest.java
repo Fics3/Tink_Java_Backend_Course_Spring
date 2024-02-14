@@ -1,9 +1,8 @@
-package edu.java.bot.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.model.User;
-import edu.java.bot.model.commands.TrackCommand;
-import edu.java.bot.model.commands.resourcesHandlers.ChainResourceHandler;
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.commands.resourcesHandlers.ChainResourceHandler;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;

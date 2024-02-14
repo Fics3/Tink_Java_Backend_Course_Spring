@@ -1,11 +1,10 @@
-package edu.java.bot.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.model.User;
-import edu.java.bot.model.commands.CommandManager;
-import edu.java.bot.model.commands.ListCommand;
-import edu.java.bot.model.commands.resourcesHandlers.Link;
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.net.URISyntaxException;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +17,8 @@ public class ListCommandTest {
 
     @BeforeEach
     void setUp() {
-        CommandManager commandManager = mock(CommandManager.class);
-        notificationService = new NotificationService(commandManager);
+        Map<String, Command> commandMap = mock();
+        notificationService = new NotificationService(commandMap);
     }
 
     @Test

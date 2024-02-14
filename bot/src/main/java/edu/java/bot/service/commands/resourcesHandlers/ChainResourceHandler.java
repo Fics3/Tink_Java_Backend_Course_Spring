@@ -1,4 +1,4 @@
-package edu.java.bot.model.commands.resourcesHandlers;
+package edu.java.bot.service.commands.resourcesHandlers;
 
 import edu.java.bot.service.NotificationService;
 import java.net.URISyntaxException;
@@ -9,7 +9,8 @@ import lombok.extern.log4j.Log4j2;
 @Getter
 @Log4j2
 public abstract class ChainResourceHandler {
-
+    private static final String WRONG_FORMAT = "Неверный формат ссылки";
+    private static final String ANSWER = "Ссылка добавлена";
     private ChainResourceHandler nextHandler;
 
     public void linkWith(ChainResourceHandler chainResourceHandler) {
@@ -25,9 +26,9 @@ public abstract class ChainResourceHandler {
                 nextHandler.handleLink(chatId, message, updateListener);
             }
         } catch (URISyntaxException e) {
-            return "Неверный формат ссылки";
+            return WRONG_FORMAT;
         }
-        return "Ссылка добавлена";
+        return ANSWER;
     }
 
     public abstract String getHost();

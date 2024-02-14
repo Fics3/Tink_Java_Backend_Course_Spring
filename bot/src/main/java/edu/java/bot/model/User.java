@@ -1,6 +1,6 @@
 package edu.java.bot.model;
 
-import edu.java.bot.model.commands.resourcesHandlers.Link;
+import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -13,7 +13,7 @@ public class User {
 
     public User(Long id) {
         this.id = id;
-        links = new ArrayList<>();
+        this.links = new ArrayList<>();
     }
 
     public void addLink(Link link) {

@@ -1,13 +1,19 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.service.NotificationService;
 import java.util.Objects;
 
 public class UntrackCommand implements Command {
+    private static final String NAME = "/untrack";
+    private static final String DESCRIPTION = "delete link from tracking links /untrack {URL}";
+    private static final String NO_REGISTERED_MESSAGE = "Для удаления ссылок необходимо зарегестрироваться /start";
+    private static final String WRONG_FORMAT_MESSAGE = "Неверный формат команды: /untrack {URL}";
+    private static final String ANSWER = "Для просмотра ваших ссылок введите /list";
+
     @Override
     public String execute(long chatId, String message, NotificationService updateListener) {
         if (updateListener.getLinkMap().get(chatId) == null) {
-            return "Для удаления ссылок необходимо зарегестрироваться /start";
+            return NO_REGISTERED_MESSAGE;
         }
         try {
             String resource = message.split(" ")[1];
@@ -17,18 +23,18 @@ public class UntrackCommand implements Command {
             }
         } catch (
             ArrayIndexOutOfBoundsException e) {
-            return "Неверный формат команды: /untrack {URL}";
+            return WRONG_FORMAT_MESSAGE;
         }
-        return "Для просмотра ваших ссылок введите /list";
+        return ANSWER;
     }
 
     @Override
     public String getName() {
-        return "/untrack";
+        return NAME;
     }
 
     @Override
     public String getDescription() {
-        return "delete link from tracking links /untrack {URL}";
+        return DESCRIPTION;
     }
 }

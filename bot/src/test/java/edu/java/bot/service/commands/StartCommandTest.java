@@ -1,7 +1,6 @@
-package edu.java.bot.commands;
+package edu.java.bot.service.commands;
 
 import edu.java.bot.model.User;
-import edu.java.bot.model.commands.StartCommand;
 import edu.java.bot.service.NotificationService;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class StartCommandTest {
         String result = startCommand.execute(chatId, "", notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Hello World");
+        assertThat(result).isEqualTo("Hello world");
 
         Map<Long, User> linkMap = notificationService.getLinkMap();
         assertThat(linkMap).isNotEmpty();

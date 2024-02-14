@@ -1,4 +1,4 @@
-package edu.java.bot.model.commands.resourcesHandlers;
+package edu.java.bot.service.commands.resourcesHandlers;
 
 import java.net.URI;
 import java.net.URISyntaxException;

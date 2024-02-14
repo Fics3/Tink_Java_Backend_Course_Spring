@@ -3,7 +3,8 @@ package edu.java.bot.configuration;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.request.SetMyCommands;
-import edu.java.bot.model.commands.CommandManager;
+import edu.java.bot.service.commands.Command;
+import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,16 +12,19 @@ import org.springframework.context.annotation.Configuration;
 public class TelegramBotConfig {
 
     @Bean
-    public TelegramBot telegramBot(ApplicationConfig applicationConfig, CommandManager commandManager) {
+    public TelegramBot telegramBot(ApplicationConfig applicationConfig, Map<String, Command> commandMap) {
         TelegramBot telegramBot = new TelegramBot(applicationConfig.telegramToken());
-        telegramBot.execute(setMyCommands(commandManager));
+        telegramBot.execute(setMyCommands(commandMap));
 
         return telegramBot;
     }
 
-    private SetMyCommands setMyCommands(CommandManager commandManager) {
-        return new SetMyCommands(commandManager.getCommandMap().values().stream()
-            .map(command -> new BotCommand(command.getName(), command.getDescription())
-            ).toArray(BotCommand[]::new));
+    private SetMyCommands setMyCommands(Map<String, Command> commandMap) {
+        return new SetMyCommands(
+            commandMap
+                .values()
+                .stream()
+                .map(command -> new BotCommand(command.getName(), command.getDescription()))
+                .toArray(BotCommand[]::new));
     }
 }

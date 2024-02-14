@@ -1,11 +1,11 @@
-package edu.java.bot.commands.resourceHandlers;
+package edu.java.bot.service.commands.resourceHandlers;
 
 import edu.java.bot.model.User;
-import edu.java.bot.model.commands.resourcesHandlers.ChainResourceHandler;
-import edu.java.bot.model.commands.resourcesHandlers.GitHubHandler;
-import edu.java.bot.model.commands.resourcesHandlers.Link;
-import edu.java.bot.model.commands.resourcesHandlers.StackOverflowHandler;
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.commands.resourcesHandlers.ChainResourceHandler;
+import edu.java.bot.service.commands.resourcesHandlers.GitHubHandler;
+import edu.java.bot.service.commands.resourcesHandlers.Link;
+import edu.java.bot.service.commands.resourcesHandlers.StackOverflowHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
