@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -51,7 +50,6 @@ class NotificationUpdateListenerTest {
         int result = updateListener.process(List.of(update));
 
         // Assert
-        verifyNoInteractions(notificationService);
         verifyNoInteractions(telegramBot);
     }
 
@@ -75,8 +73,7 @@ class NotificationUpdateListenerTest {
         updateListener.process(Collections.singletonList(update));
 
         //Assert
-        verify(notificationService).getCommand(eq(123L), eq("/testCommand"));
-
-        verify(telegramBot).execute(any());
+        verify(notificationService).messageIsNull(update);
+        verify(notificationService).processCommand(update, telegramBot);
     }
 }

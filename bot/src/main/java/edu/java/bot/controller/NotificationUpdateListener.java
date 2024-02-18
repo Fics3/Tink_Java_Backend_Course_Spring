@@ -3,7 +3,6 @@ package edu.java.bot.controller;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.service.NotificationService;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
@@ -32,22 +31,12 @@ public class NotificationUpdateListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            if (update.message() == null) {
+            if (notificationService.messageIsNull(update)) {
                 return;
             }
-            String updateMessageText = update.message().text();
-            long chatId = update.message().chat().id();
-            processCommand(chatId, updateMessageText);
+            notificationService.processCommand(update, telegramBot);
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    private void processCommand(long chatId, String message) {
-        sendMessage(chatId, notificationService.getCommand(chatId, message));
-    }
-
-    private void sendMessage(long chatId, String messageText) {
-        SendMessage message = new SendMessage(chatId, messageText);
-        telegramBot.execute(message);
-    }
 }

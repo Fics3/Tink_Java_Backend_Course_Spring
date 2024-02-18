@@ -25,6 +25,7 @@ public class TelegramBotConfig {
                 .values()
                 .stream()
                 .map(command -> new BotCommand(command.getName(), command.getDescription()))
-                .toArray(BotCommand[]::new));
+                .toArray(BotCommand[]::new)
+        );
     }
 }

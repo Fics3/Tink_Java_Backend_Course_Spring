@@ -5,7 +5,7 @@ import edu.java.bot.service.NotificationService;
 import java.util.stream.Collectors;
 
 public class ListCommand implements Command {
-    private static final String NAME = "/help";
+    private static final String NAME = "/list";
     private static final String DESCRIPTION = "show all bot commands";
     private static final String NO_SAVED_LINKS = "Нет сохраненных ссылок";
     private static final String SAVED_LINKS = "Сохраненные ссылки:\n";

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CommandConfig {
 
-    Command[] commands = {
+    private final static Command[] COMMANDS = {
         new StartCommand(),
         new HelpCommand(),
         new ListCommand(),
@@ -25,7 +25,7 @@ public class CommandConfig {
 
     @Bean
     Map<String, Command> commandMap() {
-        return Arrays.stream(commands).collect(Collectors.toMap(Command::getName, command -> command));
+        return Arrays.stream(COMMANDS).collect(Collectors.toMap(Command::getName, command -> command));
     }
 
 }

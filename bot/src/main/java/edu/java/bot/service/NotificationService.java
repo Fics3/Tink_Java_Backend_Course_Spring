@@ -1,5 +1,8 @@
 package edu.java.bot.service;
 
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.User;
 import edu.java.bot.service.commands.Command;
 import java.util.HashMap;
@@ -20,14 +23,29 @@ public class NotificationService {
         this.commandMap = commandMap;
     }
 
-    public String getCommand(long chatId, String message) {
-        try {
-            String[] parsedMessage = message.split(" ");
-            Command command = commandMap.get(parsedMessage[0]);
-            return command.execute(chatId, message, this);
-        } catch (NullPointerException e) {
-            return ERROR_MESSAGE;
-        }
+    public void processCommand(Update update, TelegramBot telegramBot) {
+        long chatId = update.message().chat().id();
+        String message = update.message().text();
+        sendMessage(chatId, getCommand(chatId, message), telegramBot);
     }
 
+    public String getCommand(long chatId, String message) {
+        String[] parsedMessage = message.split(" ");
+        Command command = commandMap.get(parsedMessage[0]);
+        if (command == null) {
+            return ERROR_MESSAGE;
+        } else {
+            return command.execute(chatId, message, this);
+        }
+
+    }
+
+    private void sendMessage(long chatId, String messageText, TelegramBot telegramBot) {
+        SendMessage message = new SendMessage(chatId, messageText);
+        telegramBot.execute(message);
+    }
+
+    public boolean messageIsNull(Update update) {
+        return update.message() == null;
+    }
 }
