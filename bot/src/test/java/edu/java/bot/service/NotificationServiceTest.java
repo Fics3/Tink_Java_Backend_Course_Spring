@@ -1,24 +1,33 @@
 package edu.java.bot.service;
 
-import edu.java.bot.service.commands.Command;
-import java.util.HashMap;
+import edu.java.bot.controller.TestConfig;
+import edu.java.bot.service.commands.CommandService;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = {TestConfig.class})
 public class NotificationServiceTest {
 
+    @Qualifier("commandMap")
+    @Mock
+    private Map<String, CommandService> commandMapMock;
+
+    @InjectMocks
     private NotificationService notificationService;
-    private Map<String, Command> commandMapMock;
 
     @BeforeEach
     public void setup() {
-        commandMapMock = new HashMap<>();
-        notificationService = new NotificationService(commandMapMock);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -27,11 +36,11 @@ public class NotificationServiceTest {
         // Arrange
         long chatId = 123;
         String message = "/list";
-        Command listCommandMock = mock(Command.class);
-        when(listCommandMock.getName()).thenReturn("/list");
-        when(listCommandMock.execute(chatId, message, notificationService)).thenReturn(
+        CommandService listCommandMockService = mock(CommandService.class);
+        when(commandMapMock.get("/list")).thenReturn(listCommandMockService);
+        when(listCommandMockService.getName()).thenReturn("/list");
+        when(listCommandMockService.execute(chatId, message, notificationService)).thenReturn(
             "List command executed successfully");
-        commandMapMock.put("/list", listCommandMock);
 
         // Act
         String result = notificationService.getCommand(chatId, message);

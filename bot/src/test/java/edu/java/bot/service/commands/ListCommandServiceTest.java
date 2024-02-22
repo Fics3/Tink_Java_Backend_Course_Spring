@@ -4,28 +4,25 @@ import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.net.URISyntaxException;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
-public class ListCommandTest {
+public class ListCommandServiceTest {
 
     private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        Map<String, Command> commandMap = mock();
-        notificationService = new NotificationService(commandMap);
+        notificationService = new NotificationService();
     }
 
     @Test
     @DisplayName("not registered - should return special message")
     void testExecuteNotRegistered() {
         // Arrange
-        ListCommand listCommand = new ListCommand();
+        ListCommandService listCommand = new ListCommandService();
         long chatId = 123;
 
         // Act
@@ -39,7 +36,7 @@ public class ListCommandTest {
     @DisplayName("registered user - no links - special message")
     public void testExecute_UserRegisteredWithEmptyLinkList_ReturnsNoLinksMessage() {
         // Arrange
-        ListCommand listCommand = new ListCommand();
+        ListCommandService listCommand = new ListCommandService();
         long chatId = 1234567L;
         notificationService.getLinkMap().put(chatId, new User(chatId));
 
@@ -54,7 +51,7 @@ public class ListCommandTest {
     @DisplayName("several links - check correct message format")
     public void testExecute_UserRegisteredWithLinks_ReturnsFormattedLinks() throws URISyntaxException {
         // Arrange
-        ListCommand listCommand = new ListCommand();
+        ListCommandService listCommand = new ListCommandService();
         long chatId = 1234567L;
         User user = new User(chatId);
         user.addLink(Link.parse("https://example.com"));

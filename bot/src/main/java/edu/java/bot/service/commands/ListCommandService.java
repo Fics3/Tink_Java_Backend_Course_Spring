@@ -3,8 +3,10 @@ package edu.java.bot.service.commands;
 import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
-public class ListCommand implements Command {
+@Service
+public class ListCommandService implements CommandService {
     private static final String NAME = "/list";
     private static final String DESCRIPTION = "show all bot commands";
     private static final String NO_SAVED_LINKS = "Нет сохраненных ссылок";
