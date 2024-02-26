@@ -4,6 +4,8 @@ import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,11 +13,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ListCommandServiceTest {
 
+    Map<String, CommandService> commandMap;
+
     private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        notificationService = new NotificationService();
+        commandMap = new HashMap<>();
+        notificationService = new NotificationService(commandMap);
     }
 
     @Test

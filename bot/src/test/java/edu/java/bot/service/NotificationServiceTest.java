@@ -28,6 +28,7 @@ public class NotificationServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+        notificationService = new NotificationService(commandMapMock);
     }
 
     @Test

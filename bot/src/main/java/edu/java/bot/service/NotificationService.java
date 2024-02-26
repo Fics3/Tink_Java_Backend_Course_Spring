@@ -8,7 +8,6 @@ import edu.java.bot.service.commands.CommandService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +17,12 @@ public class NotificationService {
     private static final String ERROR_MESSAGE =
         "Такой команды не существует, введите /help, чтобы увидеть список доступных команд";
     private final Map<Long, User> linkMap;
-    @Autowired
-    @Qualifier("commandMap")
-    private Map<String, CommandService> commandMap;
 
-    public NotificationService() {
+    private final Map<String, CommandService> commandMap;
+
+    public NotificationService(@Qualifier("commandMap") Map<String, CommandService> commandMap) {
         linkMap = new HashMap<>();
+        this.commandMap = commandMap;
     }
 
     public void processCommand(Update update, TelegramBot telegramBot) {
