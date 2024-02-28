@@ -1,5 +1,6 @@
 package edu.java.configuration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,6 +11,7 @@ public class ClientConfig {
     private static final String STACKOVERFLOW = "https://api.stackexchange.com/";
 
     @Bean
+    @Qualifier("github")
     public WebClient getGitHubClient() {
         return WebClient
             .builder()
@@ -17,11 +19,13 @@ public class ClientConfig {
             .build();
     }
 
-    @Bean WebClient getStackoverflow() {
+    @Bean
+    @Qualifier("stackoverflow")
+    public WebClient getStackoverflow() {
         return WebClient
             .builder()
             .baseUrl(STACKOVERFLOW)
             .build();
     }
-
 }
+

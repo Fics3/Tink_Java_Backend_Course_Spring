@@ -1,11 +1,11 @@
-package edu.java.github;
+package edu.java.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import lombok.Getter;
 
 @Getter
-public class RepositoryResponse {
+public class GithubRepositoryResponse {
     private String name;
     @JsonProperty("full_name")
     private String fullName;

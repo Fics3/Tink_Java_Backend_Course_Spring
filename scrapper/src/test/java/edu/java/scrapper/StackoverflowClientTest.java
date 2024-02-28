@@ -2,7 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.stackoverflow.StackoverflowClient;
+import edu.java.client.StackoverflowClient;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,7 +34,6 @@ public class StackoverflowClientTest {
         String order = "activity";
         String sort = "desc";
         OffsetDateTime fixedTime = OffsetDateTime.parse("2022-02-21T12:34:56Z");
-
 
         wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/questions/123456"))
             .willReturn(WireMock.aResponse()

@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 public class LinkUpdaterScheduler {
-
-    @Scheduled(fixedDelayString = "#{T(edu.java.util.DurationConverter).convertToMillis('${app.scheduler.interval}')}")
+    @Scheduled(fixedDelayString = "#{@linkUpdaterSchedulerConfig.interval.toMillis()}")
     public void update() {
         log.info("Произошло обновление");
     }

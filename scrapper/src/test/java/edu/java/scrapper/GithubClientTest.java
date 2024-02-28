@@ -2,7 +2,7 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.github.GitHubClient;
+import edu.java.client.GithubClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
-public class GitHubClientTest {
+public class GithubClientTest {
     private static WireMockServer wireMockServer;
 
     @BeforeAll
@@ -36,12 +36,13 @@ public class GitHubClientTest {
             .willReturn(WireMock.aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody("{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
+                .withBody(
+                    "{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
             ));
 
         // Act
         WebClient webClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
-        GitHubClient gitHubClient = new GitHubClient(webClient);
+        GithubClient gitHubClient = new GithubClient(webClient);
 
         // Assert
         StepVerifier.create(gitHubClient.fetchRepository(owner, repo))
