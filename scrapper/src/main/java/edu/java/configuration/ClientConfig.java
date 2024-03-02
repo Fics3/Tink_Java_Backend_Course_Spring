@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ClientConfig {
     private static final String GITHUB_COM = "https://api.github.com/";
     private static final String STACKOVERFLOW = "https://api.stackexchange.com/";
+    private static final String LOCALHOST_8080 = "http://localhost:8080";
 
     @Bean
     @Qualifier("github")
@@ -21,10 +22,28 @@ public class ClientConfig {
 
     @Bean
     @Qualifier("stackoverflow")
-    public WebClient getStackoverflow() {
+    public WebClient getStackoverflowClient() {
         return WebClient
             .builder()
             .baseUrl(STACKOVERFLOW)
+            .build();
+    }
+
+    @Bean
+    @Qualifier("scrapper")
+    public WebClient getScrapperClient() {
+        return WebClient
+            .builder()
+            .baseUrl(LOCALHOST_8080)
+            .build();
+    }
+
+    @Bean
+    @Qualifier("bot")
+    public WebClient boyClient() {
+        return WebClient
+            .builder()
+            .baseUrl(LOCALHOST_8080)
             .build();
     }
 }
