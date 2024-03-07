@@ -2,21 +2,20 @@ package edu.java.client;
 
 import edu.java.dto.GithubRepositoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class GithubClient {
+public class GithubWebClient {
 
     private static final String REPOS_PATH = "/repos/%s/%s";
 
     private final WebClient webClient;
 
     @Autowired
-    public GithubClient(@Qualifier("github") WebClient webClient) {
-        this.webClient = webClient;
+    public GithubWebClient(WebClient githubClient) {
+        this.webClient = githubClient;
     }
 
     public Mono<GithubRepositoryResponse> fetchRepository(String owner, String repo) {
