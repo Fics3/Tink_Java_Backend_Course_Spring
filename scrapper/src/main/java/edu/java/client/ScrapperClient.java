@@ -4,7 +4,6 @@ import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -17,8 +16,8 @@ public class ScrapperClient {
     private static final String TG_CHAT_ID = "Tg-Chat-Id";
     private final WebClient scrapperClient;
 
-    public ScrapperClient(@Qualifier("scrapper") WebClient scrapperClient) {
-        this.scrapperClient = scrapperClient;
+    public ScrapperClient(WebClient scrapperWebClient) {
+        this.scrapperClient = scrapperWebClient;
     }
 
     public Mono<Void> registerChat(long chatId) {
