@@ -1,6 +1,5 @@
 package edu.java.configuration;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,8 +11,7 @@ public class ClientConfig {
     private static final String LOCALHOST_8080 = "http://localhost:8080";
 
     @Bean
-    @Qualifier("github")
-    public WebClient getGitHubClient() {
+    public WebClient githubWebClient() {
         return WebClient
             .builder()
             .baseUrl(GITHUB_COM)
@@ -21,8 +19,7 @@ public class ClientConfig {
     }
 
     @Bean
-    @Qualifier("stackoverflow")
-    public WebClient getStackoverflowClient() {
+    public WebClient stackoverflowWebClient() {
         return WebClient
             .builder()
             .baseUrl(STACKOVERFLOW)
@@ -30,8 +27,7 @@ public class ClientConfig {
     }
 
     @Bean
-    @Qualifier("scrapper")
-    public WebClient getScrapperClient() {
+    public WebClient scrapperWebClient() {
         return WebClient
             .builder()
             .baseUrl(LOCALHOST_8080)
@@ -39,8 +35,7 @@ public class ClientConfig {
     }
 
     @Bean
-    @Qualifier("bot")
-    public WebClient boyClient() {
+    public WebClient botWebClient() {
         return WebClient
             .builder()
             .baseUrl(LOCALHOST_8080)

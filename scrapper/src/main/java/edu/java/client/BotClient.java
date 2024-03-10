@@ -1,7 +1,6 @@
 package edu.java.client;
 
 import org.example.dto.LinkUpdateRequest;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -11,8 +10,8 @@ public class BotClient {
 
     private final WebClient botClient;
 
-    public BotClient(@Qualifier("bot") WebClient botClient) {
-        this.botClient = botClient;
+    public BotClient(WebClient botWebClient) {
+        this.botClient = botWebClient;
     }
 
     public Mono<Void> sendUpdate(LinkUpdateRequest linkUpdateRequest) {
