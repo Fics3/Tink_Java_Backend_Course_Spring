@@ -10,7 +10,7 @@ public class ClientConfig {
     private static final String STACKOVERFLOW = "https://api.stackexchange.com/";
 
     @Bean
-    public WebClient githubClient() {
+    public WebClient githubWebClient() {
         return WebClient
             .builder()
             .baseUrl(GITHUB_COM)
@@ -18,7 +18,7 @@ public class ClientConfig {
     }
 
     @Bean
-    public WebClient stackoverflowClient() {
+    public WebClient stackoverflowWebClient() {
         return WebClient
             .builder()
             .baseUrl(STACKOVERFLOW)

@@ -2,7 +2,8 @@ package edu.java.scrapper;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.client.GithubWebClient;
+import edu.java.client.StackoverflowClient;
+import java.time.OffsetDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
-public class GithubWebClientTest {
+public class StackoverflowClientTest {
     private static WireMockServer wireMockServer;
 
     @BeforeAll
@@ -27,33 +28,37 @@ public class GithubWebClientTest {
 
     @Test
     @DisplayName("test for check the required response body")
-    public void testFetchRepository() {
+    public void testFetchQuestion() {
         // Arrange
-        String owner = "testOwner";
-        String repo = "testRepo";
+        long questionId = 123456;
+        String order = "activity";
+        String sort = "desc";
+        OffsetDateTime fixedTime = OffsetDateTime.parse("2022-02-21T12:34:56Z");
 
-        wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/repos/testOwner/testRepo"))
+        wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/questions/123456"))
             .willReturn(WireMock.aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(
-                    "{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
+                    "{\"question_id\":123456,\"title\":\"Test Question\",\"link\":\"https://stackoverflow.com/q/123456\",\"last_activity_date\":\"" +
+                        fixedTime + "\"}")
             ));
 
         // Act
         WebClient webClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
-        GithubWebClient gitHubWebClient = new GithubWebClient(webClient);
+        StackoverflowClient stackOverflowClient = new StackoverflowClient(webClient);
 
         // Assert
-        StepVerifier.create(gitHubWebClient.fetchRepository(owner, repo))
+        StepVerifier.create(stackOverflowClient.fetchQuestion(questionId, sort, order))
+            // Then
             .expectNextMatches(response ->
-                response.getName().equals("testRepo") &&
-                    response.getFullName().equals("testOwner/testRepo") &&
-                    response.getOwner().equals("testOwner") &&
-                    response.getDescription().equals("Test Repo") &&
-                    response.getHtmlUrl().equals("https://github.com/testOwner/testRepo")
+                response.getQuestionId() == 123456 &&
+                    response.getTitle().equals("Test Question") &&
+                    response.getLink().equals("https://stackoverflow.com/q/123456") &&
+                    response.getLastActivityDate().equals(fixedTime)
             )
             .expectComplete()
             .verify();
     }
+
 }

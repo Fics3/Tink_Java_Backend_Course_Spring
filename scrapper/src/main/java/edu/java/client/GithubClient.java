@@ -7,15 +7,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class GithubWebClient {
+public class GithubClient {
 
     private static final String REPOS_PATH = "/repos/%s/%s";
 
     private final WebClient webClient;
 
     @Autowired
-    public GithubWebClient(WebClient githubClient) {
-        this.webClient = githubClient;
+    public GithubClient(WebClient githubWebClient) {
+        this.webClient = githubWebClient;
     }
 
     public Mono<GithubRepositoryResponse> fetchRepository(String owner, String repo) {
