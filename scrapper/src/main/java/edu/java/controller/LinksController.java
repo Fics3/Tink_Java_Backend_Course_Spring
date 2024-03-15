@@ -1,6 +1,6 @@
 package edu.java.controller;
 
-import edu.java.jdbc.JdbcLinkService;
+import edu.java.service.jdbc.JdbcLinkService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.example.dto.AddLinkRequest;

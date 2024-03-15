@@ -1,4 +1,4 @@
-package edu.java.jdbc;
+package edu.java.service.jdbc;
 
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.repository.ChatRepository;

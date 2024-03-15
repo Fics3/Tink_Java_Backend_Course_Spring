@@ -28,7 +28,7 @@ public class LinksRepositoryTest extends IntegrationTest {
     void addLinkTest() {
         // Arrange
         String link = "test";
-        jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 123L, OffsetDateTime.now());
+        jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
 
         // Act
         linksRepository.addLink(123L, link);
@@ -46,7 +46,7 @@ public class LinksRepositoryTest extends IntegrationTest {
     void removeLinkTest() {
         // Arrange
         String link = "test";
-        jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 123L, OffsetDateTime.now());
+        jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
         linksRepository.addLink(123L, link);
 
         // Act

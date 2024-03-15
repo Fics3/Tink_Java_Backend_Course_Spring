@@ -1,15 +1,23 @@
 package edu.java.scrapper.controller;
 
 import edu.java.controller.TelegramChatController;
-import org.junit.jupiter.api.DisplayName;
+import edu.java.exception.BadRequestScrapperException;
+import edu.java.exception.DuplicateRegistrationScrapperException;
+import edu.java.exception.InternalServerScrapperException;
+import edu.java.service.jdbc.JdbcChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static reactor.core.publisher.Mono.when;
+import org.springframework.test.web.servlet.MvcResult;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TelegramChatController.class)
 public class TelegramChatControllerTest {
@@ -17,26 +25,69 @@ public class TelegramChatControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private JdbcChatService jdbcChatService;
+
     @Test
-    @DisplayName("Should return status 200 when register chat")
     public void testRegisterChat() throws Exception {
-        int chatId = 123;
+        // Arrange
+        Long chatId = 123456L;
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/tg-chat/{id}", chatId)
+        // Act
+        MvcResult result = mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("Чат зарегестрирован"));
+            .andExpect(status().isOk())
+            .andReturn();
+
+        // Assert
+        verify(jdbcChatService).add(chatId);
     }
 
     @Test
-    @DisplayName("Should return status 200 when delete chat")
     public void testDeleteChat() throws Exception {
-        int chatId = 456;
+        // Arrange
+        Long chatId = 123456L;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/tg-chat/{id}", chatId)
+        // Act
+        MvcResult result = mockMvc.perform(delete("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("Чат успешно удален"));
+            .andExpect(status().isOk())
+            .andReturn();
+
+        // Assert
+        verify(jdbcChatService).remove(chatId);
     }
 
+    @Test
+    public void testRegisterChat_InternalServerError() throws Exception {
+        // Arrange
+        Long chatId = 123456L;
+        doThrow(new InternalServerScrapperException("Internal Server Error", "Description")).when(jdbcChatService).add(anyLong());
+
+        // Act & Assert
+        mockMvc.perform(post("/tg-chat/{id}", chatId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isInternalServerError());
+    }
+
+
+    @Test
+    public void testRegisterChat_BadRequest() throws Exception {
+        Long chatId = 123456L;
+        doThrow(new BadRequestScrapperException("Bad Request", "Description")).when(jdbcChatService).add(anyLong());
+
+        mockMvc.perform(post("/tg-chat/{id}", chatId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testRegisterChat_Conflict() throws Exception {
+        Long chatId = 123456L;
+        doThrow(new DuplicateRegistrationScrapperException("Conflict", "Description")).when(jdbcChatService).add(anyLong());
+
+        mockMvc.perform(post("/tg-chat/{id}", chatId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
 }

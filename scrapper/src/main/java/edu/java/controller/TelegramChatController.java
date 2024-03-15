@@ -1,6 +1,6 @@
 package edu.java.controller;
 
-import edu.java.jdbc.JdbcChatService;
+import edu.java.service.jdbc.JdbcChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

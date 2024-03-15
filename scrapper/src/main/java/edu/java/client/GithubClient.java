@@ -6,6 +6,9 @@ import org.example.dto.GithubRepositoryResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Component
 @AllArgsConstructor
@@ -24,7 +27,11 @@ public class GithubClient {
             .bodyToMono(GithubRepositoryResponse.class);
     }
 
-    public void checkForUpdate() {
-        
+    public OffsetDateTime checkForUpdate(URI url) {
+        String[] urlSplit = url.getPath().split("/");
+
+        var fetchedRepo = fetchRepository(urlSplit[1], urlSplit[2]);
+
+        return Objects.requireNonNull(fetchedRepo.block()).updatedAt();
     }
 }

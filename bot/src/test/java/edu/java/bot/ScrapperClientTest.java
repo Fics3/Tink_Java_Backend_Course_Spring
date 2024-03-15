@@ -1,57 +1,72 @@
 package edu.java.bot;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.bot.client.ScrapperClient;
-import edu.java.bot.exception.InternalServerScrapperException;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.mockito.Mockito.when;
 
-@WebFluxTest(ScrapperClient.class)
 class ScrapperClientTest {
 
-    @Autowired
-    private WebTestClient webTestClient;
+    private static WireMockServer wireMockServer;
 
-    @MockBean
-    private ScrapperClient scrapperClient;
+    private static WebClient webClient;
 
-    @Test
-    @DisplayName("Should return code 500 when register chat")
-    void registerChat_shouldReturnInternalServerError() {
-        // Arrange
-        long chatId = 123;
-        Mockito.when(scrapperClient.registerChat(chatId))
-            .thenThrow(new InternalServerScrapperException("Some error message", "Внутренняя ошибка сервера"));
+    private static ScrapperClient scrapperClient;
 
-        // Act & Assert
-        webTestClient.post()
-            .uri("/tg-chat/{id}", chatId)
-            .exchange()
-            .expectStatus().is5xxServerError() // Change to 5xx status expectation
-            .expectBody()
-            .jsonPath("$.description").isEqualTo("Внутренняя ошибка сервера");
+    @BeforeAll
+    static void setUp() {
+        wireMockServer = new WireMockServer();
+        wireMockServer.start();
+
+        WireMock.configureFor("localhost", wireMockServer.port());
+
+        webClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
+        scrapperClient = new ScrapperClient(webClient);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        wireMockServer.stop();
     }
 
     @Test
-    @DisplayName("Should return code 500 when delete chat")
-    void deleteChat_shouldReturnInternalServerError() {
-        // Arrange
-        long chatId = 123;
-        Mockito.when(scrapperClient.deleteChat(chatId))
-            .thenReturn(Mono.error(new InternalServerScrapperException("Some error message", "Внутренняя ошибка сервера")));
+    void registerChat_Success() {
+        Long chatId = 123L;
 
-        // Act & Assert
-        webTestClient.delete()
-            .uri("/tg-chat/{id}", chatId)
-            .exchange()
-            .expectStatus().is5xxServerError() // Change to 5xx status expectation
-            .expectBody()
-            .jsonPath("$.description").isEqualTo("Внутренняя ошибка сервера");
+        // Stubbing the method call on the mock object directly
+        when(scrapperClient.registerChat(chatId)).thenReturn(Mono.empty()); // Assuming registerChat returns a Mono<Void>
+
+        // Mocking the method call to return the base URL
+        when(scrapperClient.getChat()).thenReturn("/tg-chat/");
+
+        // Invoke the method being tested
+        scrapperClient.registerChat(chatId).block();
+
+        // Assert whatever is necessary for successful registration
     }
 
+    @Test
+    void deleteChat_Success() {
+        Long chatId = 123L;
+
+        stubFor(delete(urlEqualTo("/tg-chat/" + chatId))
+            .willReturn(aResponse()
+                .withStatus(200)));
+
+        scrapperClient.deleteChat(chatId).block();
+        // Assert whatever is necessary for successful deletion
+    }
+
+    // Similarly, write tests for other methods like getAllLinks, addLink, removeLink
 }

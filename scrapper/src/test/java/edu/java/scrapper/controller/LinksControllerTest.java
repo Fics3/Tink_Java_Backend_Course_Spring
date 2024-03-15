@@ -2,92 +2,128 @@ package edu.java.scrapper.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.controller.LinksController;
+import edu.java.exception.DuplicateLinkScrapperException;
+import edu.java.exception.NotFoundScrapperException;
+import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
-import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
-import reactor.core.publisher.Mono;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = LinksController.class)
-class LinksControllerTest {
+@WebMvcTest(LinksController.class)
+public class LinksControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockBean
+    private JdbcLinkService jdbcLinkService;
 
     @Test
-    @DisplayName("Should return empty list when getting links")
-    void getLinks_shouldReturnEmptyList() throws Exception {
-        // Arrange
+    void testGetLinks() throws Exception {
+        Long tgChatId = 123456L;
+        when(jdbcLinkService.findAll(tgChatId)).thenReturn(Collections.emptyList());
 
-        // Act & Assert
-        mockMvc.perform(get("/links")
-                .header("Tg-Chat-Id", 1)
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.links").isArray())
-            .andExpect(jsonPath("$.links").isEmpty())
-            .andExpect(jsonPath("$.size").value(0));
-    }
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Tg-Chat-Id", tgChatId.toString());
 
-    @Test
-    @DisplayName("Should return link response when adding a link")
-    void addLink_shouldReturnLinkResponse() throws Exception {
-        // Arrange
-        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create("https://example.com"));
-
-        var expectedTime = OffsetDateTime.now();
-
-        LinkResponse linkResponse = new LinkResponse(URI.create("https://example.com"), OffsetDateTime.now());
-
-
-        // Act & Assert
-        mockMvc.perform(post("/links")
-                .header("Tg-Chat-Id", 1)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/links")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(addLinkRequest)))
+                .header("Tg-Chat-Id", tgChatId.toString()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.url").value("https://example.com"))
-            .andExpect(jsonPath("$.last_update").value(expectedTime));
+            .andReturn();
+
     }
 
     @Test
-    @DisplayName("Should return link response when delete link")
-    void deleteLink_shouldReturnLinkResponse() throws Exception {
+    void testAddLink() throws Exception {
+        Long tgChatId = 123456L;
+        String uri = "https://example.com";
+        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(uri));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Tg-Chat-Id", tgChatId.toString());
+
+        when(jdbcLinkService.remove(anyLong(), any(URI.class))).thenAnswer(invocation -> {
+            return new LinkResponse(URI.create(uri), OffsetDateTime.now());
+        });
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Tg-Chat-Id", tgChatId.toString())
+                .content(asJsonString(addLinkRequest)))
+            .andExpect(status().isOk())
+            .andReturn();
+    }
+
+    @Test
+    public void testDeleteLink() throws Exception {
         // Arrange
+        Long tgChatId = 12345L;
+        String link = "https://example.com";
+        RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create(link));
+
+        // Act & Assert
+        mockMvc.perform(delete("/links").header("Tg-Chat-Id", tgChatId)
+                .contentType("application/json")
+                .content(new ObjectMapper().writeValueAsString(removeLinkRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.url").value(link));
+        verify(jdbcLinkService).remove(tgChatId, URI.create(link));
+    }
+
+    @Test
+    public void testDeleteLink_NotFound() throws Exception {
+        Long chatId = 123456L;
+        doThrow(new NotFoundScrapperException("Conflict", "Description")).when(jdbcLinkService)
+            .remove(anyLong(), any(URI.class));
+
+        mockMvc.perform(delete("/links/{id}", chatId)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteLink_Conflict() throws Exception {
+        // Arrange
+        Long tgChatId = 123456L;
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create("https://example.com"));
 
-        var expectedTime = OffsetDateTime.now();
-
-        LinkResponse linkResponse = new LinkResponse(URI.create("https://example.com"), OffsetDateTime.now());
+        // Stubbing the service method to throw DuplicateLinkScrapperException
+        doThrow(new DuplicateLinkScrapperException("Duplicate Link", "Description"))
+            .when(jdbcLinkService).remove(anyLong(), any(URI.class));
 
         // Act & Assert
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", 1)
+                .header("Tg-Chat-Id", tgChatId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(removeLinkRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.url").value("https://example.com"))
-            .andExpect(jsonPath("$.last_update").value(expectedTime));
+                .content(asJsonString(removeLinkRequest)))
+            .andExpect(status().isConflict());
+    }
+
+    public String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

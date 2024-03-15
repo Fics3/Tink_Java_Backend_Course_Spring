@@ -7,7 +7,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import org.example.dto.LinkResponse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +21,7 @@ public class LinksRepository {
         UUID linkId = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now();
 
-        jdbcTemplate.update(sql, linkId, link, OffsetDateTime.now());
+        jdbcTemplate.update(sql, linkId, link, createdAt, createdAt);
 
         String sqlRelation = "INSERT INTO chat_link_relation(chat_id, link_id)  VALUES (?, ?)";
 
@@ -59,10 +58,14 @@ public class LinksRepository {
     }
 
     public List<LinkModel> findStaleLinks(Duration threshold) {
-        // Вычисляем временную метку, которая является пределом для устаревших ссылок
         OffsetDateTime staleThreshold = OffsetDateTime.now().minus(threshold);
 
         String sql = "SELECT * FROM links WHERE last_check < ?";
         return jdbcTemplate.query(sql, new LinkMapper(), staleThreshold);
+    }
+
+    public void updateCheckedAndLastUpdate(UUID linkId, OffsetDateTime lastUpdate, OffsetDateTime checkedAt) {
+        String sql = "UPDATE links SET last_update = ?, last_check = ? WHERE link_id = ?";
+        jdbcTemplate.update(sql, lastUpdate, checkedAt, linkId);
     }
 }

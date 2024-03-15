@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +61,7 @@ public class GithubClientTest {
                 .withBody("{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
             ));
 
-        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties("/repos/%s/%s"));
+        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties("/repos/%s/%s", "https://api.github.com"));
         // Act
         WebClient githubWebClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
         GithubClient gitHubClient = new GithubClient(applicationConfig, githubWebClient);
@@ -72,9 +71,7 @@ public class GithubClientTest {
             .expectNextMatches(response ->
                 response.name().equals("testRepo") &&
                     response.fullName().equals("testOwner/testRepo") &&
-                    response.owner().equals("testOwner") &&
-                    response.description().equals("Test Repo") &&
-                    response.htmlURL().equals(URI.create("https://github.com/testOwner/testRepo"))
+                    response.htmlUrl().equals(URI.create("https://github.com/testOwner/testRepo"))
             )
             .expectComplete()
             .verify();

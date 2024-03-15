@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ClientConfig {
 
     @Bean
-    public WebClient githubWebClient(@Value("${app.github-properties.url}") String githubUrl) {
+    public WebClient githubWebClient(@Value("${app.github-properties.base-url}") String githubUrl) {
         return WebClient
             .builder()
             .baseUrl(githubUrl)
@@ -17,7 +17,7 @@ public class ClientConfig {
     }
 
     @Bean
-    public WebClient stackoverflowWebClient(@Value("${app.stackoverflow-properties.url}") String stackoverflowUrl) {
+    public WebClient stackoverflowWebClient(@Value("${app.stackoverflow-properties.base-url}") String stackoverflowUrl) {
         return WebClient
             .builder()
             .baseUrl(stackoverflowUrl)
@@ -25,7 +25,7 @@ public class ClientConfig {
     }
 
     @Bean
-    public WebClient botWebClient(@Value("$app.bot-properties.url}") String botUrl) {
+    public WebClient botWebClient(@Value("${app.bot-properties.url}") String botUrl) {
         return WebClient
             .builder()
             .baseUrl(botUrl)

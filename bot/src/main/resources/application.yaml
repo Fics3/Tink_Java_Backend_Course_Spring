@@ -1,10 +1,10 @@
 app:
   telegram-token: ${TELEGRAM_API_KEY}
   scrapper-properties:
-    chat:
-    links:
-    tg-chat-id:
-    url: localhost:8080
+    chat: /tg-chat/{id}
+    links: /links
+    tg-chat-id: Tg-Chat-Id
+    url: http://localhost:8080
 spring:
   application:
     name: bot

@@ -9,9 +9,7 @@ import java.time.OffsetDateTime;
 public record GithubRepositoryResponse(
     String name,
     String fullName,
-    String owner,
-    String description,
-    URI htmlURL,
-    OffsetDateTime lastUpdateTime
+    URI htmlUrl,
+    OffsetDateTime updatedAt
 ) {
 }

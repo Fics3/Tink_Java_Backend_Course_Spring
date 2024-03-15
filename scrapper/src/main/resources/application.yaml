@@ -4,12 +4,14 @@ app:
     interval: 10s
     force-check-delay: 10s
 
-  bot-properties:
-    url: "http://localhost:8080"
   stackoverflow-properties:
-    url: /questions/%d?order=%s&sort=%s&site=stackoverflow
+    base-url: https://api.stackexchange.com
+    url: /questions/%d?site=stackoverflow
   github-properties:
+    base-url: https://api.github.com
     url: /repos/%s/%s
+  bot-properties:
+    url: http://localhost:8090
 
 
 spring:

@@ -1,7 +1,7 @@
 package edu.java.bot.controller;
 
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
-import edu.java.bot.exceptions.BotException;
+import edu.java.bot.exception.BotException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.coyote.BadRequestException;

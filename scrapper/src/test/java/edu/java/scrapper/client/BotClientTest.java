@@ -3,6 +3,7 @@ package edu.java.scrapper.client;
 import edu.java.client.BotClient;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ class BotClientTest {
         // Given
         LinkUpdateRequest updateRequest =
             new LinkUpdateRequest(
-                1L,
+                UUID.randomUUID(),
                 URI.create("http://example.com"),
                 "12",
                 List.of(1L)

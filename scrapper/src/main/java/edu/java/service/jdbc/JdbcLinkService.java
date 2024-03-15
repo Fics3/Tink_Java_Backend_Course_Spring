@@ -1,4 +1,4 @@
-package edu.java.jdbc;
+package edu.java.service.jdbc;
 
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;

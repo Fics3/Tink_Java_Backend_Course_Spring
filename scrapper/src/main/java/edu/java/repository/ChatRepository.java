@@ -4,6 +4,7 @@ import edu.java.model.ChatModel;
 import edu.java.repository.mapper.ChatMapper;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -35,5 +36,11 @@ public class ChatRepository {
         String sql = "SELECT COUNT(*) FROM chats WHERE telegram_chat_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, chatId);
         return count != null && count > 0;
+    }
+
+
+    public List<Long> findChatsByLinkId(UUID uuid) {
+        String sql = "SELECT chat_id FROM chat_link_relation WHERE link_id = ?";
+        return jdbcTemplate.queryForList(sql, Long.class, uuid);
     }
 }

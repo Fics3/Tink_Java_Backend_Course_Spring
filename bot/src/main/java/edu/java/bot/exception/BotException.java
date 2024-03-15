@@ -3,11 +3,12 @@ package edu.java.bot.exception;
 import lombok.Getter;
 
 @Getter
-public class ScrapperException extends RuntimeException {
+public class BotException extends RuntimeException {
     protected String description;
 
-    public ScrapperException(String message, String description) {
+    public BotException(String message, String description) {
         super(message);
         this.description = description;
     }
+
 }

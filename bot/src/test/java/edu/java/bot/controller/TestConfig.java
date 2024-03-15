@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 public class TestConfig {
 
     @Bean
-    public TelegramBot telegramBot() {
+    public TelegramBot telegramTestBot() {
         return mock(TelegramBot.class);
     }
 

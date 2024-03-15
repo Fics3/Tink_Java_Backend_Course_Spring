@@ -1,0 +1,69 @@
+package edu.java.scrapper.service.jdbc;
+
+import edu.java.exception.DuplicateRegistrationScrapperException;
+import edu.java.service.jdbc.JdbcChatService;
+import edu.java.repository.ChatRepository;
+import edu.java.service.ChatService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
+public class JdbcChatServiceTest {
+
+    @Mock
+    private ChatRepository chatRepository;
+
+    @InjectMocks
+    private ChatService chatService = new JdbcChatService();
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    void testAddNewChat_Successful() {
+        // Arrange
+        Long tgChatId = 123456L;
+        when(chatRepository.existsChat(tgChatId)).thenReturn(false);
+
+        // Act
+        chatService.add(tgChatId);
+
+        // Assert
+        verify(chatRepository, times(1)).addChat(tgChatId);
+    }
+
+    @Test
+    void testAddExistingChat_DuplicateRegistrationScrapperException() {
+        // Arrange
+        Long tgChatId = 123456L;
+        when(chatRepository.existsChat(tgChatId)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(DuplicateRegistrationScrapperException.class, () -> {
+            chatService.add(tgChatId);
+        });
+
+        // Verify that addChat method is not called
+        verify(chatRepository, never()).addChat(anyLong());
+    }
+
+    @Test
+    void testRemoveChat() {
+        // Arrange
+        Long tgChatId = 123456L;
+
+        // Act
+        chatService.remove(tgChatId);
+
+        // Assert
+        verify(chatRepository, times(1)).removeChat(tgChatId);
+    }
+}
