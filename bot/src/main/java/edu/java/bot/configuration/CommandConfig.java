@@ -1,20 +1,31 @@
 package edu.java.bot.configuration;
 
-import edu.java.bot.service.commands.CommandService;
-import java.util.List;
+import edu.java.bot.service.commands.Command;
+import edu.java.bot.service.commands.HelpCommand;
+import edu.java.bot.service.commands.ListCommand;
+import edu.java.bot.service.commands.StartCommand;
+import edu.java.bot.service.commands.TrackCommand;
+import edu.java.bot.service.commands.UntrackCommand;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CommandConfig {
 
+    private final static Command[] COMMANDS = {
+        new StartCommand(),
+        new HelpCommand(),
+        new ListCommand(),
+        new TrackCommand(),
+        new UntrackCommand()
+    };
+
     @Bean
-    @Qualifier("commandMap")
-    Map<String, CommandService> commandMap(List<CommandService> commandServices) {
-        return commandServices.stream().collect(Collectors.toMap(CommandService::getName, command -> command));
+    Map<String, Command> commandMap() {
+        return Arrays.stream(COMMANDS).collect(Collectors.toMap(Command::getName, command -> command));
     }
 
 }

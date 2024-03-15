@@ -1,0 +1,34 @@
+app:
+  scheduler:
+    enable: true
+    interval: 10s
+    force-check-delay: 10s
+
+  bot-properties:
+    url: "http://localhost:8080"
+  stackoverflow-properties:
+    url: /questions/%d?order=%s&sort=%s&site=stackoverflow
+  github-properties:
+    url: /repos/%s/%s
+
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  application:
+    name: scrapper
+  liquibase:
+    enabled: false
+
+server:
+  port: 8080
+
+logging:
+  config: classpath:log4j2-plain.xml
+
+springdoc:
+  api-docs:
+    enabled: true
+
+swagger-ui:
+  path: /swagger-ui
