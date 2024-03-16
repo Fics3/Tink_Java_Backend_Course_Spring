@@ -62,14 +62,14 @@ public class TelegramChatControllerTest {
     public void testRegisterChat_InternalServerError() throws Exception {
         // Arrange
         Long chatId = 123456L;
-        doThrow(new InternalServerScrapperException("Internal Server Error", "Description")).when(jdbcChatService).add(anyLong());
+        doThrow(new InternalServerScrapperException("Internal Server Error", "Description")).when(jdbcChatService)
+            .add(anyLong());
 
         // Act & Assert
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isInternalServerError());
     }
-
 
     @Test
     public void testRegisterChat_BadRequest() throws Exception {
@@ -84,7 +84,8 @@ public class TelegramChatControllerTest {
     @Test
     public void testRegisterChat_Conflict() throws Exception {
         Long chatId = 123456L;
-        doThrow(new DuplicateRegistrationScrapperException("Conflict", "Description")).when(jdbcChatService).add(anyLong());
+        doThrow(new DuplicateRegistrationScrapperException("Conflict", "Description")).when(jdbcChatService)
+            .add(anyLong());
 
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))

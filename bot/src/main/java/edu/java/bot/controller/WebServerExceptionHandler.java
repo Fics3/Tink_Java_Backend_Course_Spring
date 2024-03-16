@@ -1,7 +1,8 @@
 package edu.java.bot.controller;
 
-import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import edu.java.bot.exception.BotException;
+import edu.java.bot.exception.InternalServerBotException;
+import edu.java.bot.exception.NotFoundBotException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class WebServerExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(InternalServerBotException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse handleException(BotException e) {
         return buildErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, e.getDescription(), e);
@@ -27,7 +28,7 @@ public class WebServerExceptionHandler {
         return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST, e.getDescription(), e);
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(NotFoundBotException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiErrorResponse handleNotFoundException(BotException e) {
         return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND, e.getDescription(), e);

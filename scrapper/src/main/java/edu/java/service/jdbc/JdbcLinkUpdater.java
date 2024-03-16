@@ -5,37 +5,36 @@ import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.LinksRepository;
+import edu.java.service.LinkUpdater;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.UUID;
-import edu.java.service.LinkUpdater;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.example.dto.LinkUpdateRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Log4j2
 public class JdbcLinkUpdater implements LinkUpdater {
-
-    private LinksRepository linksRepository;
-    private ChatRepository chatRepository;
-    private GithubClient githubClient;
-    private StackoverflowClient stackoverflowClient;
-    private BotClient botClient;
+    private final LinksRepository linksRepository;
+    private final ChatRepository chatRepository;
+    private final GithubClient githubClient;
+    private final StackoverflowClient stackoverflowClient;
+    private final BotClient botClient;
+    @Value("#{@scheduler.forceCheckDelay().toMillis()}")
+    private Duration threshold;
 
     @Override
     public int update() {
         int updateCount = 0;
-        var staleLinks = linksRepository.findStaleLinks(Duration.ofSeconds(5L));
+        var staleLinks = linksRepository.findStaleLinks(threshold);
         for (var linkModel : staleLinks) {
-            OffsetDateTime lastUpdate = null;
             var url = URI.create(linkModel.link());
-            switch (url.getHost()) {
-                case "github.com" -> lastUpdate = githubClient.checkForUpdate(url);
-                case "stackoverflow.com" -> lastUpdate = stackoverflowClient.checkForUpdate(url);
-            }
-
+            OffsetDateTime lastUpdate = getLastUpdate(url);
             if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
                 botClient.sendUpdate(formLinkUpdateRequest(
                     linkModel.linkId(),
@@ -43,11 +42,19 @@ public class JdbcLinkUpdater implements LinkUpdater {
                     "Ссылка обновлена " + linkModel.link()
                 )).subscribe();
                 updateCount++;
-                linksRepository.updateCheckedAndLastUpdate(linkModel.linkId(), lastUpdate, OffsetDateTime.now());
+                linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
             }
-
+            linksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
         }
         return updateCount;
+    }
+
+    private OffsetDateTime getLastUpdate(URI url) {
+        return switch (url.getHost()) {
+            case "github.com" -> githubClient.checkForUpdate(url);
+            case "stackoverflow.com" -> stackoverflowClient.checkForUpdate(url);
+            default -> null;
+        };
     }
 
     private LinkUpdateRequest formLinkUpdateRequest(UUID linkId, URI url, String description) {

@@ -6,10 +6,9 @@ import java.util.List;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 
-public record ApiErrorResponse
-    (String description,
-     String code,
-     String exceptionName,
-     String exceptionMessage,
-     List<String> stacktrace) {
+public record ApiErrorResponse(String description,
+                               String code,
+                               String exceptionName,
+                               String exceptionMessage,
+                               List<String> stacktrace) {
 }

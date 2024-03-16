@@ -8,11 +8,10 @@ import java.util.List;
 public record StackoverflowQuestionResponse(List<ItemResponse> items) {
 
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-    public record ItemResponse
-        (Integer questionId,
-         String title,
-         Boolean isAnswered,
-         OffsetDateTime lastActivityDate) {
+    public record ItemResponse(Integer questionId,
+                               String title,
+                               Boolean isAnswered,
+                               OffsetDateTime lastActivityDate) {
     }
 }
 

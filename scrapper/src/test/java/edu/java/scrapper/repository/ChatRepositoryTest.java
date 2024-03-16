@@ -59,7 +59,7 @@ public class ChatRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     void findAllChatsTest() {
-        // Arrange
+        // Arrange&Act
         var chats = chatRepository.findAllChats();
 
         // Assert

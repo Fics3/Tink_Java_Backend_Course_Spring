@@ -25,20 +25,20 @@ public class ScrapperClient {
         this.scrapperWebClient = scrapperWebClient;
     }
 
-    public Mono<Void> registerChat(Long chatId) {
+    public Mono<String> registerChat(Long chatId) {
         return scrapperWebClient
             .post()
             .uri(getChat(), chatId)
             .retrieve()
-            .bodyToMono(Void.class);
+            .bodyToMono(String.class);
     }
 
-    public Mono<Void> deleteChat(Long chatId) {
+    public Mono<String> deleteChat(Long chatId) {
         return scrapperWebClient
             .delete()
             .uri(getChat(), chatId)
             .retrieve()
-            .bodyToMono(Void.class);
+            .bodyToMono(String.class);
     }
 
     public Mono<ListLinkResponse> getAllLinks(Long tgChatId) {

@@ -49,9 +49,9 @@ public class LinksRepository {
     }
 
     public boolean existsLinkForChat(Long tgChatId, String url) {
-        String sql = "SELECT COUNT(*) FROM chat_link_relation clr " +
-            "JOIN links l ON clr.link_id = l.link_id " +
-            "WHERE clr.chat_id = ? AND l.link = ?";
+        String sql = "SELECT COUNT(*) FROM chat_link_relation clr "
+            + "JOIN links l ON clr.link_id = l.link_id "
+            + "WHERE clr.chat_id = ? AND l.link = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, tgChatId, url);
 
         return count != null && count > 0;
@@ -64,8 +64,13 @@ public class LinksRepository {
         return jdbcTemplate.query(sql, new LinkMapper(), staleThreshold);
     }
 
-    public void updateCheckedAndLastUpdate(UUID linkId, OffsetDateTime lastUpdate, OffsetDateTime checkedAt) {
-        String sql = "UPDATE links SET last_update = ?, last_check = ? WHERE link_id = ?";
-        jdbcTemplate.update(sql, lastUpdate, checkedAt, linkId);
+    public void updateLastUpdate(UUID linkId, OffsetDateTime lastUpdate) {
+        String sql = "UPDATE links SET last_update = ? WHERE link_id = ?";
+        jdbcTemplate.update(sql, lastUpdate, linkId);
+    }
+
+    public void updateChecked(UUID linkId, OffsetDateTime checkedAt) {
+        String sql = "UPDATE links SET last_check = ? WHERE link_id = ?";
+        jdbcTemplate.update(sql, checkedAt, linkId);
     }
 }

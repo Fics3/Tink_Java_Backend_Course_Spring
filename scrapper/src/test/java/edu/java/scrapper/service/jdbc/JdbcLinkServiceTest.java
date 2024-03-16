@@ -1,10 +1,10 @@
 package edu.java.scrapper.service.jdbc;
 
 import edu.java.exception.DuplicateLinkScrapperException;
-import edu.java.service.jdbc.JdbcLinkService;
 import edu.java.model.LinkModel;
 import edu.java.repository.LinksRepository;
 import edu.java.service.LinkService;
+import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;

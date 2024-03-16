@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.client.GithubClient;
 import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -14,26 +15,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
-
-import java.net.URI;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class GithubClientTest {
 
-    @Configuration
-    static class TestConfig {
-        @Bean
-        public WebClient.Builder webClientBuilder() {
-            return WebClient.builder();
-        }
-    }
-
+    private static WireMockServer wireMockServer;
     @MockBean
     private ApplicationConfig applicationConfig;
-
-    private static WireMockServer wireMockServer;
 
     @BeforeAll
     public static void setUp() {
@@ -58,10 +47,14 @@ public class GithubClientTest {
             .willReturn(WireMock.aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody("{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
+                .withBody(
+                    "{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
             ));
 
-        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties("/repos/%s/%s", "https://api.github.com"));
+        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
+            "/repos/%s/%s",
+            "https://api.github.com"
+        ));
         // Act
         WebClient githubWebClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
         GithubClient gitHubClient = new GithubClient(applicationConfig, githubWebClient);
@@ -75,5 +68,13 @@ public class GithubClientTest {
             )
             .expectComplete()
             .verify();
+    }
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public WebClient.Builder webClientBuilder() {
+            return WebClient.builder();
+        }
     }
 }

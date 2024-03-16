@@ -56,19 +56,17 @@ public class LinksControllerTest {
 
     @Test
     void testAddLink() throws Exception {
-        Long tgChatId = 123456L;
+        long tgChatId = 123456L;
         String uri = "https://example.com";
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(uri));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Tg-Chat-Id", tgChatId.toString());
+        request.addHeader("Tg-Chat-Id", Long.toString(tgChatId));
 
-        when(jdbcLinkService.remove(anyLong(), any(URI.class))).thenAnswer(invocation -> {
-            return new LinkResponse(URI.create(uri), OffsetDateTime.now());
-        });
+        when(jdbcLinkService.remove(anyLong(), any(URI.class))).thenAnswer(invocation -> new LinkResponse(URI.create(uri), OffsetDateTime.now()));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/links")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Tg-Chat-Id", tgChatId.toString())
+                .header("Tg-Chat-Id", Long.toString(tgChatId))
                 .content(asJsonString(addLinkRequest)))
             .andExpect(status().isOk())
             .andReturn();
@@ -83,7 +81,7 @@ public class LinksControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/links").header("Tg-Chat-Id", tgChatId)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(removeLinkRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.url").value(link));
@@ -104,7 +102,7 @@ public class LinksControllerTest {
     @Test
     public void testDeleteLink_Conflict() throws Exception {
         // Arrange
-        Long tgChatId = 123456L;
+        long tgChatId = 123456L;
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create("https://example.com"));
 
         // Stubbing the service method to throw DuplicateLinkScrapperException
@@ -113,7 +111,7 @@ public class LinksControllerTest {
 
         // Act & Assert
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", tgChatId.toString())
+                .header("Tg-Chat-Id", Long.toString(tgChatId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(removeLinkRequest)))
             .andExpect(status().isConflict());

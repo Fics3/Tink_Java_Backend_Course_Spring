@@ -17,7 +17,9 @@ public class ClientConfig {
     }
 
     @Bean
-    public WebClient stackoverflowWebClient(@Value("${app.stackoverflow-properties.base-url}") String stackoverflowUrl) {
+    public WebClient stackoverflowWebClient(
+        @Value("${app.stackoverflow-properties.base-url}") String stackoverflowUrl
+    ) {
         return WebClient
             .builder()
             .baseUrl(stackoverflowUrl)

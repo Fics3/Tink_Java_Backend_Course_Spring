@@ -1,14 +1,14 @@
 package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.example.dto.GithubRepositoryResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Objects;
 
 @Component
 @AllArgsConstructor

@@ -1,18 +1,20 @@
 package edu.java.scrapper.service.jdbc;
 
 import edu.java.exception.DuplicateRegistrationScrapperException;
-import edu.java.service.jdbc.JdbcChatService;
 import edu.java.repository.ChatRepository;
 import edu.java.service.ChatService;
+import edu.java.service.jdbc.JdbcChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JdbcChatServiceTest {
 

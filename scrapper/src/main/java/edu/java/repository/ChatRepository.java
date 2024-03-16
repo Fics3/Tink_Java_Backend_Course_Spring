@@ -38,7 +38,6 @@ public class ChatRepository {
         return count != null && count > 0;
     }
 
-
     public List<Long> findChatsByLinkId(UUID uuid) {
         String sql = "SELECT chat_id FROM chat_link_relation WHERE link_id = ?";
         return jdbcTemplate.queryForList(sql, Long.class, uuid);
