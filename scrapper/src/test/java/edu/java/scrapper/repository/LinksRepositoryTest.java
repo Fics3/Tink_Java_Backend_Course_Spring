@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository;
 
-import edu.java.ScrapperApplication;
 import edu.java.model.LinkModel;
+import edu.java.repository.ChatRepository;
 import edu.java.repository.LinksRepository;
 import edu.java.repository.mapper.LinkMapper;
 import edu.java.scrapper.IntegrationTest;
@@ -15,12 +15,14 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = ScrapperApplication.class)
+@SpringBootTest
 public class LinksRepositoryTest extends IntegrationTest {
     @Autowired
     private LinksRepository linksRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private ChatRepository chatRepository;
 
     @Test
     @Transactional
@@ -29,6 +31,7 @@ public class LinksRepositoryTest extends IntegrationTest {
         // Arrange
         String link = "test";
         jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
+        chatRepository.addChat(123L);
 
         // Act
         linksRepository.addLink(123L, link);
@@ -47,6 +50,7 @@ public class LinksRepositoryTest extends IntegrationTest {
         // Arrange
         String link = "test";
         jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
+        chatRepository.addChat(123L);
         linksRepository.addLink(123L, link);
 
         // Act

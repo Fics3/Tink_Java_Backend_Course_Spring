@@ -63,7 +63,10 @@ public class LinksControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Tg-Chat-Id", Long.toString(tgChatId));
 
-        when(jdbcLinkService.remove(anyLong(), any(URI.class))).thenAnswer(invocation -> new LinkResponse(URI.create(uri), OffsetDateTime.now()));
+        when(jdbcLinkService.remove(
+            anyLong(),
+            any(URI.class)
+        )).thenAnswer(invocation -> new LinkResponse(URI.create(uri), OffsetDateTime.now()));
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Tg-Chat-Id", Long.toString(tgChatId))

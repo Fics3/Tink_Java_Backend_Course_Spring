@@ -8,7 +8,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import liquibase.Contexts;
 import liquibase.Liquibase;
-import liquibase.database.DatabaseFactory;
+import liquibase.database.Database;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.DirectoryResourceAccessor;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -19,6 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 public abstract class IntegrationTest {
+
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
@@ -38,8 +40,8 @@ public abstract class IntegrationTest {
             String password = c.getPassword();
 
             Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
-            liquibase.database.Database database =
-                DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            Database database = new PostgresDatabase();
+            database.setConnection(new JdbcConnection(connection));
 
             Path migrationsPath = new File(".")
                 .toPath()

@@ -1,6 +1,5 @@
 package edu.java.scrapper.repository;
 
-import edu.java.ScrapperApplication;
 import edu.java.model.ChatModel;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.mapper.ChatMapper;
@@ -14,7 +13,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = ScrapperApplication.class)
+@SpringBootTest
 public class ChatRepositoryTest extends IntegrationTest {
     @Autowired
     private ChatRepository chatRepository;
@@ -27,6 +26,7 @@ public class ChatRepositoryTest extends IntegrationTest {
     void addChatTest() {
         // Arrange
         Long chatId = 123456789L;
+        assertThat(POSTGRES.isRunning()).isTrue();
 
         // Act
         chatRepository.addChat(chatId);
