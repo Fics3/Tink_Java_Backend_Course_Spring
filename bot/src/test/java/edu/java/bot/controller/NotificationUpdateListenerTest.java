@@ -73,7 +73,6 @@ class NotificationUpdateListenerTest {
         updateListener.process(Collections.singletonList(update));
 
         //Assert
-        verify(notificationService).messageIsNull(update);
         verify(notificationService).processCommand(update, telegramBot);
     }
 }

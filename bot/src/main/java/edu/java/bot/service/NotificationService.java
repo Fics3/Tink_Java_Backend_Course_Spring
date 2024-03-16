@@ -45,7 +45,4 @@ public class NotificationService {
         telegramBot.execute(message);
     }
 
-    public boolean messageIsNull(Update update) {
-        return update.message() == null;
-    }
 }

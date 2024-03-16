@@ -1,19 +1,16 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.time.OffsetDateTime;
-import lombok.Getter;
+import java.util.List;
 
-@Getter
-public class StackoverflowQuestionResponse {
-    @JsonProperty("question_id")
-    private long questionId;
+public record StackoverflowQuestionResponse(List<ItemResponse> items) {
 
-    private String title;
-
-    private String link;
-
-    @JsonProperty("last_activity_date")
-    private OffsetDateTime lastActivityDate;
-
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+    public record ItemResponse(Integer questionId,
+                               String title,
+                               Boolean isAnswered,
+                               OffsetDateTime lastActivityDate) {
+    }
 }

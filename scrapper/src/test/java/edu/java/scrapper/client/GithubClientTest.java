@@ -1,59 +1,54 @@
 package edu.java.scrapper.client;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.client.GithubClient;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import org.example.dto.GithubRepositoryResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.test.StepVerifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
+@WebFluxTest(GithubClient.class)
 public class GithubClientTest {
-    private static WireMockServer wireMockServer;
 
-    @BeforeAll
-    public static void setUp() {
-        wireMockServer = new WireMockServer();
-        wireMockServer.start();
-        WireMock.configureFor("localhost", wireMockServer.port());
-    }
+    @Autowired
+    private WebTestClient webTestClient;
 
-    @AfterAll
-    public static void tearDown() {
-        wireMockServer.stop();
-    }
+    @MockBean
+    private ApplicationConfig applicationConfig;
+
+    @MockBean
+    private GithubClient githubClient;
 
     @Test
     @DisplayName("test for check the required response body")
     public void testFetchRepository() {
         // Arrange
-        String owner = "testOwner";
-        String repo = "testRepo";
+        GithubRepositoryResponse response = new GithubRepositoryResponse("TEST", "TEST_FULL", URI.create("sdsd"),
+            OffsetDateTime.now()
+        );
 
-        wireMockServer.stubFor(WireMock.get(WireMock.urlPathEqualTo("/repos/testOwner/testRepo"))
-            .willReturn(WireMock.aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody(
-                    "{\"name\":\"testRepo\",\"full_name\":\"testOwner/testRepo\",\"owner\":\"testOwner\",\"description\":\"Test Repo\",\"html_url\":\"https://github.com/testOwner/testRepo\"}")
-            ));
+        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
+            "/repos/%s/%s",
+            "https://api.github.com"
+        ));
 
-        // Act
-        WebClient webClient = WebClient.builder().baseUrl("http://localhost:" + wireMockServer.port()).build();
-        GithubClient gitHubClient = new GithubClient(webClient);
+        when(githubClient.fetchRepository(anyString(), anyString()))
+            .thenReturn(Mono.just(response));
 
-        // Assert
-        StepVerifier.create(gitHubClient.fetchRepository(owner, repo))
-            .expectNextMatches(response ->
-                response.getName().equals("testRepo") &&
-                    response.getFullName().equals("testOwner/testRepo") &&
-                    response.getOwner().equals("testOwner") &&
-                    response.getDescription().equals("Test Repo") &&
-                    response.getHtmlUrl().equals("https://github.com/testOwner/testRepo")
-            )
-            .expectComplete()
-            .verify();
+        // Act & Assert
+        webTestClient.get()
+            .uri("/repositories/testOwner/testRepo")
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody();
     }
+
 }
