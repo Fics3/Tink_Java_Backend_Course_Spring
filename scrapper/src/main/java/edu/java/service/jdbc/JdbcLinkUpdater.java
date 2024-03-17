@@ -44,9 +44,9 @@ public class JdbcLinkUpdater implements LinkUpdater {
             var url = URI.create(linkModel.link());
             switch (url.getHost()) {
                 case "github.com" -> {
-                    GithubRepositoryResponse repository = githubClient.fetchRepository(url).block();
-                    processSubscriberCount(linkModel, Objects.requireNonNull(repository).subscribersCount());
-                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repository).updatedAt());
+                    GithubRepositoryResponse repositoryResponse = githubClient.fetchRepository(url).block();
+                    processSubscriberCount(linkModel, Objects.requireNonNull(repositoryResponse).subscribersCount());
+                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repositoryResponse).updatedAt());
                 }
                 case "stackoverflow.com" -> {
                     var question = stackoverflowClient.fetchQuestion(url).block();
