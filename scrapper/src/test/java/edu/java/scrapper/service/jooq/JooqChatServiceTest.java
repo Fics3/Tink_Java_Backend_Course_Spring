@@ -1,8 +1,8 @@
-package edu.java.scrapper.service.jdbc;
+package edu.java.scrapper.service.jooq;
 
-import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.repository.jooq.JooqChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
-import edu.java.service.jdbc.JdbcChatService;
+import edu.java.service.jooq.JooqChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,13 +15,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JdbcChatServiceTest {
+public class JooqChatServiceTest {
 
     @Mock
-    private JdbcChatRepository jdbcChatRepository;
+    private JooqChatRepository jooqChatRepository;
 
     @InjectMocks
-    private JdbcChatService chatService = new JdbcChatService();
+    private JooqChatService chatService = new JooqChatService();
 
     @BeforeEach
     void setUp() {
@@ -32,20 +32,20 @@ public class JdbcChatServiceTest {
     void testAddNewChat_Successful() {
         // Arrange
         Long tgChatId = 123456L;
-        when(jdbcChatRepository.existsChat(tgChatId)).thenReturn(false);
+        when(jooqChatRepository.existsChat(tgChatId)).thenReturn(false);
 
         // ActS
         chatService.add(tgChatId);
 
         // Assert
-        verify(jdbcChatRepository, times(1)).addChat(tgChatId);
+        verify(jooqChatRepository, times(1)).addChat(tgChatId);
     }
 
     @Test
     void testAddExistingChat_DuplicateRegistrationScrapperException() {
         // Arrange
         Long tgChatId = 123456L;
-        when(jdbcChatRepository.existsChat(tgChatId)).thenReturn(true);
+        when(jooqChatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
         assertThrows(DuplicateRegistrationScrapperException.class, () -> {
@@ -53,7 +53,7 @@ public class JdbcChatServiceTest {
         });
 
         // Verify that addChat method is not called
-        verify(jdbcChatRepository, never()).addChat(anyLong());
+        verify(jooqChatRepository, never()).addChat(anyLong());
     }
 
     @Test
@@ -65,6 +65,6 @@ public class JdbcChatServiceTest {
         chatService.remove(tgChatId);
 
         // Assert
-        verify(jdbcChatRepository, times(1)).removeChat(tgChatId);
+        verify(jooqChatRepository, times(1)).removeChat(tgChatId);
     }
 }

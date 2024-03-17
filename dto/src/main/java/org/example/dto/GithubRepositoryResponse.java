@@ -10,6 +10,7 @@ public record GithubRepositoryResponse(
     String name,
     String fullName,
     URI htmlUrl,
-    OffsetDateTime updatedAt
+    OffsetDateTime updatedAt,
+    Integer subscribersCount
 ) {
 }

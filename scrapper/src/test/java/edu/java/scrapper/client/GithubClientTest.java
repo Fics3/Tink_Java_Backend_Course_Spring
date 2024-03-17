@@ -32,13 +32,12 @@ public class GithubClientTest {
     public void testFetchRepository() {
         // Arrange
         GithubRepositoryResponse response = new GithubRepositoryResponse("TEST", "TEST_FULL", URI.create("sdsd"),
-            OffsetDateTime.now()
+            OffsetDateTime.now(), 123
         );
 
         when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
-            "github.com",
-            "https://api.github.com",
-            "/repos/%s/%s"
+            "/repos/%s/%s",
+            "https://api.github.com"
         ));
 
         when(githubClient.fetchRepository(any(URI.class)))

@@ -1,8 +1,9 @@
 package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
-import edu.java.exception.BadRequestScrapperException;
 import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.example.dto.GithubRepositoryResponse;
 import org.springframework.stereotype.Component;
@@ -18,17 +19,20 @@ public class GithubClient {
 
     public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
-        try {
-            String apiUrl = String.format(applicationConfig.githubProperties().apiUrl(), urlSplit[1], urlSplit[2]);
 
-            return githubWebClient
-                .get()
-                .uri(apiUrl)
-                .retrieve()
-                .bodyToMono(GithubRepositoryResponse.class);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new BadRequestScrapperException("Неправильный тип ссылки", "");
-        }
+        String apiUrl = String.format(applicationConfig.githubProperties().url(), urlSplit[1], urlSplit[2]);
+
+        return githubWebClient
+            .get()
+            .uri(apiUrl)
+            .retrieve()
+            .bodyToMono(GithubRepositoryResponse.class);
+    }
+
+    public OffsetDateTime checkForUpdate(URI url) {
+        var fetchedRepo = fetchRepository(url);
+
+        return Objects.requireNonNull(fetchedRepo.block()).updatedAt();
     }
 
 }

@@ -3,11 +3,11 @@ package edu.java.controller;
 import edu.java.service.LinkService;
 import java.time.OffsetDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/links")
-@RequiredArgsConstructor
 public class LinksController {
-    private final LinkService linkService;
+    @Autowired
+    private LinkService jooqLinkService;
 
     @GetMapping
     public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
-        List<LinkResponse> linkResponses = linkService.findAll(tgChatId);
+        List<LinkResponse> linkResponses = jooqLinkService.findAll(tgChatId);
         return new ListLinkResponse(linkResponses, linkResponses.size());
     }
 
@@ -33,7 +33,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
-        linkService.add(tgChatId, addLinkRequest.uri());
+        jooqLinkService.add(tgChatId, addLinkRequest.uri());
         return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }
 
@@ -42,7 +42,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        linkService.remove(tgChatId, removeLinkRequest.link());
+        jooqLinkService.remove(tgChatId, removeLinkRequest.link());
         return new LinkResponse(removeLinkRequest.link(), OffsetDateTime.now());
     }
 }

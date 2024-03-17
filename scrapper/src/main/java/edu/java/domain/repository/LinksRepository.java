@@ -1,4 +1,4 @@
-package edu.java.repository;
+package edu.java.domain.repository;
 
 import edu.java.model.LinkModel;
 import java.time.Duration;
@@ -14,8 +14,6 @@ public interface LinksRepository {
 
     List<LinkModel> findAllLinks();
 
-    List<LinkModel> findLinksByChatId(Long tgChatId);
-
     boolean existsLinkForChat(Long tgChatId, String url);
 
     List<LinkModel> findStaleLinks(Duration threshold);
@@ -24,4 +22,7 @@ public interface LinksRepository {
 
     void updateChecked(UUID linkId, OffsetDateTime checkedAt);
 
+    LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount);
+
+    LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount);
 }

@@ -11,4 +11,6 @@
     <include file="01-create_chats.sql"/>
     <include file="02-create_links.sql"/>
     <include file="03-create_relationsChatLinks.sql"/>
+    <include file="04-create_questions.sql"/>
+    <include file="05-create_repositories.sql"/>
 </databaseChangeLog>

@@ -1,8 +1,13 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.repository.mapper.ChatMapper;
 import edu.java.model.ChatModel;
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/JdbcChatRepositoryTest.java
 import edu.java.repository.jdbc.JdbcChatRepository;
 import edu.java.repository.mapper.ChatMapper;
+========
+>>>>>>>> 5d3111d (hw5 bonus):scrapper/src/test/java/edu/java/scrapper/repository/jdbc/JdbcChatRepositoryTest.java
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -13,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/JdbcChatRepositoryTest.java
 @Transactional
+========
+>>>>>>>> 5d3111d (hw5 bonus):scrapper/src/test/java/edu/java/scrapper/repository/jdbc/JdbcChatRepositoryTest.java
 public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcChatRepository jdbcChatRepository;

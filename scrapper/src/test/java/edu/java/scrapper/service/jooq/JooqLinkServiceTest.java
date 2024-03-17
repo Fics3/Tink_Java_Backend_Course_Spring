@@ -1,13 +1,13 @@
-package edu.java.scrapper.service.jdbc;
+package edu.java.scrapper.service.jooq;
 
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.domain.repository.jdbc.JdbcChatRepository;
-import edu.java.domain.repository.jdbc.JdbcLinksRepository;
+import edu.java.domain.repository.jooq.JooqChatRepository;
+import edu.java.domain.repository.jooq.JooqLinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
 import edu.java.service.LinkService;
-import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.jooq.JooqLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -32,18 +32,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class JdbcLinkServiceTest {
+public class JooqLinkServiceTest {
 
     @MockBean
-    private JdbcChatRepository jdbcChatRepository;
+    private JooqChatRepository jooqChatRepository;
     @Mock
-    private JdbcLinksRepository jdbcLinksRepository;
+    private JooqLinksRepository jooqLinksRepository;
     @Mock
     private GithubClient githubClient;
     @Mock
     private StackoverflowClient stackoverflowClient;
     @InjectMocks
-    private LinkService linkService = new JdbcLinkService(jdbcLinksRepository, githubClient, stackoverflowClient);
+    private LinkService linkService = new JooqLinkService(githubClient, stackoverflowClient);
 
     @BeforeEach
     void setUp() {
@@ -54,15 +54,15 @@ public class JdbcLinkServiceTest {
     void testAddLink_Successful() {
         // Arrange
         Long tgChatId = 1234L;
-        jdbcChatRepository.addChat(tgChatId);
+        jooqChatRepository.addChat(tgChatId);
 
         UUID linkId = UUID.randomUUID();
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
         URI url = URI.create("https://test.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
 
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), offsetDateTime, offsetDateTime);
-        when(jdbcLinksRepository.addLink(eq(tgChatId), eq(url.toString()), any(OffsetDateTime.class))).thenReturn(
+        when(jooqLinksRepository.addLink(eq(tgChatId), eq(url.toString()), any(OffsetDateTime.class))).thenReturn(
             expectedLink);
         // Act
         LinkModel result = linkService.add(tgChatId, url);
@@ -76,7 +76,7 @@ public class JdbcLinkServiceTest {
         // Arrange
         Long tgChatId = 123456L;
         URI url = URI.create("https://github.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
+        when(jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
         assertThrows(DuplicateLinkScrapperException.class, () -> {
@@ -84,7 +84,7 @@ public class JdbcLinkServiceTest {
         });
 
         // Verify that addLink method is not called
-        verify(jdbcLinksRepository, never()).addLink(anyLong(), anyString(), any());
+        verify(jooqLinksRepository, never()).addLink(anyLong(), anyString(), any());
     }
 
     @Test
@@ -93,9 +93,9 @@ public class JdbcLinkServiceTest {
         Long tgChatId = 1234L;
         UUID linkId = UUID.randomUUID();
         URI url = URI.create("https://example.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), OffsetDateTime.now(), OffsetDateTime.now());
-        when(jdbcLinksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
+        when(jooqLinksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
 
         // Act
         LinkModel result = linkService.remove(tgChatId, url);
@@ -112,7 +112,7 @@ public class JdbcLinkServiceTest {
         List<LinkModel> links = new ArrayList<>();
         links.add(new LinkModel(uuid, "https://example1.com", OffsetDateTime.now(), OffsetDateTime.now()));
         links.add(new LinkModel(uuid, "https://example2.com", OffsetDateTime.now(), OffsetDateTime.now()));
-        when(jdbcLinksRepository.findAllLinks()).thenReturn(links);
+        when(jooqLinksRepository.findAllLinks()).thenReturn(links);
 
         // Act
         List<LinkResponse> result = linkService.findAll(tgChatId);
