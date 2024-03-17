@@ -1,7 +1,7 @@
-package edu.java.repository;
+package edu.java.domain.repository.jdbc;
 
+import edu.java.domain.repository.mapper.LinkMapper;
 import edu.java.model.LinkModel;
-import edu.java.repository.mapper.LinkMapper;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -12,34 +12,47 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class LinksRepository {
+public class JdbcLinksRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public LinkModel addLink(Long tgChatId, String link) {
+    public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
         String sql = "INSERT INTO links (link_id, link, last_update, last_check) VALUES (?, ?, ?, ?)";
         UUID linkId = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now();
 
-        jdbcTemplate.update(sql, linkId, link, createdAt, createdAt);
+        jdbcTemplate.update(sql, linkId, link, lastUpdate, createdAt);
 
         String sqlRelation = "INSERT INTO chat_link_relation(chat_id, link_id)  VALUES (?, ?)";
 
         jdbcTemplate.update(sqlRelation, tgChatId, linkId);
 
-        return new LinkModel(linkId, link, createdAt, createdAt);
+        return new LinkModel(linkId, link, lastUpdate, createdAt);
     }
 
     public LinkModel removeLink(Long tgChatId, String link) {
+
+        // Получаем ID ссылки
         String sqlGetLinkId = "SELECT link_id FROM links WHERE link = ?";
         UUID linkId = jdbcTemplate.queryForObject(sqlGetLinkId, UUID.class, link);
 
-        String sqlDeleteRelation = "DELETE FROM chat_link_relation WHERE chat_id = ? AND link_id = ?";
-        jdbcTemplate.update(sqlDeleteRelation, tgChatId, linkId);
+        // Удаляем связи ссылки с чатами
+        String sqlDeleteChatLinkRelation = "DELETE FROM chat_link_relation WHERE link_id = ?";
+        jdbcTemplate.update(sqlDeleteChatLinkRelation, linkId);
 
+        // Удаляем ссылки из таблицы questions
+        String sqlDeleteQuestions = "DELETE FROM questions WHERE link_id = ?";
+        jdbcTemplate.update(sqlDeleteQuestions, linkId);
+
+        // Удаляем ссылки из таблицы repository
+        String sqlDeleteRepository = "DELETE FROM repositories WHERE link_id = ?";
+        jdbcTemplate.update(sqlDeleteRepository, linkId);
+
+        // Удаляем саму ссылку из таблицы links
         String sqlDeleteLink = "DELETE FROM links WHERE link_id = ?";
         jdbcTemplate.update(sqlDeleteLink, linkId);
 
+        // Возвращаем информацию о удаленной ссылке
         return new LinkModel(linkId, link, null, null);
     }
 
@@ -72,5 +85,25 @@ public class LinksRepository {
     public void updateChecked(UUID linkId, OffsetDateTime checkedAt) {
         String sql = "UPDATE links SET last_check = ? WHERE link_id = ?";
         jdbcTemplate.update(sql, checkedAt, linkId);
+    }
+
+    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
+        var link = addLink(tgChatId, string, lastUpdate);
+
+        String sqlRelation = "INSERT INTO questions(link_id, answer_count)  VALUES (?, ?)";
+
+        jdbcTemplate.update(sqlRelation, link.linkId(), answerCount);
+
+        return link;
+    }
+
+    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
+        var link = addLink(tgChatId, string, lastUpdate);
+
+        String sqlRelation = "INSERT INTO repositories(link_id, subscribers_count)  VALUES (?, ?)";
+
+        jdbcTemplate.update(sqlRelation, link.linkId(), subscribersCount);
+
+        return link;
     }
 }

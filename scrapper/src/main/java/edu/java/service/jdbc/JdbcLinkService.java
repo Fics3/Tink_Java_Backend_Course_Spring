@@ -1,38 +1,66 @@
 package edu.java.service.jdbc;
 
+import edu.java.client.GithubClient;
+import edu.java.client.StackoverflowClient;
+import edu.java.domain.repository.jdbc.JdbcLinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
-import edu.java.repository.LinksRepository;
 import edu.java.service.LinkService;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.example.dto.LinkResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class JdbcLinkService implements LinkService {
 
-    @Autowired
-    private LinksRepository linksRepository;
+    private JdbcLinksRepository jdbcLinksRepository;
+    private GithubClient githubClient;
+    private StackoverflowClient stackoverflowClient;
 
     @Override
     public LinkModel add(Long tgChatId, URI url) {
-        if (linksRepository.existsLinkForChat(tgChatId, url.toString())) {
+        if (jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())) {
             throw new DuplicateLinkScrapperException("Ссылка уже существует", url + "уже отсвеживается");
         }
-        return linksRepository.addLink(tgChatId, url.toString());
+        switch (url.getHost()) {
+            case "stackoverflow.com" -> {
+                var question = stackoverflowClient.fetchQuestion(url).block();
+                return jdbcLinksRepository.addQuestion(
+                    tgChatId,
+                    url.toString(),
+                    Objects.requireNonNull(question).items().getFirst().lastActivityDate(),
+                    question.items().getFirst().answerCount()
+                );
+            }
+            case "github.com" -> {
+                var repository = githubClient.fetchRepository(url).block();
+                return jdbcLinksRepository.addRepository(
+                    tgChatId,
+                    url.toString(),
+                    Objects.requireNonNull(repository).updatedAt(),
+                    repository.subscribersCount()
+                );
+            }
+            default -> {
+                return jdbcLinksRepository.addLink(tgChatId, url.toString(), OffsetDateTime.now());
+            }
+        }
     }
 
     @Override
     public LinkModel remove(Long tgChatId, URI url) {
-        return linksRepository.removeLink(tgChatId, url.toString());
+        return jdbcLinksRepository.removeLink(tgChatId, url.toString());
     }
 
     @Override
     public List<LinkResponse> findAll(Long tgChatId) {
-        return linksRepository.findAllLinks().stream()
+        return jdbcLinksRepository.findAllLinks().stream()
             .map(linkModel -> new LinkResponse(
                 URI.create(linkModel.link()),
                 linkModel.lastUpdate()

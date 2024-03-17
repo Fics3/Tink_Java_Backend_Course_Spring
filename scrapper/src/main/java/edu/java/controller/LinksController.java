@@ -1,6 +1,6 @@
 package edu.java.controller;
 
-import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.LinkService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.example.dto.AddLinkRequest;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 public class LinksController {
     @Autowired
-    private JdbcLinkService jdbcLinkService;
+    private LinkService jooqLinkService;
 
     @GetMapping
     public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
-        List<LinkResponse> linkResponses = jdbcLinkService.findAll(tgChatId);
+        List<LinkResponse> linkResponses = jooqLinkService.findAll(tgChatId);
         return new ListLinkResponse(linkResponses, linkResponses.size());
     }
 
@@ -33,7 +33,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
-        jdbcLinkService.add(tgChatId, addLinkRequest.uri());
+        jooqLinkService.add(tgChatId, addLinkRequest.uri());
         return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }
 
@@ -42,7 +42,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        jdbcLinkService.remove(tgChatId, removeLinkRequest.link());
+        jooqLinkService.remove(tgChatId, removeLinkRequest.link());
         return new LinkResponse(removeLinkRequest.link(), OffsetDateTime.now());
     }
 }

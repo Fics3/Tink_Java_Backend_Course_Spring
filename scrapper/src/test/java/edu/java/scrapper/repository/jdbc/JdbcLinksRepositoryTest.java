@@ -1,9 +1,9 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.repository.jdbc.JdbcLinksRepository;
+import edu.java.domain.repository.mapper.LinkMapper;
 import edu.java.model.LinkModel;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.LinksRepository;
-import edu.java.repository.mapper.LinkMapper;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class LinksRepositoryTest extends IntegrationTest {
+public class JdbcLinksRepositoryTest extends IntegrationTest {
     @Autowired
-    private LinksRepository linksRepository;
+    private JdbcLinksRepository jdbcLinksRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private ChatRepository chatRepository;
+    private JdbcChatRepository jdbcChatRepository;
 
     @Test
     @Transactional
@@ -31,10 +31,10 @@ public class LinksRepositoryTest extends IntegrationTest {
         // Arrange
         String link = "test";
         jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
-        chatRepository.addChat(123L);
+        jdbcChatRepository.addChat(123L);
 
         // Act
-        linksRepository.addLink(123L, link);
+        jdbcLinksRepository.addLink(123L, link, OffsetDateTime.now());
 
         // Assert
         List<LinkModel> links =
@@ -50,11 +50,11 @@ public class LinksRepositoryTest extends IntegrationTest {
         // Arrange
         String link = "test";
         jdbcTemplate.update("INSERT INTO chats VALUES (?, ?)", 0L, OffsetDateTime.now());
-        chatRepository.addChat(123L);
-        linksRepository.addLink(123L, link);
+        jdbcChatRepository.addChat(123L);
+        jdbcLinksRepository.addLink(123L, link, OffsetDateTime.now());
 
         // Act
-        linksRepository.removeLink(123L, link);
+        jdbcLinksRepository.removeLink(123L, link);
 
         // Assert
         List<LinkModel> links =
@@ -67,7 +67,7 @@ public class LinksRepositoryTest extends IntegrationTest {
     @Rollback
     void findAllLinksTest() {
         // Arrange&Act
-        var links = linksRepository.findAllLinks();
+        var links = jdbcLinksRepository.findAllLinks();
 
         // Assert
         assertThat(links).isNotNull();

@@ -1,8 +1,7 @@
 package edu.java.scrapper.service.jdbc;
 
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
-import edu.java.repository.ChatRepository;
-import edu.java.service.ChatService;
 import edu.java.service.jdbc.JdbcChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +18,10 @@ import static org.mockito.Mockito.when;
 public class JdbcChatServiceTest {
 
     @Mock
-    private ChatRepository chatRepository;
+    private JdbcChatRepository jdbcChatRepository;
 
     @InjectMocks
-    private ChatService chatService = new JdbcChatService();
+    private JdbcChatService chatService = new JdbcChatService();
 
     @BeforeEach
     void setUp() {
@@ -33,20 +32,20 @@ public class JdbcChatServiceTest {
     void testAddNewChat_Successful() {
         // Arrange
         Long tgChatId = 123456L;
-        when(chatRepository.existsChat(tgChatId)).thenReturn(false);
+        when(jdbcChatRepository.existsChat(tgChatId)).thenReturn(false);
 
-        // Act
+        // ActS
         chatService.add(tgChatId);
 
         // Assert
-        verify(chatRepository, times(1)).addChat(tgChatId);
+        verify(jdbcChatRepository, times(1)).addChat(tgChatId);
     }
 
     @Test
     void testAddExistingChat_DuplicateRegistrationScrapperException() {
         // Arrange
         Long tgChatId = 123456L;
-        when(chatRepository.existsChat(tgChatId)).thenReturn(true);
+        when(jdbcChatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
         assertThrows(DuplicateRegistrationScrapperException.class, () -> {
@@ -54,7 +53,7 @@ public class JdbcChatServiceTest {
         });
 
         // Verify that addChat method is not called
-        verify(chatRepository, never()).addChat(anyLong());
+        verify(jdbcChatRepository, never()).addChat(anyLong());
     }
 
     @Test
@@ -66,6 +65,6 @@ public class JdbcChatServiceTest {
         chatService.remove(tgChatId);
 
         // Assert
-        verify(chatRepository, times(1)).removeChat(tgChatId);
+        verify(jdbcChatRepository, times(1)).removeChat(tgChatId);
     }
 }

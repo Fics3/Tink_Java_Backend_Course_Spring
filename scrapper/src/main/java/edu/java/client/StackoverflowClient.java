@@ -17,7 +17,11 @@ public class StackoverflowClient {
     private final ApplicationConfig applicationConfig;
     private final WebClient stackoverflowWebClient;
 
-    public Mono<StackoverflowQuestionResponse> fetchQuestion(Integer questionId) {
+    public Mono<StackoverflowQuestionResponse> fetchQuestion(URI url) {
+        String[] urlSplit = url.toString().split("/questions/");
+
+        Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
+
         String apiUrl = String.format(applicationConfig.stackoverflowProperties().url(), questionId);
 
         return stackoverflowWebClient
@@ -28,11 +32,7 @@ public class StackoverflowClient {
     }
 
     public OffsetDateTime checkForUpdate(URI url) {
-        String[] urlSplit = url.toString().split("/");
-
-        Integer questionId = Integer.parseInt(urlSplit[urlSplit.length - 2]);
-
-        var fetchedQuestion = fetchQuestion(questionId);
+        var fetchedQuestion = fetchQuestion(url);
 
         return Objects.requireNonNull(fetchedQuestion.block()).items().getFirst().lastActivityDate();
     }

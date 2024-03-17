@@ -11,7 +11,8 @@ public record StackoverflowQuestionResponse(List<ItemResponse> items) {
     public record ItemResponse(Integer questionId,
                                String title,
                                Boolean isAnswered,
-                               OffsetDateTime lastActivityDate) {
+                               OffsetDateTime lastActivityDate,
+                               Integer answerCount) {
     }
 }
 

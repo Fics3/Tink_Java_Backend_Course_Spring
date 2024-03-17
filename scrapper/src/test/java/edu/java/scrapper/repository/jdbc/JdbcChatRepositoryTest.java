@@ -1,8 +1,8 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.repository.mapper.ChatMapper;
 import edu.java.model.ChatModel;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.mapper.ChatMapper;
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class ChatRepositoryTest extends IntegrationTest {
+public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
-    private ChatRepository chatRepository;
+    private JdbcChatRepository jdbcChatRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -29,7 +29,7 @@ public class ChatRepositoryTest extends IntegrationTest {
         assertThat(POSTGRES.isRunning()).isTrue();
 
         // Act
-        chatRepository.addChat(chatId);
+        jdbcChatRepository.addChat(chatId);
 
         // Assert
         List<ChatModel> chats =
@@ -44,10 +44,10 @@ public class ChatRepositoryTest extends IntegrationTest {
     void removeChatTest() {
         // Arrange
         Long chatId = 123456789L;
-        chatRepository.addChat(chatId);
+        jdbcChatRepository.addChat(chatId);
 
         // Act
-        chatRepository.removeChat(chatId);
+        jdbcChatRepository.removeChat(chatId);
 
         // Assert
         List<ChatModel> chats =
@@ -60,7 +60,7 @@ public class ChatRepositoryTest extends IntegrationTest {
     @Rollback
     void findAllChatsTest() {
         // Arrange&Act
-        var chats = chatRepository.findAllChats();
+        var chats = jdbcChatRepository.findAllChats();
 
         // Assert
         assertThat(chats).isNotNull();

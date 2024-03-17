@@ -17,8 +17,10 @@ public class GithubClient {
     private final ApplicationConfig applicationConfig;
     private final WebClient githubWebClient;
 
-    public Mono<GithubRepositoryResponse> fetchRepository(String owner, String repo) {
-        String apiUrl = String.format(applicationConfig.githubProperties().url(), owner, repo);
+    public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
+        String[] urlSplit = url.getPath().split("/");
+
+        String apiUrl = String.format(applicationConfig.githubProperties().url(), urlSplit[1], urlSplit[2]);
 
         return githubWebClient
             .get()
@@ -28,10 +30,9 @@ public class GithubClient {
     }
 
     public OffsetDateTime checkForUpdate(URI url) {
-        String[] urlSplit = url.getPath().split("/");
-
-        var fetchedRepo = fetchRepository(urlSplit[1], urlSplit[2]);
+        var fetchedRepo = fetchRepository(url);
 
         return Objects.requireNonNull(fetchedRepo.block()).updatedAt();
     }
+
 }
