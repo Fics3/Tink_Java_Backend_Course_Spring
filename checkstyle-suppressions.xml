@@ -5,4 +5,6 @@
     "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
+    <suppress checks="EmptyLineSeparator" files="edu/java/domain/jooq/DefaultSchema.java"/>
+    <suppress checks="ImportOrder" files="edu/java/domain/jooq/DefaultSchema.java"/>
 </suppressions>
