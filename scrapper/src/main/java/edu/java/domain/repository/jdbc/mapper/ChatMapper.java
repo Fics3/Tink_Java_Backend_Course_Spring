@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:scrapper/src/main/java/edu/java/domain/repository/jdbc/mapper/ChatMapper.java
 package edu.java.domain.repository.jdbc.mapper;
+========
+package edu.java.domain.repository.mapper;
+>>>>>>>> 1b59763 (hw5 bonus):scrapper/src/main/java/edu/java/domain/repository/mapper/ChatMapper.java
 
 import edu.java.model.ChatModel;
 import java.sql.ResultSet;
