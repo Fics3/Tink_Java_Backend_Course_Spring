@@ -1,6 +1,8 @@
 package edu.java.bot.client;
 
+import edu.java.bot.configuration.ApplicationConfig;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
@@ -12,18 +14,17 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Getter
+@RequiredArgsConstructor
 public class ScrapperClient {
     private final WebClient scrapperWebClient;
+    private final ApplicationConfig applicationConfig;
+
     @Value(value = "${app.scrapper-properties.chat}")
     private String chat;
     @Value(value = "${app.scrapper-properties.links}")
     private String links;
     @Value(value = "${app.scrapper-properties.tg-chat-id}")
     private String tgChatIdProperty;
-
-    public ScrapperClient(WebClient scrapperWebClient) {
-        this.scrapperWebClient = scrapperWebClient;
-    }
 
     public Mono<String> registerChat(Long chatId) {
         return scrapperWebClient
