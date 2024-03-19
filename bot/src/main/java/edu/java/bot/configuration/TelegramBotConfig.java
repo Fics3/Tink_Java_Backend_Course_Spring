@@ -3,7 +3,7 @@ package edu.java.bot.configuration;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.request.SetMyCommands;
-import edu.java.bot.service.commands.CommandService;
+import edu.java.bot.service.commands.Command;
 import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,14 +12,14 @@ import org.springframework.context.annotation.Configuration;
 public class TelegramBotConfig {
 
     @Bean
-    public TelegramBot telegramBot(ApplicationConfig applicationConfig, Map<String, CommandService> commandMap) {
+    public TelegramBot telegramBot(ApplicationConfig applicationConfig, Map<String, Command> commandMap) {
         TelegramBot telegramBot = new TelegramBot(applicationConfig.telegramToken());
         telegramBot.execute(setMyCommands(commandMap));
 
         return telegramBot;
     }
 
-    private SetMyCommands setMyCommands(Map<String, CommandService> commandMap) {
+    private SetMyCommands setMyCommands(Map<String, Command> commandMap) {
         return new SetMyCommands(
             commandMap
                 .values()
