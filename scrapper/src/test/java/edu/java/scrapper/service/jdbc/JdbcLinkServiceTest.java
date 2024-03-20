@@ -79,9 +79,9 @@ public class JdbcLinkServiceTest {
         when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateLinkScrapperException.class, () -> {
-            linkService.add(tgChatId, url);
-        });
+        assertThrows(DuplicateLinkScrapperException.class, () ->
+            linkService.add(tgChatId, url)
+        );
 
         // Verify that addLink method is not called
         verify(jdbcLinksRepository, never()).addLink(anyLong(), anyString(), any());
@@ -112,7 +112,7 @@ public class JdbcLinkServiceTest {
         List<LinkModel> links = new ArrayList<>();
         links.add(new LinkModel(uuid, "https://example1.com", OffsetDateTime.now(), OffsetDateTime.now()));
         links.add(new LinkModel(uuid, "https://example2.com", OffsetDateTime.now(), OffsetDateTime.now()));
-        when(jdbcLinksRepository.findAllLinks()).thenReturn(links);
+        when(jdbcLinksRepository.findLinksByChatId(tgChatId)).thenReturn(links);
 
         // Act
         List<LinkResponse> result = linkService.findAll(tgChatId);

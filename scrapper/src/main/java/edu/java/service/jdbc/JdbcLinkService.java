@@ -43,7 +43,7 @@ public class JdbcLinkService implements LinkService {
                 return jdbcLinksRepository.addRepository(
                     tgChatId,
                     url.toString(),
-                    Objects.requireNonNull(repository).updatedAt(),
+                    Objects.requireNonNull(repository).pushedAt(),
                     repository.subscribersCount()
                 );
             }
@@ -60,7 +60,7 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public List<LinkResponse> findAll(Long tgChatId) {
-        return jdbcLinksRepository.findAllLinks().stream()
+        return jdbcLinksRepository.findLinksByChatId(tgChatId).stream()
             .map(linkModel -> new LinkResponse(
                 URI.create(linkModel.link()),
                 linkModel.lastUpdate()

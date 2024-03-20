@@ -31,7 +31,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
     private final GithubClient githubClient;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
-    private final JdbcRepositoryRepository repository;
+    private final JdbcRepositoryRepository jdbcRepositoryRepository;
     private final JdbcQuestionRepository jdbcQuestionRepository;
     @Value("#{@scheduler.forceCheckDelay().toMillis()}")
     private Duration threshold;
@@ -46,7 +46,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
                 case "github.com" -> {
                     GithubRepositoryResponse repositoryResponse = githubClient.fetchRepository(url).block();
                     processSubscriberCount(linkModel, Objects.requireNonNull(repositoryResponse).subscribersCount());
-                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repositoryResponse).updatedAt());
+                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repositoryResponse).pushedAt());
                 }
                 case "stackoverflow.com" -> {
                     var question = stackoverflowClient.fetchQuestion(url).block();
@@ -68,17 +68,19 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     private void processSubscriberCount(LinkModel linkModel, Integer subscribersCount) {
-        var repositoryModel = repository.getRepositoryByLinkId(linkModel.linkId());
+        var repositoryModel = jdbcRepositoryRepository.getRepositoryByLinkId(linkModel.linkId());
         if (repositoryModel == null) {
             return;
         }
         if (subscribersCount != null
-            && !subscribersCount.equals(repository.getRepositoryByLinkId(linkModel.linkId()).subscribersCount())) {
+            && !subscribersCount.equals(jdbcRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
+            .subscribersCount())) {
             botClient.sendUpdate(formLinkUpdateRequest(
                 linkModel.linkId(),
                 URI.create(linkModel.link()),
                 "Число подписчиков изменилось, теперь: " + subscribersCount
             )).subscribe();
+            jdbcRepositoryRepository.updateSubscribersCount(linkModel.linkId(), subscribersCount);
         }
     }
 
@@ -95,6 +97,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
                 url,
                 "Количество ответов обновилось: " + answerCount
             )).subscribe();
+            jdbcQuestionRepository.updateAnswerCount(linkModel.linkId(), answerCount);
         }
     }
 

@@ -1,5 +1,6 @@
 package edu.java.domain.repository.jdbc;
 
+import edu.java.domain.repository.QuestionRepository;
 import edu.java.domain.repository.mapper.QuestionMapper;
 import edu.java.model.QuestionModel;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcQuestionRepository {
+public class JdbcQuestionRepository implements QuestionRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public QuestionModel getQuestionByLinkId(UUID uuid) {
@@ -20,5 +21,11 @@ public class JdbcQuestionRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public void updateAnswerCount(UUID linkId, Integer integer) {
+        String sql = "UPDATE questions set answer_count = ? where link_id = ?";
+        jdbcTemplate.update(sql, integer, linkId);
     }
 }

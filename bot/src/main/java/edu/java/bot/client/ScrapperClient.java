@@ -6,8 +6,11 @@ import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -46,23 +49,25 @@ public class ScrapperClient {
             .bodyToMono(ListLinkResponse.class);
     }
 
-    public Mono<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
+    public ResponseEntity<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         return scrapperWebClient
             .post()
             .uri(applicationConfig.scrapperProperties().links())
             .header(applicationConfig.scrapperProperties().tgChatId(), String.valueOf(tgChatId))
             .body(Mono.just(addLinkRequest), AddLinkRequest.class)
             .retrieve()
-            .bodyToMono(LinkResponse.class);
+            .toEntity(LinkResponse.class)
+            .onErrorResume(WebClientResponseException.class, Mono::error).block();
     }
 
-    public Mono<LinkResponse> removeLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
+    public ResponseEntity<LinkResponse> removeLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
         return scrapperWebClient
-            .post()
+            .method(HttpMethod.DELETE)
             .uri(applicationConfig.scrapperProperties().links())
             .header(applicationConfig.scrapperProperties().tgChatId(), String.valueOf(tgChatId))
             .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
             .retrieve()
-            .bodyToMono(LinkResponse.class);
+            .toEntity(LinkResponse.class)
+            .onErrorResume(WebClientResponseException.class, Mono::error).block();
     }
 }

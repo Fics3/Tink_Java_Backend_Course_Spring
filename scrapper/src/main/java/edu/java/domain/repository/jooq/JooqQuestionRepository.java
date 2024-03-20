@@ -19,4 +19,12 @@ public class JooqQuestionRepository implements QuestionRepository {
             .where(QUESTIONS.LINK_ID.eq(uuid))
             .fetchOneInto(QuestionModel.class);
     }
+
+    @Override
+    public void updateAnswerCount(UUID linkId, Integer integer) {
+        dslContext.update(QUESTIONS)
+            .set(QUESTIONS.ANSWER_COUNT, integer)
+            .where(QUESTIONS.LINK_ID.eq(linkId))
+            .execute();
+    }
 }

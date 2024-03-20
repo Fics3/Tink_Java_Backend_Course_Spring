@@ -47,7 +47,7 @@ public class JooqLinkServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Инициализация моков перед каждым тестом
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -105,14 +105,14 @@ public class JooqLinkServiceTest {
     }
 
     @Test
-    void testFindAllLinks_Successful() {
+    void testFindAllLinksByChatId_Successful() {
         // Arrange
         Long tgChatId = 123456L;
         UUID uuid = UUID.randomUUID();
         List<LinkModel> links = new ArrayList<>();
         links.add(new LinkModel(uuid, "https://example1.com", OffsetDateTime.now(), OffsetDateTime.now()));
         links.add(new LinkModel(uuid, "https://example2.com", OffsetDateTime.now(), OffsetDateTime.now()));
-        when(jooqLinksRepository.findAllLinks()).thenReturn(links);
+        when(jooqLinksRepository.findLinksByChatId(tgChatId)).thenReturn(links);
 
         // Act
         List<LinkResponse> result = linkService.findAll(tgChatId);

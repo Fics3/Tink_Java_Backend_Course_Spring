@@ -1,8 +1,11 @@
 package edu.java.domain.repository.jooq;
 
+import edu.java.domain.repository.ChatRepository;
+import edu.java.model.ChatModel;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHATS;
@@ -10,13 +13,10 @@ import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
 import static org.jooq.impl.DSL.selectFrom;
 
 @Repository
-public class JooqChatRepository {
+@RequiredArgsConstructor
+public class JooqChatRepository implements ChatRepository {
 
     private final DSLContext dsl;
-
-    public JooqChatRepository(DSLContext dsl) {
-        this.dsl = dsl;
-    }
 
     public void addChat(Long chatId) {
         dsl.insertInto(CHATS)
@@ -35,9 +35,9 @@ public class JooqChatRepository {
             .execute();
     }
 
-    public List<Long> findAllChats() {
+    public List<ChatModel> findAllChats() {
         return dsl.selectFrom(CHATS)
-            .fetch(CHATS.TELEGRAM_CHAT_ID);
+            .fetchInto(ChatModel.class);
     }
 
     public boolean existsChat(Long chatId) {

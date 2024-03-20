@@ -11,4 +11,5 @@ public interface LinkService {
     LinkModel remove(Long tgChatId, URI url);
 
     List<LinkResponse> findAll(Long tgChatId);
+
 }

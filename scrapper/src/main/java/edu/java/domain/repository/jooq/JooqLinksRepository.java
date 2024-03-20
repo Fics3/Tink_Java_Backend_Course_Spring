@@ -2,13 +2,14 @@ package edu.java.domain.repository.jooq;
 
 import edu.java.domain.jooq.tables.records.LinksRecord;
 import edu.java.domain.repository.LinksRepository;
+import edu.java.exception.BadRequestScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
 import static edu.java.domain.jooq.Tables.LINKS;
@@ -16,13 +17,18 @@ import static edu.java.domain.jooq.Tables.QUESTIONS;
 import static edu.java.domain.jooq.Tables.REPOSITORIES;
 
 @Repository
+@RequiredArgsConstructor
 public class JooqLinksRepository implements LinksRepository {
 
-    @Autowired
-    private DSLContext dsl;
+    private final DSLContext dsl;
+    private final JooqChatRepository jooqChatRepository;
 
     @Override
     public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
+        if (!jooqChatRepository.existsChat(tgChatId)) {
+            throw new BadRequestScrapperException("Пользователь не зарегестрирован", "Зарегистрируйстесь");
+        }
+
         UUID linkId = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now();
 
@@ -115,6 +121,15 @@ public class JooqLinksRepository implements LinksRepository {
             .set(LINKS.LAST_UPDATE, lastUpdate)
             .where(LINKS.LINK_ID.eq(linkId))
             .execute();
+    }
+
+    @Override
+    public List<LinkModel> findLinksByChatId(Long tgChatId) {
+        return dsl.select(LINKS.LINK_ID, LINKS.LINK, LINKS.LAST_UPDATE, LINKS.LAST_CHECK)
+            .from(CHAT_LINK_RELATION)
+            .join(LINKS).on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID))
+            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId))
+            .fetchInto(LinkModel.class);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class JooqLinkUpdater implements LinkUpdater {
     private final GithubClient githubClient;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
-    private final JooqRepositoryRepository repository;
+    private final JooqRepositoryRepository jooqRepositoryRepository;
     private final JooqQuestionRepository jooqQuestionRepository;
     @Value("#{@scheduler.forceCheckDelay().toMillis()}")
     private Duration threshold;
@@ -46,7 +46,7 @@ public class JooqLinkUpdater implements LinkUpdater {
                 case "github.com" -> {
                     GithubRepositoryResponse repositoryResponse = githubClient.fetchRepository(url).block();
                     processSubscriberCount(linkModel, Objects.requireNonNull(repositoryResponse).subscribersCount());
-                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repositoryResponse).updatedAt());
+                    processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repositoryResponse).pushedAt());
                 }
                 case "stackoverflow.com" -> {
                     var question = stackoverflowClient.fetchQuestion(url).block();
@@ -68,17 +68,19 @@ public class JooqLinkUpdater implements LinkUpdater {
     }
 
     private void processSubscriberCount(LinkModel linkModel, Integer subscribersCount) {
-        var repositoryModel = repository.getRepositoryByLinkId(linkModel.linkId());
+        var repositoryModel = jooqRepositoryRepository.getRepositoryByLinkId(linkModel.linkId());
         if (repositoryModel == null) {
             return;
         }
         if (subscribersCount != null
-            && !subscribersCount.equals(repository.getRepositoryByLinkId(linkModel.linkId()).subscribersCount())) {
+            && !subscribersCount.equals(jooqRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
+            .subscribersCount())) {
             botClient.sendUpdate(formLinkUpdateRequest(
                 linkModel.linkId(),
                 URI.create(linkModel.link()),
                 "Число подписчиков изменилось, теперь: " + subscribersCount
             )).subscribe();
+            jooqRepositoryRepository.updateSubscribersCount(linkModel.linkId(), subscribersCount);
         }
     }
 
@@ -95,6 +97,7 @@ public class JooqLinkUpdater implements LinkUpdater {
                 url,
                 "Количество ответов обновилось: " + answerCount
             )).subscribe();
+            jooqQuestionRepository.updateAnswerCount(linkModel.linkId(), answerCount);
         }
     }
 
@@ -105,7 +108,7 @@ public class JooqLinkUpdater implements LinkUpdater {
             botClient.sendUpdate(formLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
-                "Ссылка обновлена " + linkModel.link()
+                "Обновление было в: " + lastUpdate
             )).subscribe();
             tmpCount++;
             jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);

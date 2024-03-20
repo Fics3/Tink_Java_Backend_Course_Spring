@@ -2,8 +2,6 @@ package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.example.dto.StackoverflowQuestionResponse;
 import org.springframework.stereotype.Component;
@@ -31,9 +29,4 @@ public class StackoverflowClient {
             .bodyToMono(StackoverflowQuestionResponse.class);
     }
 
-    public OffsetDateTime checkForUpdate(URI url) {
-        var fetchedQuestion = fetchQuestion(url);
-
-        return Objects.requireNonNull(fetchedQuestion.block()).items().getFirst().lastActivityDate();
-    }
 }

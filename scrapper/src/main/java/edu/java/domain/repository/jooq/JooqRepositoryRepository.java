@@ -19,4 +19,13 @@ public class JooqRepositoryRepository implements RepositoryRepository {
             .where(REPOSITORIES.LINK_ID.eq(uuid))
             .fetchOneInto(RepositoryModel.class);
     }
+
+    @Override
+    public void updateSubscribersCount(UUID linkId, Integer subscribersCount) {
+        dslContext.update(REPOSITORIES)
+            .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
+            .where(REPOSITORIES.LINK_ID.eq(linkId))
+            .execute();
+    }
+
 }

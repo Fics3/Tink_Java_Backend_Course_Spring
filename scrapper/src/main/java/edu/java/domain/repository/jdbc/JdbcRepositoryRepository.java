@@ -1,5 +1,6 @@
 package edu.java.domain.repository.jdbc;
 
+import edu.java.domain.repository.RepositoryRepository;
 import edu.java.domain.repository.mapper.RepositoryMapper;
 import edu.java.model.RepositoryModel;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class JdbcRepositoryRepository {
+public class JdbcRepositoryRepository implements RepositoryRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public RepositoryModel getRepositoryByLinkId(UUID uuid) {
@@ -20,5 +21,11 @@ public class JdbcRepositoryRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public void updateSubscribersCount(UUID linkId, Integer subscribersCount) {
+        String sql = "UPDATE repositories set subscribers_count = ? where link_id = ?";
+        jdbcTemplate.update(sql, subscribersCount, linkId);
     }
 }

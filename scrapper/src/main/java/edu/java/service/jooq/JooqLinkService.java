@@ -45,7 +45,7 @@ public class JooqLinkService implements LinkService {
                 return jooqLinksRepository.addRepository(
                     tgChatId,
                     url.toString(),
-                    Objects.requireNonNull(repository).updatedAt(),
+                    Objects.requireNonNull(repository).pushedAt(),
                     repository.subscribersCount()
                 );
             }
@@ -60,7 +60,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override public List<LinkResponse> findAll(Long tgChatId) {
-        return jooqLinksRepository.findAllLinks().stream()
+        return jooqLinksRepository.findLinksByChatId(tgChatId).stream()
             .map(linkModel -> new LinkResponse(
                 URI.create(linkModel.link()),
                 linkModel.lastUpdate()
