@@ -29,6 +29,9 @@ public class NotificationService {
     }
 
     public String getCommand(Long chatId, String message) {
+        if (message == null) {
+            return ERROR_MESSAGE;
+        }
         String[] parsedMessage = message.split(" ");
         CommandService commandService = commandMap.get(parsedMessage[0]);
         if (commandService == null) {

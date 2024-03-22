@@ -1,14 +1,11 @@
 package edu.java.bot.service;
 
 import edu.java.bot.service.commands.CommandService;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

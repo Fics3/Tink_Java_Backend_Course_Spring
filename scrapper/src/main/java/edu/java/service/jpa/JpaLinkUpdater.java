@@ -1,22 +1,22 @@
-package edu.java.service.jooq;
+package edu.java.service.jpa;
 
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.domain.repository.jooq.JooqChatRepository;
-import edu.java.domain.repository.jooq.JooqLinksRepository;
-import edu.java.domain.repository.jooq.JooqQuestionRepository;
-import edu.java.domain.repository.jooq.JooqRepositoryRepository;
+import edu.java.domain.entity.ChatEntity;
+import edu.java.domain.entity.LinkEntity;
+import edu.java.domain.repository.jpa.JpaLinksRepository;
+import edu.java.domain.repository.jpa.JpaQuestionRepository;
+import edu.java.domain.repository.jpa.JpaRepositoryRepository;
 import edu.java.exception.InternalServerScrapperException;
-import edu.java.model.LinkModel;
 import edu.java.service.LinkUpdater;
+import jakarta.transaction.Transactional;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.example.dto.GithubRepositoryResponse;
 import org.example.dto.LinkUpdateRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,36 +24,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-@Service
 @RequiredArgsConstructor
-@Log4j2
-public class JooqLinkUpdater implements LinkUpdater {
-    private final JooqLinksRepository jooqLinksRepository;
-    private final JooqChatRepository jooqChatRepository;
+@Service
+public class JpaLinkUpdater implements LinkUpdater {
+    private final JpaLinksRepository jpaLinksRepository;
     private final GithubClient githubClient;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
-    private final JooqRepositoryRepository jooqRepositoryRepository;
-    private final JooqQuestionRepository jooqQuestionRepository;
+    private final JpaRepositoryRepository jpaRepositoryRepository;
+    private final JpaQuestionRepository jpaQuestionRepository;
     @Value("#{@scheduler.forceCheckDelay().toMillis()}")
     private Duration threshold;
 
     @Override
+    @Transactional
     public int update() {
         int updateCount = 0;
-        var staleLinks = jooqLinksRepository.findStaleLinks(threshold);
-        for (var linkModel : staleLinks) {
-            var url = URI.create(linkModel.link());
+        var staleLinks = jpaLinksRepository.findByLastCheckAfter(OffsetDateTime.now().minus(threshold));
+        for (var linkEntity : staleLinks) {
+            var url = URI.create(linkEntity.getLink());
             try {
                 switch (url.getHost()) {
                     case "github.com" -> {
                         GithubRepositoryResponse repositoryResponse = githubClient.fetchRepository(url).block();
                         processSubscriberCount(
-                            linkModel,
+                            linkEntity,
                             Objects.requireNonNull(repositoryResponse).subscribersCount()
                         );
                         processLastUpdate(
-                            linkModel,
+                            linkEntity,
                             updateCount,
                             Objects.requireNonNull(repositoryResponse).pushedAt()
                         );
@@ -61,11 +60,11 @@ public class JooqLinkUpdater implements LinkUpdater {
                     case "stackoverflow.com" -> {
                         var question = stackoverflowClient.fetchQuestion(url).block();
                         processAnswerCount(
-                            linkModel,
+                            linkEntity,
                             Objects.requireNonNull(question).items().getFirst().answerCount()
                         );
                         processLastUpdate(
-                            linkModel,
+                            linkEntity,
                             updateCount,
                             Objects.requireNonNull(question).items().getFirst().lastActivityDate()
                         );
@@ -75,62 +74,61 @@ public class JooqLinkUpdater implements LinkUpdater {
                         "Только гит и стековерфлоу("
                     );
                 }
-                jooqLinksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
+                jpaLinksRepository.updateChecked(linkEntity.getLinkId(), OffsetDateTime.now());
 
             } catch (WebClientResponseException e) {
                 if (e.getStatusCode().isSameCodeAs(HttpStatus.FORBIDDEN)) {
-                    jooqLinksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
+                    jpaLinksRepository.updateChecked(linkEntity.getLinkId(), OffsetDateTime.now());
                 }
             }
         }
         return updateCount;
     }
 
-    private void processSubscriberCount(LinkModel linkModel, Integer subscribersCount) {
-        var repositoryModel = jooqRepositoryRepository.getRepositoryByLinkId(linkModel.linkId());
+    private void processSubscriberCount(LinkEntity linkEntity, Integer subscribersCount) {
+        var repositoryModel = jpaRepositoryRepository.findByLink(linkEntity);
         if (repositoryModel == null) {
             return;
         }
         if (subscribersCount != null
-            && !subscribersCount.equals(jooqRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
-            .subscribersCount())) {
+            && !subscribersCount.equals(repositoryModel.getSubscribersCount())) {
             botClient.sendUpdate(formLinkUpdateRequest(
-                linkModel.linkId(),
-                URI.create(linkModel.link()),
+                linkEntity.getLinkId(),
+                URI.create(linkEntity.getLink()),
                 "Число подписчиков изменилось, теперь: " + subscribersCount
             )).subscribe();
-            jooqRepositoryRepository.updateSubscribersCount(linkModel.linkId(), subscribersCount);
+            jpaRepositoryRepository.updateSubscribersCount(linkEntity.getLinkId(), subscribersCount);
         }
     }
 
-    private void processAnswerCount(LinkModel linkModel, Integer answerCount) {
-        var url = URI.create(linkModel.link());
-        var questionModel = jooqQuestionRepository.getQuestionByLinkId(linkModel.linkId());
+    private void processAnswerCount(LinkEntity linkEntity, Integer answerCount) {
+        var url = URI.create(linkEntity.getLink());
+        var questionModel = jpaQuestionRepository.findByLink(linkEntity);
         if (questionModel == null) {
             return;
         }
-        var questionCount = questionModel.answerCount();
+        var questionCount = questionModel.getAnswerCount();
         if (answerCount != null && !questionCount.equals(answerCount)) {
             botClient.sendUpdate(formLinkUpdateRequest(
-                linkModel.linkId(),
+                linkEntity.getLinkId(),
                 url,
                 "Количество ответов обновилось: " + answerCount
             )).subscribe();
-            jooqQuestionRepository.updateAnswerCount(linkModel.linkId(), answerCount);
+            jpaQuestionRepository.updateAnswerCount(linkEntity.getLinkId(), answerCount);
         }
     }
 
-    private void processLastUpdate(LinkModel linkModel, int updateCount, OffsetDateTime lastUpdate) {
-        var url = URI.create(linkModel.link());
+    private void processLastUpdate(LinkEntity linkEntity, int updateCount, OffsetDateTime lastUpdate) {
+        var url = URI.create(linkEntity.getLink());
         var tmpCount = updateCount;
-        if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
+        if (lastUpdate != null && lastUpdate.isAfter(linkEntity.getLastUpdate())) {
             botClient.sendUpdate(formLinkUpdateRequest(
-                linkModel.linkId(),
+                linkEntity.getLinkId(),
                 url,
                 "Обновление было в: " + lastUpdate
             )).subscribe();
             tmpCount++;
-            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            jpaLinksRepository.updateLastUpdate(linkEntity.getLinkId(), lastUpdate);
         }
     }
 
@@ -139,7 +137,11 @@ public class JooqLinkUpdater implements LinkUpdater {
             linkId,
             url,
             description,
-            jooqChatRepository.findChatsByLinkId(linkId)
+            jpaLinksRepository.findByLinkId(linkId)
+                .getChats()
+                .stream()
+                .mapToLong(ChatEntity::getTelegramChatId)
+                .boxed().toList()
         );
     }
 }
