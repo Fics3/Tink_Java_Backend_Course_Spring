@@ -22,7 +22,7 @@ class JpaChatServiceTest {
     private JpaChatRepository jpaChatRepository;
 
     @InjectMocks
-    private JpaChatService chatService = new JpaChatService();
+    private JpaChatService chatService;
 
     @BeforeEach
     void setUp() {

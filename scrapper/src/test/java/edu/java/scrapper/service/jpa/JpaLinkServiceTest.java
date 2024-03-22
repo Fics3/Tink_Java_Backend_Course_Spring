@@ -14,11 +14,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.example.dto.LinkResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
@@ -26,7 +27,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class JpaLinkServiceTest {
 
     @Mock
@@ -37,6 +37,11 @@ public class JpaLinkServiceTest {
 
     @InjectMocks
     private JpaLinkService linkService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     @DisplayName("should call save from repository")

@@ -20,9 +20,7 @@ import lombok.extern.log4j.Log4j2;
 import org.example.dto.GithubRepositoryResponse;
 import org.example.dto.LinkUpdateRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 @Log4j2
 public class JdbcLinkUpdater implements LinkUpdater {

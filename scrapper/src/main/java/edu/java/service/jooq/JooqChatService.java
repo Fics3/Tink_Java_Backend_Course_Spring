@@ -3,14 +3,11 @@ package edu.java.service.jooq;
 import edu.java.domain.repository.jooq.JooqChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-@Service
+@RequiredArgsConstructor
 public class JooqChatService implements ChatService {
-
-    @Autowired
-    private JooqChatRepository jooqChatRepository;
+    private final JooqChatRepository jooqChatRepository;
 
     @Override
     public void add(Long tgChatId) {

@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class LinkUpdaterScheduler {
 
-    private LinkUpdater jpaLinkUpdater;
+    private LinkUpdater linkUpdater;
 
     @Scheduled(fixedDelayString = "#{@scheduler.interval.toMillis()}")
     public void update() {
-        jpaLinkUpdater.update();
+        linkUpdater.update();
         log.info("Произошло обновление");
 
     }

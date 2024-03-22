@@ -21,11 +21,11 @@ public class JdbcChatServiceTest {
     private JdbcChatRepository jdbcChatRepository;
 
     @InjectMocks
-    private JdbcChatService chatService = new JdbcChatService();
+    private JdbcChatService chatService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -48,9 +48,7 @@ public class JdbcChatServiceTest {
         when(jdbcChatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateRegistrationScrapperException.class, () -> {
-            chatService.add(tgChatId);
-        });
+        assertThrows(DuplicateRegistrationScrapperException.class, () -> chatService.add(tgChatId));
 
         // Verify that addChat method is not called
         verify(jdbcChatRepository, never()).addChat(anyLong());

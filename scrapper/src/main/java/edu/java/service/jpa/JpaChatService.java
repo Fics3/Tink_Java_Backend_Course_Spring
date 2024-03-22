@@ -5,14 +5,12 @@ import edu.java.domain.repository.jpa.JpaChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.service.ChatService;
 import java.time.OffsetDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-@Service
+@RequiredArgsConstructor
 public class JpaChatService implements ChatService {
 
-    @Autowired
-    private JpaChatRepository jpaChatRepository;
+    private final JpaChatRepository jpaChatRepository;
 
     @Override
     public void add(Long tgChatId) {

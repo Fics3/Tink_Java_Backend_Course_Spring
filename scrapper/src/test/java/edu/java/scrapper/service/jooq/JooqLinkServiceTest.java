@@ -1,12 +1,9 @@
 package edu.java.scrapper.service.jooq;
 
-import edu.java.client.GithubClient;
-import edu.java.client.StackoverflowClient;
 import edu.java.domain.repository.jooq.JooqChatRepository;
 import edu.java.domain.repository.jooq.JooqLinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
-import edu.java.service.LinkService;
 import edu.java.service.jooq.JooqLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -19,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,19 +26,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class JooqLinkServiceTest {
 
-    @MockBean
+    @Mock
     private JooqChatRepository jooqChatRepository;
     @Mock
     private JooqLinksRepository jooqLinksRepository;
-    @Mock
-    private GithubClient githubClient;
-    @Mock
-    private StackoverflowClient stackoverflowClient;
+
     @InjectMocks
-    private LinkService linkService = new JooqLinkService(githubClient, stackoverflowClient);
+    private JooqLinkService linkService;
 
     @BeforeEach
     void setUp() {
@@ -79,9 +70,7 @@ public class JooqLinkServiceTest {
         when(jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateLinkScrapperException.class, () -> {
-            linkService.add(tgChatId, url);
-        });
+        assertThrows(DuplicateLinkScrapperException.class, () -> linkService.add(tgChatId, url));
 
         // Verify that addLink method is not called
         verify(jooqLinksRepository, never()).addLink(anyLong(), anyString(), any());

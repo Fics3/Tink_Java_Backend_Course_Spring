@@ -21,11 +21,11 @@ public class JooqChatServiceTest {
     private JooqChatRepository jooqChatRepository;
 
     @InjectMocks
-    private JooqChatService chatService = new JooqChatService();
+    private JooqChatService chatService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -48,9 +48,7 @@ public class JooqChatServiceTest {
         when(jooqChatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateRegistrationScrapperException.class, () -> {
-            chatService.add(tgChatId);
-        });
+        assertThrows(DuplicateRegistrationScrapperException.class, () -> chatService.add(tgChatId));
 
         // Verify that addChat method is not called
         verify(jooqChatRepository, never()).addChat(anyLong());

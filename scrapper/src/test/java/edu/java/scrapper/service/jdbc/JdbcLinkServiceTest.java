@@ -1,12 +1,9 @@
 package edu.java.scrapper.service.jdbc;
 
-import edu.java.client.GithubClient;
-import edu.java.client.StackoverflowClient;
 import edu.java.domain.repository.jdbc.JdbcChatRepository;
 import edu.java.domain.repository.jdbc.JdbcLinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
-import edu.java.service.LinkService;
 import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -19,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,23 +26,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class JdbcLinkServiceTest {
 
-    @MockBean
+    @Mock
     private JdbcChatRepository jdbcChatRepository;
     @Mock
     private JdbcLinksRepository jdbcLinksRepository;
-    @Mock
-    private GithubClient githubClient;
-    @Mock
-    private StackoverflowClient stackoverflowClient;
     @InjectMocks
-    private LinkService linkService = new JdbcLinkService(jdbcLinksRepository, githubClient, stackoverflowClient);
+    private JdbcLinkService linkService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Инициализация моков перед каждым тестом
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

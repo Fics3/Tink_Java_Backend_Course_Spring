@@ -18,9 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkResponse;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class JpaLinkService implements LinkService {
     private final GithubClient githubClient;

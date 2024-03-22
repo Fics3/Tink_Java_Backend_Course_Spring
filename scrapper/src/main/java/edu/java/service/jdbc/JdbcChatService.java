@@ -3,14 +3,11 @@ package edu.java.service.jdbc;
 import edu.java.domain.repository.jdbc.JdbcChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-@Service
+@RequiredArgsConstructor
 public class JdbcChatService implements ChatService {
-
-    @Autowired
-    private JdbcChatRepository jdbcChatRepository;
+    private final JdbcChatRepository jdbcChatRepository;
 
     @Override
     public void add(Long tgChatId) {

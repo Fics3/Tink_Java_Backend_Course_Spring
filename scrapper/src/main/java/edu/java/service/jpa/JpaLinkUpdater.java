@@ -21,11 +21,9 @@ import org.example.dto.GithubRepositoryResponse;
 import org.example.dto.LinkUpdateRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @RequiredArgsConstructor
-@Service
 public class JpaLinkUpdater implements LinkUpdater {
     private final JpaLinksRepository jpaLinksRepository;
     private final GithubClient githubClient;

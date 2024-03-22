@@ -13,17 +13,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class JooqLinkService implements LinkService {
 
     private final GithubClient githubClient;
     private final StackoverflowClient stackoverflowClient;
-    @Autowired
-    private JooqLinksRepository jooqLinksRepository;
+    private final JooqLinksRepository jooqLinksRepository;
 
     @Override
     public LinkModel add(Long tgChatId, URI url) {

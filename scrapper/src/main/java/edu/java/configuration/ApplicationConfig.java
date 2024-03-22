@@ -22,8 +22,17 @@ public record ApplicationConfig(
     GithubProperties githubProperties,
     @NestedConfigurationProperty
     @NotNull
-    BotClient botProperties
+    BotClient botProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    AccessType databaseAccessType
 ) {
+    public enum AccessType {
+        JDBC,
+        JOOQ,
+        JPA
+    }
+
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 

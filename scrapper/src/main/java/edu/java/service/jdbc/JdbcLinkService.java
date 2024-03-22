@@ -13,9 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.example.dto.LinkResponse;
-import org.springframework.stereotype.Service;
 
-@Service
 @AllArgsConstructor
 public class JdbcLinkService implements LinkService {
 
