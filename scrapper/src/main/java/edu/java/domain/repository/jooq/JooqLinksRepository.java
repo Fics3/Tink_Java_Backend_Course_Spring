@@ -163,4 +163,5 @@ public class JooqLinksRepository implements LinksRepository {
 
         return link;
     }
+
 }
