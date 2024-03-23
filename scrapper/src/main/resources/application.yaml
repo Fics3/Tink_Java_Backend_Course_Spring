@@ -2,14 +2,39 @@ app:
   scheduler:
     enable: true
     interval: 10s
-    force-check-delay: 10s
+    force-check-delay: 3600s
+
+  stackoverflow-properties:
+    base-url: https://api.stackexchange.com
+    url: /questions/%d?site=stackoverflow
+  github-properties:
+    base-url: https://api.github.com
+    url: /repos/%s/%s
+  bot-properties:
+    url: http://localhost:8090
+  database-access-type: jooq
+
 
 spring:
   application:
     name: scrapper
+  liquibase:
+    enabled: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
 
 server:
   port: 8080
 
 logging:
   config: classpath:log4j2-plain.xml
+
+springdoc:
+  api-docs:
+    enabled: true
+
+swagger-ui:
+  path: /swagger-ui

@@ -1,27 +1,32 @@
 package edu.java.client;
 
-import edu.java.dto.StackoverflowQuestionResponse;
+import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
+import lombok.AllArgsConstructor;
+import org.example.dto.StackoverflowQuestionResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
+@AllArgsConstructor
 public class StackoverflowClient {
 
-    private static final String URL = "/questions/%d?order=%s&sort=%s&site=stackoverflow";
-    private final WebClient webClient;
+    private final ApplicationConfig applicationConfig;
+    private final WebClient stackoverflowWebClient;
 
-    public StackoverflowClient(WebClient stackoverflowWebClient) {
-        this.webClient = stackoverflowWebClient;
-    }
+    public Mono<StackoverflowQuestionResponse> fetchQuestion(URI url) {
+        String[] urlSplit = url.toString().split("/questions/");
 
-    public Mono<StackoverflowQuestionResponse> fetchQuestion(long questionId, String sort, String order) {
-        String apiUrl = String.format(URL, questionId, sort, order);
+        Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
 
-        return webClient
+        String apiUrl = String.format(applicationConfig.stackoverflowProperties().url(), questionId);
+
+        return stackoverflowWebClient
             .get()
             .uri(apiUrl)
             .retrieve()
             .bodyToMono(StackoverflowQuestionResponse.class);
     }
+
 }

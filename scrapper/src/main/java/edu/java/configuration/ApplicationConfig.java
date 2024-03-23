@@ -13,8 +13,35 @@ public record ApplicationConfig(
     @Bean
     @NestedConfigurationProperty
     @NotNull
-    Scheduler scheduler
+    Scheduler scheduler,
+    @NestedConfigurationProperty
+    @NotNull
+    StackoverflowProperties stackoverflowProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    GithubProperties githubProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    BotClient botProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    AccessType databaseAccessType
 ) {
+    public enum AccessType {
+        JDBC,
+        JOOQ,
+        JPA
+    }
+
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
+    }
+
+    public record StackoverflowProperties(String url, String baseUrl) {
+    }
+
+    public record GithubProperties(String url, String baseUrl) {
+    }
+
+    public record BotClient(String url) {
     }
 }

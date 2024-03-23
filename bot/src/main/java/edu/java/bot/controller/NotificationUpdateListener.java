@@ -7,21 +7,18 @@ import edu.java.bot.service.NotificationService;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 
 @Log4j2
 @Getter
 @Controller
+@RequiredArgsConstructor
 public class NotificationUpdateListener implements UpdatesListener {
 
     private final TelegramBot telegramBot;
     private final NotificationService notificationService;
-
-    public NotificationUpdateListener(TelegramBot telegramBot, NotificationService notificationService) {
-        this.telegramBot = telegramBot;
-        this.notificationService = notificationService;
-    }
 
     @PostConstruct
     public void init() {
@@ -31,7 +28,7 @@ public class NotificationUpdateListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            if (update.message() == null) {
+            if (notificationService.messageIsNull(update)) {
                 return;
             }
             notificationService.processCommand(update, telegramBot);
@@ -40,3 +37,4 @@ public class NotificationUpdateListener implements UpdatesListener {
     }
 
 }
+
