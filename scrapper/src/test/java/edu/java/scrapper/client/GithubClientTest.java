@@ -25,7 +25,7 @@ public class GithubClientTest {
     private ApplicationConfig applicationConfig;
 
     @MockBean
-    private GithubClient githubClient;
+    private GithubClient githubWebClient;
 
     @Test
     @DisplayName("test for check the required response body")
@@ -40,7 +40,7 @@ public class GithubClientTest {
             "https://api.github.com"
         ));
 
-        when(githubClient.fetchRepository(any(URI.class)))
+        when(githubWebClient.fetchRepository(any(URI.class)))
             .thenReturn(Mono.just(response));
 
         // Act & Assert
