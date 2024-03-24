@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Getter
 public class GithubClient {
-
     private final WebClient githubWebClient;
     @Value("${app.github-properties.url}")
     private String url;

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest(classes = {NotificationUpdateListener.class, TestConfig.class})
 class NotificationUpdateListenerTest {
@@ -35,7 +35,7 @@ class NotificationUpdateListenerTest {
 
     @BeforeEach
     void setUp() {
-        initMocks(this);
+        openMocks(this);
         updateListener = new NotificationUpdateListener(telegramBot, notificationService);
     }
 
