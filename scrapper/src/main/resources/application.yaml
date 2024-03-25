@@ -3,6 +3,14 @@ app:
     enable: true
     interval: 10s
     force-check-delay: 10s
+  stackoverflow-properties:
+    base-url: https://api.stackexchange.com
+    url: /questions/%d?site=stackoverflow
+  github-properties:
+    base-url: https://api.github.com
+    url: /repos/%s/%s
+  bot-properties:
+    url: http://localhost:8090
 
 spring:
   application:
@@ -13,3 +21,10 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+springdoc:
+  api-docs:
+    enabled: true
+
+swagger-ui:
+  path: /swagger-ui
