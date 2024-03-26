@@ -1,18 +1,15 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.net.URI;
 import java.time.OffsetDateTime;
-import lombok.Getter;
 
-@Getter
-public class GithubRepositoryResponse {
-    private String name;
-    @JsonProperty("full_name")
-    private String fullName;
-    private String owner;
-    private String description;
-    @JsonProperty("html_url")
-    private String htmlUrl;
-    @JsonProperty("created_at")
-    private OffsetDateTime offsetDateTime;
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+public record GithubRepositoryResponse(
+    String name,
+    String fullName,
+    URI htmlUrl,
+    OffsetDateTime updatedAt
+) {
 }

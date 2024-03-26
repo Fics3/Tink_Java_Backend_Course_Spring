@@ -1,13 +1,7 @@
 package org.example.dto;
 
 import java.net.URI;
-import lombok.Getter;
-import lombok.Setter;
+import java.time.OffsetDateTime;
 
-@Setter
-@Getter
-public class LinkResponse {
-    private long id;
-    private URI url;
-
+public record LinkResponse(URI url, OffsetDateTime lastUpdate) {
 }

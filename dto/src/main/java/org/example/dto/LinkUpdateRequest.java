@@ -1,14 +1,8 @@
 package org.example.dto;
 
+import java.net.URI;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.UUID;
 
-@Getter
-@Setter
-public class LinkUpdateRequest {
-    private Long id;
-    private String url;
-    private String description;
-    private List<Long> tgChatIds;
+public record LinkUpdateRequest(UUID id, URI url, String description, List<Long> tgChatIds) {
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/updates")
 public class WebServerController {
     @PostMapping
-    public ResponseEntity<Object> processUpdate(@RequestBody LinkUpdateRequest linkUpdateRequest) {
+    public ResponseEntity<String> processUpdate(@RequestBody LinkUpdateRequest linkUpdateRequest) {
         return ResponseEntity.ok("Обноавление обработано");
     }
 }

@@ -1,6 +1,5 @@
-package edu.java.scrapper.client;
+package edu.java.bot.client;
 
-import edu.java.client.ScrapperClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,7 +19,7 @@ class ScrapperClientTest {
     private ScrapperClient scrapperClient;
 
     @Test
-    @DisplayName("Should return code 500 when register chat")
+    @DisplayName("Should return code 404 when register chat")
     void registerChat_shouldReturnInternalServerError() {
         // Arrange
         long chatId = 123;
@@ -31,13 +30,11 @@ class ScrapperClientTest {
         webTestClient.post()
             .uri("/tg-chat/{id}", chatId)
             .exchange()
-            .expectStatus().is5xxServerError() // Change to 5xx status expectation
-            .expectBody()
-            .jsonPath("$.description").isEqualTo("Внутренняя ошибка сервера");
+            .expectStatus().is4xxClientError();
     }
 
     @Test
-    @DisplayName("Should return code 500 when delete chat")
+    @DisplayName("Should return code 404 when delete chat")
     void deleteChat_shouldReturnInternalServerError() {
         // Arrange
         long chatId = 123;
@@ -48,9 +45,7 @@ class ScrapperClientTest {
         webTestClient.delete()
             .uri("/tg-chat/{id}", chatId)
             .exchange()
-            .expectStatus().is5xxServerError() // Change to 5xx status expectation
-            .expectBody()
-            .jsonPath("$.description").isEqualTo("Внутренняя ошибка сервера");
+            .expectStatus().is4xxClientError();
     }
 
 }

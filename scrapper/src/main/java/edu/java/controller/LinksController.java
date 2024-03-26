@@ -1,12 +1,14 @@
 package edu.java.controller;
 
+import edu.java.service.LinkService;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,40 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 public class LinksController {
 
+    @Autowired
+    private LinkService linkService;
+
     @GetMapping
-    public ResponseEntity<Object> getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
+    public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
         List<LinkResponse> linkResponses = new ArrayList<>();
-
-        int size = 0;
-
-        ListLinkResponse listLinkResponse = new ListLinkResponse();
-        listLinkResponse.setLinks(linkResponses);
-        listLinkResponse.setSize(size);
-
-        return ResponseEntity.ok(listLinkResponse);
+        return new ListLinkResponse(linkResponses, linkResponses.size());
     }
 
     @PostMapping
-    public ResponseEntity<Object> addLink(
+    public LinkResponse addLink(
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
-        LinkResponse linkResponse = new LinkResponse();
-        linkResponse.setId(1);
-        linkResponse.setUrl(addLinkRequest.getUri());
-
-        return ResponseEntity.ok(linkResponse);
+        linkService.addLink(tgChatId, addLinkRequest);
+        return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteLink(
+    public LinkResponse deleteLink(
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        LinkResponse linkResponse = new LinkResponse();
-        linkResponse.setId(tgChatId);
-        linkResponse.setUrl(removeLinkRequest.getLink());
-
-        return ResponseEntity.ok(linkResponse);
+        linkService.removeLink(tgChatId, removeLinkRequest);
+        return new LinkResponse(removeLinkRequest.link(), OffsetDateTime.now());
     }
 }
