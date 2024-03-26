@@ -1,6 +1,6 @@
 package edu.java.client;
 
-import edu.java.dto.StackoverflowQuestionResponse;
+import org.example.dto.StackoverflowQuestionResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
