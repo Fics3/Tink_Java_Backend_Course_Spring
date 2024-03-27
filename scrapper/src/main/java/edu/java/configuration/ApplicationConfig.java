@@ -27,10 +27,10 @@ public record ApplicationConfig(
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
-    public record StackoverflowProperties(String url, String baseUrl) {
+    public record StackoverflowProperties(String domain, String apiUrl, String questions) {
     }
 
-    public record GithubProperties(String url, String baseUrl) {
+    public record GithubProperties(String domain, String apiUrl, String repos) {
     }
 
     public record BotClient(String url) {

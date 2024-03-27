@@ -1,5 +1,6 @@
 package edu.java.domain.repository.jdbc;
 
+import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.mapper.ChatMapper;
 import edu.java.model.ChatModel;
 import java.time.OffsetDateTime;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class JdbcChatRepository {
+public class JdbcChatRepository implements ChatRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void addChat(Long chatId) {
