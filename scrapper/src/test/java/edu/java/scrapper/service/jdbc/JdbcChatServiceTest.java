@@ -3,7 +3,6 @@ package edu.java.scrapper.service.jdbc;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.repository.ChatRepository;
 import edu.java.service.ChatService;
-import edu.java.service.jdbc.JdbcChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,11 +21,11 @@ public class JdbcChatServiceTest {
     private ChatRepository chatRepository;
 
     @InjectMocks
-    private ChatService chatService = new JdbcChatService();
+    private ChatService chatService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -35,7 +34,7 @@ public class JdbcChatServiceTest {
         Long tgChatId = 123456L;
         when(chatRepository.existsChat(tgChatId)).thenReturn(false);
 
-        // Act
+        // ActS
         chatService.add(tgChatId);
 
         // Assert
@@ -49,9 +48,7 @@ public class JdbcChatServiceTest {
         when(chatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateRegistrationScrapperException.class, () -> {
-            chatService.add(tgChatId);
-        });
+        assertThrows(DuplicateRegistrationScrapperException.class, () -> chatService.add(tgChatId));
 
         // Verify that addChat method is not called
         verify(chatRepository, never()).addChat(anyLong());

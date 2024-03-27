@@ -2,8 +2,6 @@ package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.example.dto.StackoverflowQuestionResponse;
 import org.springframework.stereotype.Component;
@@ -17,23 +15,17 @@ public class StackoverflowClient {
     private final ApplicationConfig applicationConfig;
     private final WebClient stackoverflowWebClient;
 
-    public Mono<StackoverflowQuestionResponse> fetchQuestion(Integer questionId) {
-        String apiUrl = String.format(applicationConfig.stackoverflowProperties().url(), questionId);
+    public Mono<StackoverflowQuestionResponse> fetchQuestion(URI url) {
+        String[] urlSplit = url.toString().split("/questions/");
+
+        Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
+
+        String apiUrl = String.format(applicationConfig.stackoverflowProperties().apiUrl(), questionId);
 
         return stackoverflowWebClient
             .get()
             .uri(apiUrl)
             .retrieve()
             .bodyToMono(StackoverflowQuestionResponse.class);
-    }
-
-    public OffsetDateTime checkForUpdate(URI url) {
-        String[] urlSplit = url.toString().split("/");
-
-        Integer questionId = Integer.parseInt(urlSplit[urlSplit.length - 2]);
-
-        var fetchedQuestion = fetchQuestion(questionId);
-
-        return Objects.requireNonNull(fetchedQuestion.block()).items().getFirst().lastActivityDate();
     }
 }

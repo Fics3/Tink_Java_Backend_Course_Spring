@@ -1,9 +1,8 @@
 package edu.java.client;
 
 import edu.java.configuration.ApplicationConfig;
+import edu.java.exception.BadRequestScrapperException;
 import java.net.URI;
-import java.time.OffsetDateTime;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.example.dto.GithubRepositoryResponse;
 import org.springframework.stereotype.Component;
@@ -17,21 +16,19 @@ public class GithubClient {
     private final ApplicationConfig applicationConfig;
     private final WebClient githubWebClient;
 
-    public Mono<GithubRepositoryResponse> fetchRepository(String owner, String repo) {
-        String apiUrl = String.format(applicationConfig.githubProperties().url(), owner, repo);
-
-        return githubWebClient
-            .get()
-            .uri(apiUrl)
-            .retrieve()
-            .bodyToMono(GithubRepositoryResponse.class);
-    }
-
-    public OffsetDateTime checkForUpdate(URI url) {
+    public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
+        try {
+            String apiUrl = String.format(applicationConfig.githubProperties().apiUrl(), urlSplit[1], urlSplit[2]);
 
-        var fetchedRepo = fetchRepository(urlSplit[1], urlSplit[2]);
-
-        return Objects.requireNonNull(fetchedRepo.block()).updatedAt();
+            return githubWebClient
+                .get()
+                .uri(apiUrl)
+                .retrieve()
+                .bodyToMono(GithubRepositoryResponse.class);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new BadRequestScrapperException("Неправильный тип ссылки", "");
+        }
     }
+
 }

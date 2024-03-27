@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository;
 
 import edu.java.model.ChatModel;
-import edu.java.repository.ChatRepository;
+import edu.java.repository.jdbc.JdbcChatRepository;
 import edu.java.repository.mapper.ChatMapper;
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
@@ -9,27 +9,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class ChatRepositoryTest extends IntegrationTest {
+@Transactional
+public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
-    private ChatRepository chatRepository;
+    private JdbcChatRepository jdbcChatRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    @Transactional
-    @Rollback
     void addChatTest() {
         // Arrange
         Long chatId = 123456789L;
         assertThat(POSTGRES.isRunning()).isTrue();
 
         // Act
-        chatRepository.addChat(chatId);
+        jdbcChatRepository.addChat(chatId);
 
         // Assert
         List<ChatModel> chats =
@@ -39,15 +37,13 @@ public class ChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChatTest() {
         // Arrange
         Long chatId = 123456789L;
-        chatRepository.addChat(chatId);
+        jdbcChatRepository.addChat(chatId);
 
         // Act
-        chatRepository.removeChat(chatId);
+        jdbcChatRepository.removeChat(chatId);
 
         // Assert
         List<ChatModel> chats =
@@ -56,11 +52,9 @@ public class ChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void findAllChatsTest() {
         // Arrange&Act
-        var chats = chatRepository.findAllChats();
+        var chats = jdbcChatRepository.findAllChats();
 
         // Assert
         assertThat(chats).isNotNull();

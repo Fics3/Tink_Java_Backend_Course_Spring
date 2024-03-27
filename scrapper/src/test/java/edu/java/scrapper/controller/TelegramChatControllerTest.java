@@ -4,7 +4,7 @@ import edu.java.controller.TelegramChatController;
 import edu.java.exception.BadRequestScrapperException;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.exception.InternalServerScrapperException;
-import edu.java.service.jdbc.JdbcChatService;
+import edu.java.service.ChatService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +26,7 @@ public class TelegramChatControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private JdbcChatService jdbcChatService;
+    private ChatService jdbcChatService;
 
     @Test
     public void testRegisterChat() throws Exception {

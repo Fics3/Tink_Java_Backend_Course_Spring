@@ -5,11 +5,13 @@ app:
     force-check-delay: 3600s
 
   stackoverflow-properties:
-    base-url: https://api.stackexchange.com
-    url: /questions/%d?site=stackoverflow
+    domain: stackoverflow.com
+    api-url: https://api.stackexchange.com
+    questions: /questions/%d?site=stackoverflow
   github-properties:
-    base-url: https://api.github.com
-    url: /repos/%s/%s
+    domain: github.com
+    api-url: https://api.github.com
+    repos: /repos/%s/%s
   bot-properties:
     url: http://localhost:8090
 
