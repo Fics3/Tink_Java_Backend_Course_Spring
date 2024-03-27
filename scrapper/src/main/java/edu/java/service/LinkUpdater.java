@@ -13,15 +13,17 @@ import org.springframework.stereotype.Service;
 public class LinkUpdater {
     private final LinksRepository linksRepository;
     private final Map<String, UpdateChecker> updateCheckers;
-    @Value("#{@scheduler.forceCheckDelay().toMillis()}")
-    private Duration threshold;
+    private final Duration threshold;
 
     public LinkUpdater(
         LinksRepository linksRepository,
-        @Qualifier("updateCheckers") Map<String, UpdateChecker> updateCheckers
+        @Qualifier("updateCheckers") Map<String, UpdateChecker> updateCheckers,
+        @Value("#{@scheduler.forceCheckDelay().toMillis()}")
+        Duration threshold
     ) {
         this.linksRepository = linksRepository;
         this.updateCheckers = updateCheckers;
+        this.threshold = threshold;
     }
 
     public int update() {
