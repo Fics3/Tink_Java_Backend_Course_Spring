@@ -3,9 +3,9 @@ package edu.java.service.updateChecker;
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.LinksRepository;
 import edu.java.model.LinkModel;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.LinksRepository;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -21,8 +21,8 @@ public class GithubUpdateChecker implements UpdateChecker {
     private final ApplicationConfig applicationConfig;
     private final GithubClient githubClient;
     private final BotClient botClient;
-    private final ChatRepository chatRepository;
-    private final LinksRepository linksRepository;
+    private final ChatRepository jooqChatRepository;
+    private final LinksRepository jooqLinksRepository;
 
     @Override
     public void processUrlUpdates(LinkModel linkModel, int updateCount) {
@@ -40,9 +40,9 @@ public class GithubUpdateChecker implements UpdateChecker {
                 "Ссылка обновлена " + linkModel.link()
             )).subscribe();
             tmpCount++;
-            linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
         }
-        linksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
+        jooqLinksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
     }
 
     private LinkUpdateRequest formLinkUpdateRequest(UUID linkId, URI url, String description) {
@@ -50,7 +50,7 @@ public class GithubUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-            chatRepository.findChatsByLinkId(linkId)
+            jooqChatRepository.findChatsByLinkId(linkId)
         );
     }
 

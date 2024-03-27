@@ -3,9 +3,10 @@ package edu.java.service.updateChecker;
 import edu.java.client.BotClient;
 import edu.java.client.StackoverflowClient;
 import edu.java.configuration.ApplicationConfig;
+import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.LinksRepository;
+import edu.java.domain.repository.QuestionRepository;
 import edu.java.model.LinkModel;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.LinksRepository;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -20,8 +21,9 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
     private final ApplicationConfig applicationConfig;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
-    private final ChatRepository chatRepository;
-    private final LinksRepository linksRepository;
+    private final ChatRepository jooqChatRepository;
+    private final LinksRepository jooqLinksRepository;
+    private final QuestionRepository jooqQuestionRepository;
 
     @Override
     public void processUrlUpdates(LinkModel linkModel, int updateCount) {
@@ -31,6 +33,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             updateCount,
             Objects.requireNonNull(question).items().getFirst().lastActivityDate()
         );
+        processAnswerCount(linkModel, question.items().getFirst().answerCount());
     }
 
     private void processLastUpdate(LinkModel linkModel, int updateCount, OffsetDateTime lastUpdate) {
@@ -43,7 +46,23 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
                 "Ссылка обновлена " + linkModel.link()
             )).subscribe();
             tmpCount++;
-            linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+        }
+    }
+
+    private void processAnswerCount(LinkModel linkModel, Integer answerCount) {
+        var url = URI.create(linkModel.link());
+        var questionModel = jooqQuestionRepository.getQuestionByLinkId(linkModel.linkId());
+        if (questionModel == null) {
+            return;
+        }
+        var questionCount = questionModel.answerCount();
+        if (answerCount != null && !questionCount.equals(answerCount)) {
+            botClient.sendUpdate(formLinkUpdateRequest(
+                linkModel.linkId(),
+                url,
+                "Количество ответов обновилось: " + answerCount
+            )).subscribe();
         }
     }
 
@@ -52,7 +71,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-            chatRepository.findChatsByLinkId(linkId)
+            jooqChatRepository.findChatsByLinkId(linkId)
         );
     }
 
