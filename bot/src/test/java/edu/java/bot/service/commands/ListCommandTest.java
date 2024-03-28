@@ -4,22 +4,20 @@ import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import edu.java.bot.service.commands.resourcesHandlers.Link;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class ListCommandServiceTest {
-
-    Map<String, CommandService> commandMap;
+public class ListCommandTest {
 
     private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        commandMap = new HashMap<>();
+        Map<String, Command> commandMap = mock();
         notificationService = new NotificationService(commandMap);
     }
 
@@ -27,7 +25,7 @@ public class ListCommandServiceTest {
     @DisplayName("not registered - should return special message")
     void testExecuteNotRegistered() {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
+        ListCommand listCommand = new ListCommand();
         long chatId = 123;
 
         // Act
@@ -41,7 +39,7 @@ public class ListCommandServiceTest {
     @DisplayName("registered user - no links - special message")
     public void testExecute_UserRegisteredWithEmptyLinkList_ReturnsNoLinksMessage() {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
+        ListCommand listCommand = new ListCommand();
         long chatId = 1234567L;
         notificationService.getLinkMap().put(chatId, new User(chatId));
 
@@ -56,7 +54,7 @@ public class ListCommandServiceTest {
     @DisplayName("several links - check correct message format")
     public void testExecute_UserRegisteredWithLinks_ReturnsFormattedLinks() throws URISyntaxException {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
+        ListCommand listCommand = new ListCommand();
         long chatId = 1234567L;
         User user = new User(chatId);
         user.addLink(Link.parse("https://example.com"));

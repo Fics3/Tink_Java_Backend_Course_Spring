@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class StartCommandServiceTest {
+public class StartCommandTest {
 
     @Test
     @DisplayName("register user - data base should be not null")
@@ -22,7 +22,7 @@ public class StartCommandServiceTest {
         // Ensure that getLinkMap() returns a non-null value
         when(notificationService.getLinkMap()).thenReturn(new HashMap<>());
 
-        StartCommandService startCommand = new StartCommandService();
+        StartCommand startCommand = new StartCommand();
 
         // Act
         String result = startCommand.execute(chatId, "", notificationService);
@@ -39,7 +39,7 @@ public class StartCommandServiceTest {
     @DisplayName("should return command name")
     void testGetName() {
         // Arrange
-        StartCommandService startCommand = new StartCommandService();
+        StartCommand startCommand = new StartCommand();
 
         // Act
         String result = startCommand.getName();
@@ -52,7 +52,7 @@ public class StartCommandServiceTest {
     @DisplayName("should return command description")
     void testGetDescription() {
         // Arrange
-        StartCommandService startCommand = new StartCommandService();
+        StartCommand startCommand = new StartCommand();
 
         // Act
         String result = startCommand.getDescription();

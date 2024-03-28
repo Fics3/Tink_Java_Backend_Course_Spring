@@ -10,91 +10,85 @@ import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(WebServerController.class)
+@AutoConfigureMockMvc
 public class WebServerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private WebServerController webServerController;
 
     @Test
-    void testProcessUpdate() throws Exception {
+    public void testProcessUpdate_Success() throws Exception {
         // Arrange
-        LinkUpdateRequest request =
-            new LinkUpdateRequest(UUID.randomUUID(), URI.create("example"), "232", List.of(123L));
+        LinkUpdateRequest linkUpdateRequest =
+            new LinkUpdateRequest(UUID.randomUUID(), URI.create("dsd"), "SDSD", List.of(1223L));
 
         // Act&Assert
-        MvcResult result = mockMvc.perform(post("/updates")
+        mockMvc.perform(post("/updates")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(request)))
-            .andExpect(status().isOk())
-            .andReturn();
+                .content(objectMapper.writeValueAsString(linkUpdateRequest)))
+            .andExpect(status().isOk());
+
+        verify(webServerController).processUpdate(any(LinkUpdateRequest.class));
     }
 
     @Test
-    void testHandleInternalServerException() throws Exception {
+    public void testHandleException_InternalServerBotException() throws Exception {
         // Arrange
-        doThrow(new InternalServerBotException("Internal Server Error", "SDSD"))
+        doThrow(new InternalServerBotException("test", "testD"))
             .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
 
-        LinkUpdateRequest request =
-            new LinkUpdateRequest(UUID.randomUUID(), URI.create("example"), "232", List.of(123L));
+        LinkUpdateRequest request = new LinkUpdateRequest(UUID.randomUUID(), URI.create("sds"), "sdsd", List.of(1L));
 
         // Act&Assert
-        MvcResult result = mockMvc.perform(post("/updates")
+        mockMvc.perform(post("/updates")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(request)))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
-    void testHandleBadRequestException() throws Exception {
-        // Arrange
-        doThrow(new BadRequestBotException("Bad Request", "SDSD"))
+    public void testHandleException_BadRequestException() throws Exception {
+        doThrow(new BadRequestBotException("test", "testD"))
             .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
 
-        LinkUpdateRequest request =
-            new LinkUpdateRequest(UUID.randomUUID(), URI.create("example"), "232", List.of(123L));
-
-        // Act&Assert
-        MvcResult result = mockMvc.perform(post("/updates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(request)))
-            .andExpect(status().isBadRequest())
-            .andReturn();
+        mockMvc.perform(post("/updates"))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    void testHandleNotFoundBotException() throws Exception {
+    public void testHandleException_NotFoundException() throws Exception {
         // Arrange
-        doThrow(new NotFoundBotException("Not Found", "SDSD"))
+        doThrow(new NotFoundBotException("test", "testD"))
             .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
 
-        LinkUpdateRequest request =
-            new LinkUpdateRequest(UUID.randomUUID(), URI.create("example"), "232", List.of(123L));
+        LinkUpdateRequest request = new LinkUpdateRequest(UUID.randomUUID(), URI.create("sds"), "sdsd", List.of(1L));
 
         // Act&Assert
-        MvcResult result = mockMvc.perform(post("/updates")
+        mockMvc.perform(post("/updates")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(request)))
-            .andExpect(status().isNotFound())
-            .andReturn();
+            .andExpect(status().isNotFound());
     }
 
-    private String asJsonString(Object obj) {
+    private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {

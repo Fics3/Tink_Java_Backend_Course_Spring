@@ -19,7 +19,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TrackCommandServiceTest {
+public class TrackCommandTest {
 
     @Mock
     private ChainResourceHandler chainResourceHandler;
@@ -28,7 +28,7 @@ public class TrackCommandServiceTest {
     private NotificationService notificationService;
 
     @InjectMocks
-    private TrackCommandService trackCommand;
+    private TrackCommand trackCommand;
 
     @BeforeEach
     void setUp() {

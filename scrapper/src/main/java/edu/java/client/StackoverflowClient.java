@@ -1,22 +1,26 @@
 package edu.java.client;
 
-import lombok.RequiredArgsConstructor;
+import edu.java.configuration.ApplicationConfig;
+import java.net.URI;
+import lombok.AllArgsConstructor;
 import org.example.dto.StackoverflowQuestionResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class StackoverflowClient {
 
+    private final ApplicationConfig applicationConfig;
     private final WebClient stackoverflowWebClient;
-    @Value(value = "${app.stackoverflow-properties.url}")
-    private String url;
 
-    public Mono<StackoverflowQuestionResponse> fetchQuestion(long questionId) {
-        String apiUrl = String.format(url, questionId);
+    public Mono<StackoverflowQuestionResponse> fetchQuestion(URI url) {
+        String[] urlSplit = url.toString().split("/questions/");
+
+        Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
+
+        String apiUrl = String.format(applicationConfig.stackoverflowProperties().apiUrl(), questionId);
 
         return stackoverflowWebClient
             .get()

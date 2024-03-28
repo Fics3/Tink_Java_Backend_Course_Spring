@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(GithubClient.class)
@@ -36,11 +36,12 @@ public class GithubClientTest {
         );
 
         when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
-            "/repos/%s/%s",
-            "https://api.github.com"
+            "github.com",
+            "https://api.github.com",
+            "/repos/%s/%s"
         ));
 
-        when(githubClient.fetchRepository(anyString(), anyString()))
+        when(githubClient.fetchRepository(any(URI.class)))
             .thenReturn(Mono.just(response));
 
         // Act & Assert

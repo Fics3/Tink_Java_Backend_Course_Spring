@@ -31,7 +31,7 @@ public class NotificationUpdateListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            if (update.message() == null) {
+            if (notificationService.messageIsNull(update)) {
                 return;
             }
             notificationService.processCommand(update, telegramBot);

@@ -1,8 +1,8 @@
 create table chat_link_relation
 (
     chat_id bigint not null,
-    link text not null,
-    primary key (chat_id, link),
+    link_id uuid   not null,
+    primary key (chat_id, link_id),
     foreign key (chat_id) references chats (telegram_chat_id),
-    foreign key (link) references links (link)
+    foreign key (link_id) references links (link_id)
 );

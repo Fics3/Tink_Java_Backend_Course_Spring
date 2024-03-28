@@ -3,11 +3,9 @@ package edu.java.bot.service.commands;
 import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
 
 @Log4j2
-@Service
-public class StartCommandService implements CommandService {
+public class StartCommand implements Command {
     private static final String NAME = "/start";
     private static final String DESCRIPTION = "registration";
     private static final String WELCOME_MESSAGE = "Hello world";

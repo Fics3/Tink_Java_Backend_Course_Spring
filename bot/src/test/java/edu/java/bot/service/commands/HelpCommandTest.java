@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HelpCommandServiceTest {
+public class HelpCommandTest {
     @Test
     @DisplayName("should return all commands")
     void testExecute() {
@@ -19,13 +19,13 @@ public class HelpCommandServiceTest {
         NotificationService notificationService = mock(NotificationService.class);
 
         // Mocking the command map
-        Map<String, CommandService> commandMap = new HashMap<>();
-        commandMap.put("/command1", mock(CommandService.class));
-        commandMap.put("/command2", mock(CommandService.class));
+        Map<String, Command> commandMap = new HashMap<>();
+        commandMap.put("/command1", mock(Command.class));
+        commandMap.put("/command2", mock(Command.class));
 
         when(notificationService.getCommandMap()).thenReturn(commandMap);
 
-        HelpCommandService helpCommand = new HelpCommandService();
+        HelpCommand helpCommand = new HelpCommand();
 
         // Act
         String result = helpCommand.execute(chatId, "", notificationService);
@@ -38,7 +38,7 @@ public class HelpCommandServiceTest {
     @DisplayName("should return command name")
     void testGetName() {
         // Arrange
-        HelpCommandService helpCommand = new HelpCommandService();
+        HelpCommand helpCommand = new HelpCommand();
 
         // Act
         String result = helpCommand.getName();
@@ -51,7 +51,7 @@ public class HelpCommandServiceTest {
     @DisplayName("should return command description")
     void testGetDescription() {
         // Arrange
-        HelpCommandService helpCommand = new HelpCommandService();
+        HelpCommand helpCommand = new HelpCommand();
 
         // Act
         String result = helpCommand.getDescription();

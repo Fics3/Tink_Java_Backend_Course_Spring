@@ -1,6 +1,7 @@
 package edu.java.scrapper.client;
 
 import edu.java.client.StackoverflowClient;
+import java.net.URI;
 import org.example.dto.StackoverflowQuestionResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ public class StackoverflowClientTest {
         // Arrange
         StackoverflowQuestionResponse response = mock(StackoverflowQuestionResponse.class);
 
-        when(stackoverflowClient.fetchQuestion(anyLong()))
+        when(stackoverflowClient.fetchQuestion(URI.create("https://api.stackexchange.com")))
             .thenReturn(Mono.just(response));
 
         // Act&Assert
