@@ -14,6 +14,8 @@ public interface LinksRepository {
 
     List<LinkModel> findAllLinks();
 
+    List<LinkModel> findLinksByChatId(Long tgChatId);
+
     boolean existsLinkForChat(Long tgChatId, String url);
 
     List<LinkModel> findStaleLinks(Duration threshold);
