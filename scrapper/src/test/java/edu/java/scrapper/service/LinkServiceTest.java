@@ -1,17 +1,17 @@
-package edu.java.scrapper.service.jdbc;
+package edu.java.scrapper.service;
 
-import edu.java.client.GithubClient;
-import edu.java.client.StackoverflowClient;
-import edu.java.domain.repository.jdbc.JdbcChatRepository;
-import edu.java.domain.repository.jdbc.JdbcLinksRepository;
+import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.LinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
 import edu.java.service.LinkService;
-import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.linkAdder.LinkAdder;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.example.dto.LinkResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,38 +29,40 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-public class JdbcLinkServiceTest {
+public class LinkServiceTest {
 
-    @MockBean
-    private JdbcChatRepository jdbcChatRepository;
     @Mock
-    private JdbcLinksRepository jdbcLinksRepository;
+    private ChatRepository chatRepository;
     @Mock
-    private GithubClient githubClient;
+    private LinksRepository linksRepository;
     @Mock
-    private StackoverflowClient stackoverflowClient;
+    private LinkAdder linkAdder;
+    @Mock
+    private Map<String, LinkAdder> linkAdders;
     @InjectMocks
-    private LinkService linkService = new JdbcLinkService(jdbcLinksRepository, githubClient, stackoverflowClient);
+    private LinkService linkService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Инициализация моков перед каждым тестом
+        MockitoAnnotations.openMocks(this);
+        linkAdders = new HashMap<>();
+        linkAdders.put("test.com", linkAdder);
+        linkService = new LinkService(linkAdders, linksRepository);
     }
 
     @Test
     void testAddLink_Successful() {
         // Arrange
         Long tgChatId = 1234L;
-        jdbcChatRepository.addChat(tgChatId);
+        chatRepository.addChat(tgChatId);
 
         UUID linkId = UUID.randomUUID();
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
         URI url = URI.create("https://test.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
 
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), offsetDateTime, offsetDateTime);
-        when(jdbcLinksRepository.addLink(eq(tgChatId), eq(url.toString()), any(OffsetDateTime.class))).thenReturn(
+        when(linkAdder.addLink(eq(url), eq(tgChatId))).thenReturn(
             expectedLink);
         // Act
         LinkModel result = linkService.add(tgChatId, url);
@@ -76,15 +76,13 @@ public class JdbcLinkServiceTest {
         // Arrange
         Long tgChatId = 123456L;
         URI url = URI.create("https://github.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateLinkScrapperException.class, () -> {
-            linkService.add(tgChatId, url);
-        });
+        assertThrows(DuplicateLinkScrapperException.class, () -> linkService.add(tgChatId, url));
 
         // Verify that addLink method is not called
-        verify(jdbcLinksRepository, never()).addLink(anyLong(), anyString(), any());
+        verify(linksRepository, never()).addLink(anyLong(), anyString(), any());
     }
 
     @Test
@@ -93,9 +91,9 @@ public class JdbcLinkServiceTest {
         Long tgChatId = 1234L;
         UUID linkId = UUID.randomUUID();
         URI url = URI.create("https://example.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), OffsetDateTime.now(), OffsetDateTime.now());
-        when(jdbcLinksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
+        when(linksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
 
         // Act
         LinkModel result = linkService.remove(tgChatId, url);
@@ -112,7 +110,7 @@ public class JdbcLinkServiceTest {
         List<LinkModel> links = new ArrayList<>();
         links.add(new LinkModel(uuid, "https://example1.com", OffsetDateTime.now(), OffsetDateTime.now()));
         links.add(new LinkModel(uuid, "https://example2.com", OffsetDateTime.now(), OffsetDateTime.now()));
-        when(jdbcLinksRepository.findAllLinks()).thenReturn(links);
+        when(linksRepository.findLinksByChatId(tgChatId)).thenReturn(links);
 
         // Act
         List<LinkResponse> result = linkService.findAll(tgChatId);

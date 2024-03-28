@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UpdateChecker {
 
-    void processUrlUpdates(LinkModel linkModel, int updateCount);
+    int processUrlUpdates(LinkModel linkModel, int updateCount);
 
     String getDomain();
 }

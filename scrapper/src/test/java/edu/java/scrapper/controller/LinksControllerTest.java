@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.controller.LinksController;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.NotFoundScrapperException;
-import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.LinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class LinksControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private JdbcLinkService jdbcLinkService;
+    private LinkService jdbcLinkService;
 
     @Test
     void testGetLinks() throws Exception {

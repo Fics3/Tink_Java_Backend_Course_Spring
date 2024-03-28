@@ -1,17 +1,21 @@
 package edu.java.bot.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@RequiredArgsConstructor
 public class ClientConfig {
+
+    private final ApplicationConfig applicationConfig;
+
     @Bean
-    public WebClient scrapperWebClient(@Value("${app.scrapper-properties.url}") String baseUrl) {
+    public WebClient scrapperWebClient() {
         return WebClient
             .builder()
-            .baseUrl(baseUrl)
+            .baseUrl(applicationConfig.scrapperProperties().url())
             .build();
     }
 }

@@ -5,7 +5,7 @@ import edu.java.client.StackoverflowClient;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.LinksRepository;
-import edu.java.domain.repository.QuestionRepository;
+import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.model.LinkModel;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -23,10 +23,10 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
     private final BotClient botClient;
     private final ChatRepository jooqChatRepository;
     private final LinksRepository jooqLinksRepository;
-    private final QuestionRepository jooqQuestionRepository;
+    private final StackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
 
     @Override
-    public void processUrlUpdates(LinkModel linkModel, int updateCount) {
+    public int processUrlUpdates(LinkModel linkModel, int updateCount) {
         var question = stackoverflowClient.fetchQuestion(URI.create(linkModel.link())).block();
         processLastUpdate(
             linkModel,
@@ -34,6 +34,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             Objects.requireNonNull(question).items().getFirst().lastActivityDate()
         );
         processAnswerCount(linkModel, question.items().getFirst().answerCount());
+        return updateCount;
     }
 
     private void processLastUpdate(LinkModel linkModel, int updateCount, OffsetDateTime lastUpdate) {
@@ -52,7 +53,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
 
     private void processAnswerCount(LinkModel linkModel, Integer answerCount) {
         var url = URI.create(linkModel.link());
-        var questionModel = jooqQuestionRepository.getQuestionByLinkId(linkModel.linkId());
+        var questionModel = jooqStackoverflowQuestionRepository.getQuestionByLinkId(linkModel.linkId());
         if (questionModel == null) {
             return;
         }

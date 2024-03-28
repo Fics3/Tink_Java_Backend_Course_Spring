@@ -1,8 +1,8 @@
-package edu.java.scrapper.service.jooq;
+package edu.java.scrapper.service;
 
 import edu.java.domain.repository.jooq.JooqChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
-import edu.java.service.jooq.JooqChatService;
+import edu.java.service.ChatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,17 +15,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JooqChatServiceTest {
+public class ChatServiceTest {
 
     @Mock
     private JooqChatRepository jooqChatRepository;
 
     @InjectMocks
-    private JooqChatService chatService = new JooqChatService();
+    private ChatService chatService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -48,9 +48,7 @@ public class JooqChatServiceTest {
         when(jooqChatRepository.existsChat(tgChatId)).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateRegistrationScrapperException.class, () -> {
-            chatService.add(tgChatId);
-        });
+        assertThrows(DuplicateRegistrationScrapperException.class, () -> chatService.add(tgChatId));
 
         // Verify that addChat method is not called
         verify(jooqChatRepository, never()).addChat(anyLong());
