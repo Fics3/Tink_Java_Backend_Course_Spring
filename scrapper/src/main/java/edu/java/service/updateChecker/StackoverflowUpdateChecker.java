@@ -13,9 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class StackoverflowUpdateChecker implements UpdateChecker {
     private final ApplicationConfig applicationConfig;

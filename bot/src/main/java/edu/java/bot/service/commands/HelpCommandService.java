@@ -1,8 +1,10 @@
 package edu.java.bot.service.commands;
 
 import edu.java.bot.service.NotificationService;
+import org.springframework.stereotype.Service;
 
-public class HelpCommand implements Command {
+@Service
+public class HelpCommandService implements CommandService {
     private static final String NAME = "/help";
     private static final String DESCRIPTION = "show all bot commands";
 

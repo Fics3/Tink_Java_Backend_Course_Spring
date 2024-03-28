@@ -17,13 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class UntrackCommandTest {
+class UntrackCommandServiceTest {
 
     @Mock
     private NotificationService notificationService;
 
     @InjectMocks
-    private UntrackCommand untrackCommand;
+    private UntrackCommandService untrackCommand;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +47,7 @@ class UntrackCommandTest {
         // Устанавливаем мокированное значение для getLinkMap()
         when(notificationService.getLinkMap()).thenReturn(Map.of(chatId, mockedUser));
 
-        UntrackCommand untrackCommand = new UntrackCommand();
+        UntrackCommandService untrackCommand = new UntrackCommandService();
 
         // Act
         String result = untrackCommand.execute(chatId, "/untrack " + urlToRemove, notificationService);

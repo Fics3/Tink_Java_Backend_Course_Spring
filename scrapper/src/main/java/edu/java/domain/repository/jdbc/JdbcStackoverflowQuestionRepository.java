@@ -2,6 +2,7 @@ package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.domain.repository.jdbc.mapper.StackoverflowQuestionMapper;
+import edu.java.model.LinkModel;
 import edu.java.model.StackoverflowQuestionModel;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,15 @@ public class JdbcStackoverflowQuestionRepository implements StackoverflowQuestio
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public LinkModel addQuestion(LinkModel linkModel, Integer answerCount) {
+        String sqlRelation = "INSERT INTO questions(link_id, answer_count)  VALUES (?, ?)";
+
+        jdbcTemplate.update(sqlRelation, linkModel.linkId(), answerCount);
+
+        return linkModel;
     }
 
     @Override

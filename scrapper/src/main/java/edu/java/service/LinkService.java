@@ -8,26 +8,17 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-@Service
+@RequiredArgsConstructor
 public class LinkService {
     private final Map<String, LinkAdder> linkAdders;
     private final LinksRepository jooqLinksRepository;
 
-    public LinkService(
-        @Qualifier("linkAdders") Map<String, LinkAdder> linkAdders,
-        LinksRepository jooqLinksRepository
-    ) {
-        this.linkAdders = linkAdders;
-        this.jooqLinksRepository = jooqLinksRepository;
-    }
-
     public LinkModel add(Long tgChatId, URI url) {
         if (jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())) {
-            throw new DuplicateLinkScrapperException("Ссылка уже существует", url + "уже отсвеживается");
+            throw new DuplicateLinkScrapperException("Ссылка уже существует", url + " уже отслеживается");
         }
         return linkAdders.get(url.getHost()).addLink(url, tgChatId);
     }

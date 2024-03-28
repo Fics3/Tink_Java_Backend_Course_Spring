@@ -1,6 +1,6 @@
 package edu.java.bot.service;
 
-import edu.java.bot.service.commands.Command;
+import edu.java.bot.service.commands.CommandService;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 public class NotificationServiceTest {
 
     private NotificationService notificationService;
-    private Map<String, Command> commandMapMock;
+    private Map<String, CommandService> commandMapMock;
 
     @BeforeEach
     public void setup() {
@@ -27,11 +27,11 @@ public class NotificationServiceTest {
         // Arrange
         long chatId = 123;
         String message = "/list";
-        Command listCommandMock = mock(Command.class);
-        when(listCommandMock.getName()).thenReturn("/list");
-        when(listCommandMock.execute(chatId, message, notificationService)).thenReturn(
+        CommandService listCommandMockService = mock(CommandService.class);
+        when(listCommandMockService.getName()).thenReturn("/list");
+        when(listCommandMockService.execute(chatId, message, notificationService)).thenReturn(
             "List command executed successfully");
-        commandMapMock.put("/list", listCommandMock);
+        commandMapMock.put("/list", listCommandMockService);
 
         // Act
         String result = notificationService.getCommand(chatId, message);

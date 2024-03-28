@@ -2,6 +2,7 @@ package edu.java.scrapper.service.linkAdder;
 
 import edu.java.client.StackoverflowClient;
 import edu.java.domain.repository.LinksRepository;
+import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.model.LinkModel;
 import edu.java.service.linkAdder.StackoverflowLinkAdder;
 import java.net.URI;
@@ -26,7 +27,10 @@ public class StackoverflowLinkAdderTest {
     private StackoverflowClient stackoverflowClient;
 
     @Mock
-    private LinksRepository jooqLinksRepository;
+    private LinksRepository linksRepository;
+
+    @Mock
+    private StackoverflowQuestionRepository stackoverflowQuestionRepository;
 
     @InjectMocks
     private StackoverflowLinkAdder linkAdder;
@@ -43,6 +47,12 @@ public class StackoverflowLinkAdderTest {
         Long tgChatId = 123456L;
         OffsetDateTime updatedAt = OffsetDateTime.now();
         int answersCount = 1000;
+        LinkModel linkModel = new LinkModel(
+            null,
+            null,
+            updatedAt,
+            updatedAt
+        );
 
         when(stackoverflowClient.fetchQuestion(any(URI.class))).thenReturn(Mono.just(new StackoverflowQuestionResponse(
             List.of(new StackoverflowQuestionResponse.ItemResponse(
@@ -54,28 +64,24 @@ public class StackoverflowLinkAdderTest {
             )))
         ));
 
-        when(jooqLinksRepository.addQuestion(
+        when(linksRepository.addLink(
             any(Long.class),
             any(String.class),
-            any(OffsetDateTime.class),
-            any(Integer.class)
-        ))
-            .thenReturn(new LinkModel(
-                null,
-                null,
-                updatedAt,
-                updatedAt
-            ));
+            any(OffsetDateTime.class)
+        )).thenReturn(linkModel);
+        when(stackoverflowQuestionRepository.addQuestion(linkModel, answersCount)).thenReturn(linkModel);
 
         // Act
         linkAdder.addLink(url, tgChatId);
 
         // Assert
-        verify(jooqLinksRepository, times(1)).addQuestion(
+        verify(linksRepository, times(1)).addLink(
             eq(tgChatId),
             eq(url.toString()),
-            eq(updatedAt),
-            eq(answersCount)
+            eq(updatedAt)
         );
+
+        verify(stackoverflowQuestionRepository, times(1))
+            .addQuestion(eq(linkModel), eq(answersCount));
     }
 }

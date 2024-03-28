@@ -3,6 +3,7 @@ package edu.java.domain.repository.jdbc;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.jdbc.mapper.GithubRepositoryMapper;
 import edu.java.model.GithubRepositoryModel;
+import edu.java.model.LinkModel;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,6 +22,15 @@ public class JdbcGithubRepositoryRepository implements GithubRepositoryRepositor
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public LinkModel addRepository(LinkModel linkModel, Integer subscribersCount) {
+        String sqlRelation = "INSERT INTO repositories(link_id, subscribers_count)  VALUES (?, ?)";
+
+        jdbcTemplate.update(sqlRelation, linkModel.linkId(), subscribersCount);
+
+        return linkModel;
     }
 
     @Override

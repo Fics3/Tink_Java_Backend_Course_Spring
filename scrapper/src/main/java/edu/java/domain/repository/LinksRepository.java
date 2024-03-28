@@ -24,7 +24,4 @@ public interface LinksRepository {
 
     void updateChecked(UUID linkId, OffsetDateTime checkedAt);
 
-    LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount);
-
-    LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount);
 }

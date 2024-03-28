@@ -1,6 +1,7 @@
 package edu.java.scrapper.service.linkAdder;
 
 import edu.java.client.GithubClient;
+import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.model.LinkModel;
 import edu.java.service.linkAdder.GithubLinkAdder;
@@ -27,6 +28,9 @@ public class GithubLinkAdderTest {
     @Mock
     private LinksRepository jooqLinksRepository;
 
+    @Mock
+    private GithubRepositoryRepository githubRepositoryRepository;
+
     @InjectMocks
     private GithubLinkAdder linkAdder;
 
@@ -42,6 +46,12 @@ public class GithubLinkAdderTest {
         Long tgChatId = 123456L;
         OffsetDateTime updatedAt = OffsetDateTime.now();
         int subscribersCount = 1000;
+        LinkModel linkModel = new LinkModel(
+            null,
+            null,
+            updatedAt,
+            updatedAt
+        );
 
         when(githubClient.fetchRepository(any(URI.class))).thenReturn(Mono.just(new GithubRepositoryResponse(
             null,
@@ -51,29 +61,26 @@ public class GithubLinkAdderTest {
             subscribersCount
         )));
 
-        when(jooqLinksRepository.addRepository(
+        when(jooqLinksRepository.addLink(
             any(Long.class),
             any(String.class),
-            any(OffsetDateTime.class),
-            any(Integer.class)
-        ))
-            .thenReturn(new LinkModel(
-                null,
-                null,
-                updatedAt,
-                updatedAt
-            ));
+            any(OffsetDateTime.class)
+        )).thenReturn(linkModel);
+
+        when(githubRepositoryRepository.addRepository(linkModel, subscribersCount)).thenReturn(linkModel);
 
         // Act
         LinkModel addedLink = linkAdder.addLink(url, tgChatId);
 
         // Assert
-        verify(jooqLinksRepository, times(1)).addRepository(
+        verify(jooqLinksRepository, times(1)).addLink(
             eq(tgChatId),
             eq(url.toString()),
-            eq(updatedAt),
-            eq(subscribersCount)
+            eq(updatedAt)
         );
+
+        verify(githubRepositoryRepository, times(1))
+            .addRepository(linkModel, subscribersCount);
     }
 
 }

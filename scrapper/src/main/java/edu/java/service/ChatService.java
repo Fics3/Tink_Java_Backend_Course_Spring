@@ -3,9 +3,7 @@ package edu.java.service;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 public class ChatService {
 
