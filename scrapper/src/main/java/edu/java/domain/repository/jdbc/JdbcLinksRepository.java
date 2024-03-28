@@ -106,13 +106,4 @@ public class JdbcLinksRepository implements LinksRepository {
         return link;
     }
 
-    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        String sqlRelation = "INSERT INTO repositories(link_id, subscribers_count)  VALUES (?, ?)";
-
-        jdbcTemplate.update(sqlRelation, link.linkId(), subscribersCount);
-
-        return link;
-    }
 }

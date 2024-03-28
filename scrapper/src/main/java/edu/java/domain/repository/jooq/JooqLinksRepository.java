@@ -140,27 +140,4 @@ public class JooqLinksRepository implements LinksRepository {
             .execute();
     }
 
-    @Override
-    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(QUESTIONS)
-            .set(QUESTIONS.LINK_ID, link.linkId())
-            .set(QUESTIONS.ANSWER_COUNT, answerCount)
-            .execute();
-
-        return link;
-    }
-
-    @Override
-    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(REPOSITORIES)
-            .set(REPOSITORIES.LINK_ID, link.linkId())
-            .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
-            .execute();
-
-        return link;
-    }
 }

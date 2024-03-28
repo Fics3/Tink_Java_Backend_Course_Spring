@@ -13,10 +13,8 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Service
 public class GithubUpdateChecker implements UpdateChecker {
 
     private final ApplicationConfig applicationConfig;

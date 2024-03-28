@@ -3,7 +3,7 @@ package edu.java.bot.service.commands;
 import edu.java.bot.service.NotificationService;
 import java.util.Objects;
 
-public class UntrackCommand implements Command {
+public class UntrackCommandService implements CommandService {
     private static final String NAME = "/untrack";
     private static final String DESCRIPTION = "delete link from tracking links /untrack {URL}";
     private static final String NO_REGISTERED_MESSAGE = "Для удаления ссылок необходимо зарегестрироваться /start";

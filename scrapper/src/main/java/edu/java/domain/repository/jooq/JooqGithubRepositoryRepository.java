@@ -2,6 +2,7 @@ package edu.java.domain.repository.jooq;
 
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.model.GithubRepositoryModel;
+import edu.java.model.LinkModel;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -18,6 +19,16 @@ public class JooqGithubRepositoryRepository implements GithubRepositoryRepositor
         return dslContext.selectFrom(REPOSITORIES)
             .where(REPOSITORIES.LINK_ID.eq(uuid))
             .fetchOneInto(GithubRepositoryModel.class);
+    }
+
+    @Override
+    public LinkModel addRepository(LinkModel linkModel, Integer subscribersCount) {
+        dslContext.insertInto(REPOSITORIES)
+            .set(REPOSITORIES.LINK_ID, linkModel.linkId())
+            .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
+            .execute();
+
+        return linkModel;
     }
 
     @Override

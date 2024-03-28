@@ -1,6 +1,7 @@
 package edu.java.domain.repository.jooq;
 
 import edu.java.domain.repository.StackoverflowQuestionRepository;
+import edu.java.model.LinkModel;
 import edu.java.model.StackoverflowQuestionModel;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,16 @@ public class JooqStackoverflowQuestionRepository implements StackoverflowQuestio
         return dslContext.selectFrom(QUESTIONS)
             .where(QUESTIONS.LINK_ID.eq(uuid))
             .fetchOneInto(StackoverflowQuestionModel.class);
+    }
+
+    @Override
+    public LinkModel addQuestion(LinkModel linkModel, Integer answerCount) {
+        dslContext.insertInto(QUESTIONS)
+            .set(QUESTIONS.LINK_ID, linkModel.linkId())
+            .set(QUESTIONS.ANSWER_COUNT, answerCount)
+            .execute();
+
+        return linkModel;
     }
 
     @Override

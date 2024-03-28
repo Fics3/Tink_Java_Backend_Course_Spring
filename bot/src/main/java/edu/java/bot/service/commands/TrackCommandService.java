@@ -9,14 +9,14 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Getter
-public class TrackCommand implements Command {
+public class TrackCommandService implements CommandService {
     private static final String NAME = "/track";
     private static final String DESCRIPTION = "add URL to list of tracking links /track {URL}";
     private static final String ERROR_MESSAGE = "Неверный формат команды: /track {URL}";
     private static final String NO_REGISTERED_MESSAGE = "Для отслеживания ссылок необходимо зарегестрироваться /start";
     private final ChainResourceHandler chainResourceHandler;
 
-    public TrackCommand() {
+    public TrackCommandService() {
         this.chainResourceHandler = initResourceHandler();
     }
 
