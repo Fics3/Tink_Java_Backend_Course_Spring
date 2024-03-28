@@ -36,6 +36,9 @@ public class StackoverflowUpdateCheckerTest {
     private LinksRepository jooqLinksRepository;
 
     @Mock
+    private ChatRepository chatRepository;
+
+    @Mock
     private StackoverflowQuestionRepository stackoverflowQuestionRepository;
 
     @InjectMocks
