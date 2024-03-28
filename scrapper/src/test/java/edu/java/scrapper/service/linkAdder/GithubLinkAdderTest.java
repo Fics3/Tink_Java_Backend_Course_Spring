@@ -61,26 +61,29 @@ public class GithubLinkAdderTest {
             subscribersCount
         )));
 
-        when(jooqLinksRepository.addLink(
+        when(jooqLinksRepository.addRepository(
             any(Long.class),
             any(String.class),
-            any(OffsetDateTime.class)
-        )).thenReturn(linkModel);
-
-        when(githubRepositoryRepository.addRepository(linkModel, subscribersCount)).thenReturn(linkModel);
+            any(OffsetDateTime.class),
+            any(Integer.class)
+        ))
+            .thenReturn(new LinkModel(
+                null,
+                null,
+                updatedAt,
+                updatedAt
+            ));
 
         // Act
-        linkAdder.addLink(url, tgChatId);
+        LinkModel addedLink = linkAdder.addLink(url, tgChatId);
 
         // Assert
-        verify(jooqLinksRepository, times(1)).addLink(
+        verify(jooqLinksRepository, times(1)).addRepository(
             eq(tgChatId),
             eq(url.toString()),
-            eq(updatedAt)
+            eq(updatedAt),
+            eq(subscribersCount)
         );
-
-        verify(githubRepositoryRepository, times(1))
-            .addRepository(linkModel, subscribersCount);
     }
 
 }

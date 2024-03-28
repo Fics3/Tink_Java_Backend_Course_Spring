@@ -39,6 +39,7 @@ public class JooqChatRepository implements ChatRepository {
         return dsl.selectFrom(CHATS)
             .fetchInto(ChatModel.class);
     }
+
     public boolean existsChat(Long chatId) {
         return dsl.fetchExists(
             selectFrom(CHATS)
