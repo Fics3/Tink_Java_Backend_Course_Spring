@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class LinkUpdaterScheduler {
 
-    private LinkUpdater jooqLinkUpdater;
+    private LinkUpdater linkUpdater;
 
     @Scheduled(fixedDelayString = "#{@scheduler.interval.toMillis()}")
     public void update() {
-        jooqLinkUpdater.update();
+        linkUpdater.update();
         log.info("Произошло обновление");
 
     }
 }
-

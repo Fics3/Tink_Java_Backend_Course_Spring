@@ -4,6 +4,7 @@ import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.model.LinkModel;
 import java.net.URI;
@@ -23,11 +24,14 @@ public class GithubUpdateChecker implements UpdateChecker {
     private final BotClient botClient;
     private final ChatRepository jooqChatRepository;
     private final LinksRepository jooqLinksRepository;
+    private final GithubRepositoryRepository jooqGithubRepositoryRepository;
 
     @Override
-    public void processUrlUpdates(LinkModel linkModel, int updateCount) {
+    public int processUrlUpdates(LinkModel linkModel, int updateCount) {
         var repository = githubClient.fetchRepository(URI.create(linkModel.link())).block();
         processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repository).updatedAt());
+        processSubscriberCount(linkModel, repository.subscribersCount());
+        return updateCount;
     }
 
     private void processLastUpdate(LinkModel linkModel, int updateCount, OffsetDateTime lastUpdate) {
@@ -43,6 +47,22 @@ public class GithubUpdateChecker implements UpdateChecker {
             jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
         }
         jooqLinksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
+    }
+
+    private void processSubscriberCount(LinkModel linkModel, Integer subscribersCount) {
+        var repositoryModel = jooqGithubRepositoryRepository.getRepositoryByLinkId(linkModel.linkId());
+        if (repositoryModel == null) {
+            return;
+        }
+        if (subscribersCount != null
+            && !subscribersCount.equals(jooqGithubRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
+            .subscribersCount())) {
+            botClient.sendUpdate(formLinkUpdateRequest(
+                linkModel.linkId(),
+                URI.create(linkModel.link()),
+                "Число подписчиков изменилось, теперь: " + subscribersCount
+            )).subscribe();
+        }
     }
 
     private LinkUpdateRequest formLinkUpdateRequest(UUID linkId, URI url, String description) {

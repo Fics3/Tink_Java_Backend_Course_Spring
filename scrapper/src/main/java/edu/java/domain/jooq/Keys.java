@@ -40,40 +40,47 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<ChatLinkRelationRecord> CONSTRAINT_B =
-        Internal.createUniqueKey(ChatLinkRelation.CHAT_LINK_RELATION,
+        Internal.createUniqueKey(
+            ChatLinkRelation.CHAT_LINK_RELATION,
             DSL.name("CONSTRAINT_B"),
             new TableField[] {ChatLinkRelation.CHAT_LINK_RELATION.CHAT_ID, ChatLinkRelation.CHAT_LINK_RELATION.LINK_ID},
             true
         );
-    public static final UniqueKey<ChatsRecord> CONSTRAINT_3 = Internal.createUniqueKey(Chats.CHATS,
+    public static final UniqueKey<ChatsRecord> CONSTRAINT_3 = Internal.createUniqueKey(
+        Chats.CHATS,
         DSL.name("CONSTRAINT_3"),
         new TableField[] {Chats.CHATS.TELEGRAM_CHAT_ID},
         true
     );
-    public static final UniqueKey<ChatsRecord> CONSTRAINT_3D = Internal.createUniqueKey(Chats.CHATS,
+    public static final UniqueKey<ChatsRecord> CONSTRAINT_3D = Internal.createUniqueKey(
+        Chats.CHATS,
         DSL.name("CONSTRAINT_3D"),
         new TableField[] {Chats.CHATS.TELEGRAM_CHAT_ID},
         true
     );
     public static final UniqueKey<LinksRecord> CONSTRAINT_4 =
         Internal.createUniqueKey(Links.LINKS, DSL.name("CONSTRAINT_4"), new TableField[] {Links.LINKS.LINK_ID}, true);
-    public static final UniqueKey<QuestionsRecord> CONSTRAINT_3B = Internal.createUniqueKey(Questions.QUESTIONS,
+    public static final UniqueKey<QuestionsRecord> CONSTRAINT_3B = Internal.createUniqueKey(
+        Questions.QUESTIONS,
         DSL.name("CONSTRAINT_3B"),
         new TableField[] {Questions.QUESTIONS.QUESTION_ID},
         true
     );
-    public static final UniqueKey<QuestionsRecord> CONSTRAINT_3BD = Internal.createUniqueKey(Questions.QUESTIONS,
+    public static final UniqueKey<QuestionsRecord> CONSTRAINT_3BD = Internal.createUniqueKey(
+        Questions.QUESTIONS,
         DSL.name("CONSTRAINT_3BD"),
         new TableField[] {Questions.QUESTIONS.LINK_ID},
         true
     );
-    public static final UniqueKey<RepositoriesRecord> CONSTRAINT_8 = Internal.createUniqueKey(Repositories.REPOSITORIES,
+    public static final UniqueKey<RepositoriesRecord> CONSTRAINT_8 = Internal.createUniqueKey(
+        Repositories.REPOSITORIES,
         DSL.name("CONSTRAINT_8"),
         new TableField[] {Repositories.REPOSITORIES.REPOSITORY_ID},
         true
     );
     public static final UniqueKey<RepositoriesRecord> CONSTRAINT_81 =
-        Internal.createUniqueKey(Repositories.REPOSITORIES,
+        Internal.createUniqueKey(
+            Repositories.REPOSITORIES,
             DSL.name("CONSTRAINT_81"),
             new TableField[] {Repositories.REPOSITORIES.LINK_ID},
             true
@@ -100,7 +107,8 @@ public class Keys {
         true
     );
     public static final ForeignKey<QuestionsRecord, LinksRecord> CONSTRAINT_3BDD =
-        Internal.createForeignKey(Questions.QUESTIONS,
+        Internal.createForeignKey(
+            Questions.QUESTIONS,
             DSL.name("CONSTRAINT_3BDD"),
             new TableField[] {Questions.QUESTIONS.LINK_ID},
             Keys.CONSTRAINT_4,

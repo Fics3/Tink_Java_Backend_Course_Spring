@@ -15,7 +15,7 @@ public class ClientConfig {
     public WebClient githubWebClient() {
         return WebClient
             .builder()
-            .baseUrl(applicationConfig.githubProperties().repos())
+            .baseUrl(applicationConfig.githubProperties().apiUrl())
             .build();
     }
 
@@ -23,7 +23,7 @@ public class ClientConfig {
     public WebClient stackoverflowWebClient() {
         return WebClient
             .builder()
-            .baseUrl(applicationConfig.stackoverflowProperties().questions())
+            .baseUrl(applicationConfig.stackoverflowProperties().apiUrl())
             .build();
     }
 
@@ -35,3 +35,4 @@ public class ClientConfig {
             .build();
     }
 }
+

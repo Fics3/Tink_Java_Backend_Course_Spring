@@ -26,7 +26,7 @@ public class TelegramChatControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ChatService jdbcChatService;
+    private ChatService chatService;
 
     @Test
     public void testRegisterChat() throws Exception {
@@ -40,7 +40,7 @@ public class TelegramChatControllerTest {
             .andReturn();
 
         // Assert
-        verify(jdbcChatService).add(chatId);
+        verify(chatService).add(chatId);
     }
 
     @Test
@@ -55,14 +55,14 @@ public class TelegramChatControllerTest {
             .andReturn();
 
         // Assert
-        verify(jdbcChatService).remove(chatId);
+        verify(chatService).remove(chatId);
     }
 
     @Test
     public void testRegisterChat_InternalServerError() throws Exception {
         // Arrange
         Long chatId = 123456L;
-        doThrow(new InternalServerScrapperException("Internal Server Error", "Description")).when(jdbcChatService)
+        doThrow(new InternalServerScrapperException("Internal Server Error", "Description")).when(chatService)
             .add(anyLong());
 
         // Act & Assert
@@ -74,7 +74,7 @@ public class TelegramChatControllerTest {
     @Test
     public void testRegisterChat_BadRequest() throws Exception {
         Long chatId = 123456L;
-        doThrow(new BadRequestScrapperException("Bad Request", "Description")).when(jdbcChatService).add(anyLong());
+        doThrow(new BadRequestScrapperException("Bad Request", "Description")).when(chatService).add(anyLong());
 
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -84,7 +84,7 @@ public class TelegramChatControllerTest {
     @Test
     public void testRegisterChat_Conflict() throws Exception {
         Long chatId = 123456L;
-        doThrow(new DuplicateRegistrationScrapperException("Conflict", "Description")).when(jdbcChatService)
+        doThrow(new DuplicateRegistrationScrapperException("Conflict", "Description")).when(chatService)
             .add(anyLong());
 
         mockMvc.perform(post("/tg-chat/{id}", chatId)

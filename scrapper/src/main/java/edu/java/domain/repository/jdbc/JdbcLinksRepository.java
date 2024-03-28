@@ -1,6 +1,7 @@
 package edu.java.domain.repository.jdbc;
 
-import edu.java.domain.repository.mapper.LinkMapper;
+import edu.java.domain.repository.LinksRepository;
+import edu.java.domain.repository.jdbc.mapper.LinkMapper;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class JdbcLinksRepository {
+public class JdbcLinksRepository implements LinksRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -59,6 +60,14 @@ public class JdbcLinksRepository {
     public List<LinkModel> findAllLinks() {
         String sql = "SELECT * FROM links";
         return jdbcTemplate.query(sql, new LinkMapper());
+    }
+
+    public List<LinkModel> findLinksByChatId(Long tgChatId) {
+        String sql = "SELECT l.link_id, l.link, l.last_update, l.last_check "
+            + "FROM links l "
+            + "JOIN chat_link_relation clr ON l.link_id = clr.link_id "
+            + "WHERE clr.chat_id = ?";
+        return jdbcTemplate.query(sql, new LinkMapper(), tgChatId);
     }
 
     public boolean existsLinkForChat(Long tgChatId, String url) {

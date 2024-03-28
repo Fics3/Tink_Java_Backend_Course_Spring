@@ -1,7 +1,7 @@
 package edu.java.service;
 
+import edu.java.domain.repository.ChatRepository;
 import edu.java.exception.DuplicateRegistrationScrapperException;
-import edu.java.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,19 +9,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRepository chatRepository;
+    private final ChatRepository jooqChatRepository;
 
     public void add(Long tgChatId) {
-        if (chatRepository.existsChat(tgChatId)) {
+        if (jooqChatRepository.existsChat(tgChatId)) {
             throw new DuplicateRegistrationScrapperException(
                 "Повторная регистрация",
                 "Такой пользователь уже зарегистрирован"
             );
         }
-        chatRepository.addChat(tgChatId);
+        jooqChatRepository.addChat(tgChatId);
     }
 
     public void remove(Long tgChatId) {
-        chatRepository.removeChat(tgChatId);
+        jooqChatRepository.removeChat(tgChatId);
     }
 }

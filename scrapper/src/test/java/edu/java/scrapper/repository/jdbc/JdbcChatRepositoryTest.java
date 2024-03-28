@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository.jdbc;
 
 import edu.java.domain.repository.jdbc.JdbcChatRepository;
-import edu.java.domain.repository.mapper.ChatMapper;
+import edu.java.domain.repository.jdbc.mapper.ChatMapper;
 import edu.java.model.ChatModel;
 <<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/JdbcChatRepositoryTest.java
 import edu.java.repository.jdbc.JdbcChatRepository;

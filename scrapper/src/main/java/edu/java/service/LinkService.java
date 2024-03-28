@@ -1,35 +1,43 @@
 package edu.java.service;
 
+import edu.java.domain.repository.LinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
-import edu.java.repository.LinksRepository;
+import edu.java.service.linkAdder.LinkAdder;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.example.dto.LinkResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LinkService {
+    private final Map<String, LinkAdder> linkAdders;
+    private final LinksRepository jooqLinksRepository;
 
-    @Autowired
-    private LinksRepository linksRepository;
+    public LinkService(
+        @Qualifier("linkAdders") Map<String, LinkAdder> linkAdders,
+        LinksRepository jooqLinksRepository
+    ) {
+        this.linkAdders = linkAdders;
+        this.jooqLinksRepository = jooqLinksRepository;
+    }
 
     public LinkModel add(Long tgChatId, URI url) {
-        if (linksRepository.existsLinkForChat(tgChatId, url.toString())) {
+        if (jooqLinksRepository.existsLinkForChat(tgChatId, url.toString())) {
             throw new DuplicateLinkScrapperException("Ссылка уже существует", url + "уже отсвеживается");
         }
-        return linksRepository.addLink(tgChatId, url.toString(), OffsetDateTime.now());
+        return linkAdders.get(url.getHost()).addLink(url, tgChatId);
     }
 
     public LinkModel remove(Long tgChatId, URI url) {
-        return linksRepository.removeLink(tgChatId, url.toString());
+        return jooqLinksRepository.removeLink(tgChatId, url.toString());
     }
 
     public List<LinkResponse> findAll(Long tgChatId) {
-        return linksRepository.findAllLinks().stream()
+        return jooqLinksRepository.findLinksByChatId(tgChatId).stream()
             .map(linkModel -> new LinkResponse(
                 URI.create(linkModel.link()),
                 linkModel.lastUpdate()
