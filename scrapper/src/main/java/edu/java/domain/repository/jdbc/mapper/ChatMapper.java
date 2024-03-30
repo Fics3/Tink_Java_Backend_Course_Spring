@@ -1,4 +1,4 @@
-package edu.java.domain.repository.mapper;
+package edu.java.domain.repository.jdbc.mapper;
 
 import edu.java.model.ChatModel;
 import java.sql.ResultSet;

@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TelegramChatController {
 
     @Autowired
-    private ChatService jooqChatService;
+    private ChatService chatService;
 
     @PostMapping
     public String registerChat(@PathVariable Long id) {
-        jooqChatService.add(id);
+        chatService.add(id);
         return "Чат зарегестрирован";
     }
 
     @DeleteMapping
     public String deleteChat(@PathVariable Long id) {
-        jooqChatService.remove(id);
+        chatService.remove(id);
         return "Чат успешно удален";
     }
 

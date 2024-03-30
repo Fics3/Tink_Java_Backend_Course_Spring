@@ -1,14 +1,17 @@
-package edu.java.scrapper.service.jdbc;
+package edu.java.scrapper.service;
 
-import edu.java.domain.repository.jdbc.JdbcChatRepository;
-import edu.java.domain.repository.jdbc.JdbcLinksRepository;
+import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.LinksRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
-import edu.java.service.jdbc.JdbcLinkService;
+import edu.java.service.LinkService;
+import edu.java.service.linkAdder.LinkAdder;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.example.dto.LinkResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,33 +29,40 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class JdbcLinkServiceTest {
+public class LinkServiceTest {
 
     @Mock
-    private JdbcChatRepository jdbcChatRepository;
+    private ChatRepository chatRepository;
     @Mock
-    private JdbcLinksRepository jdbcLinksRepository;
+    private LinksRepository linksRepository;
+    @Mock
+    private LinkAdder linkAdder;
+    @Mock
+    private Map<String, LinkAdder> linkAdders;
     @InjectMocks
-    private JdbcLinkService linkService;
+    private LinkService linkService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        linkAdders = new HashMap<>();
+        linkAdders.put("test.com", linkAdder);
+        linkService = new LinkService(linkAdders, linksRepository);
     }
 
     @Test
     void testAddLink_Successful() {
         // Arrange
         Long tgChatId = 1234L;
-        jdbcChatRepository.addChat(tgChatId);
+        chatRepository.addChat(tgChatId);
 
         UUID linkId = UUID.randomUUID();
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
         URI url = URI.create("https://test.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
 
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), offsetDateTime, offsetDateTime);
-        when(jdbcLinksRepository.addLink(eq(tgChatId), eq(url.toString()), any(OffsetDateTime.class))).thenReturn(
+        when(linkAdder.addLink(eq(url), eq(tgChatId))).thenReturn(
             expectedLink);
         // Act
         LinkModel result = linkService.add(tgChatId, url);
@@ -66,15 +76,15 @@ public class JdbcLinkServiceTest {
         // Arrange
         Long tgChatId = 123456L;
         URI url = URI.create("https://github.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateLinkScrapperException.class, () ->
-            linkService.add(tgChatId, url)
-        );
+        assertThrows(DuplicateLinkScrapperException.class, () -> {
+            linkService.add(tgChatId, url);
+        });
 
         // Verify that addLink method is not called
-        verify(jdbcLinksRepository, never()).addLink(anyLong(), anyString(), any());
+        verify(linksRepository, never()).addLink(anyLong(), anyString(), any());
     }
 
     @Test
@@ -83,9 +93,9 @@ public class JdbcLinkServiceTest {
         Long tgChatId = 1234L;
         UUID linkId = UUID.randomUUID();
         URI url = URI.create("https://example.com");
-        when(jdbcLinksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
+        when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(false);
         LinkModel expectedLink = new LinkModel(linkId, url.toString(), OffsetDateTime.now(), OffsetDateTime.now());
-        when(jdbcLinksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
+        when(linksRepository.removeLink(tgChatId, url.toString())).thenReturn(expectedLink);
 
         // Act
         LinkModel result = linkService.remove(tgChatId, url);
@@ -102,7 +112,7 @@ public class JdbcLinkServiceTest {
         List<LinkModel> links = new ArrayList<>();
         links.add(new LinkModel(uuid, "https://example1.com", OffsetDateTime.now(), OffsetDateTime.now()));
         links.add(new LinkModel(uuid, "https://example2.com", OffsetDateTime.now(), OffsetDateTime.now()));
-        when(jdbcLinksRepository.findLinksByChatId(tgChatId)).thenReturn(links);
+        when(linksRepository.findLinksByChatId(tgChatId)).thenReturn(links);
 
         // Act
         List<LinkResponse> result = linkService.findAll(tgChatId);

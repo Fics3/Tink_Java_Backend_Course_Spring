@@ -91,6 +91,15 @@ public class JooqLinksRepository implements LinksRepository {
     }
 
     @Override
+    public List<LinkModel> findLinksByChatId(Long tgChatId) {
+        return dsl.select(LINKS.LINK_ID, LINKS.LINK, LINKS.LAST_UPDATE, LINKS.LAST_CHECK)
+            .from(CHAT_LINK_RELATION)
+            .join(LINKS).on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID))
+            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId))
+            .fetchInto(LinkModel.class);
+    }
+
+    @Override
     public boolean existsLinkForChat(Long tgChatId, String url) {
         return dsl.fetchExists(
             CHAT_LINK_RELATION.join(LINKS)
@@ -124,44 +133,11 @@ public class JooqLinksRepository implements LinksRepository {
     }
 
     @Override
-    public List<LinkModel> findLinksByChatId(Long tgChatId) {
-        return dsl.select(LINKS.LINK_ID, LINKS.LINK, LINKS.LAST_UPDATE, LINKS.LAST_CHECK)
-            .from(CHAT_LINK_RELATION)
-            .join(LINKS).on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID))
-            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId))
-            .fetchInto(LinkModel.class);
-    }
-
-    @Override
     public void updateChecked(UUID linkId, OffsetDateTime checkedAt) {
         dsl.update(LINKS)
             .set(LINKS.LAST_CHECK, checkedAt)
             .where(LINKS.LINK_ID.eq(linkId))
             .execute();
-    }
-
-    @Override
-    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(QUESTIONS)
-            .set(QUESTIONS.LINK_ID, link.linkId())
-            .set(QUESTIONS.ANSWER_COUNT, answerCount)
-            .execute();
-
-        return link;
-    }
-
-    @Override
-    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(REPOSITORIES)
-            .set(REPOSITORIES.LINK_ID, link.linkId())
-            .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
-            .execute();
-
-        return link;
     }
 
 }

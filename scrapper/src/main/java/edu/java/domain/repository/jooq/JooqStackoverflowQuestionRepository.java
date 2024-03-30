@@ -1,7 +1,8 @@
 package edu.java.domain.repository.jooq;
 
-import edu.java.domain.repository.QuestionRepository;
-import edu.java.model.QuestionModel;
+import edu.java.domain.repository.StackoverflowQuestionRepository;
+import edu.java.model.LinkModel;
+import edu.java.model.StackoverflowQuestionModel;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -10,14 +11,24 @@ import static edu.java.domain.jooq.Tables.QUESTIONS;
 
 @Repository
 @RequiredArgsConstructor
-public class JooqQuestionRepository implements QuestionRepository {
+public class JooqStackoverflowQuestionRepository implements StackoverflowQuestionRepository {
     private final DSLContext dslContext;
 
     @Override
-    public QuestionModel getQuestionByLinkId(UUID uuid) {
+    public StackoverflowQuestionModel getQuestionByLinkId(UUID uuid) {
         return dslContext.selectFrom(QUESTIONS)
             .where(QUESTIONS.LINK_ID.eq(uuid))
-            .fetchOneInto(QuestionModel.class);
+            .fetchOneInto(StackoverflowQuestionModel.class);
+    }
+
+    @Override
+    public LinkModel addQuestion(LinkModel linkModel, Integer answerCount) {
+        dslContext.insertInto(QUESTIONS)
+            .set(QUESTIONS.LINK_ID, linkModel.linkId())
+            .set(QUESTIONS.ANSWER_COUNT, answerCount)
+            .execute();
+
+        return linkModel;
     }
 
     @Override

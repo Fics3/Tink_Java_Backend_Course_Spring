@@ -1,7 +1,8 @@
 package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.LinksRepository;
-import edu.java.domain.repository.mapper.LinkMapper;
+import edu.java.domain.repository.LinksRepository;
+import edu.java.domain.repository.jdbc.mapper.LinkMapper;
 import edu.java.exception.BadRequestScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
@@ -99,25 +100,5 @@ public class JdbcLinksRepository implements LinksRepository {
     public void updateChecked(UUID linkId, OffsetDateTime checkedAt) {
         String sql = "UPDATE links SET last_check = ? WHERE link_id = ?";
         jdbcTemplate.update(sql, checkedAt, linkId);
-    }
-
-    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        String sqlRelation = "INSERT INTO questions(link_id, answer_count)  VALUES (?, ?)";
-
-        jdbcTemplate.update(sqlRelation, link.linkId(), answerCount);
-
-        return link;
-    }
-
-    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        String sqlRelation = "INSERT INTO repositories(link_id, subscribers_count)  VALUES (?, ?)";
-
-        jdbcTemplate.update(sqlRelation, link.linkId(), subscribersCount);
-
-        return link;
     }
 }

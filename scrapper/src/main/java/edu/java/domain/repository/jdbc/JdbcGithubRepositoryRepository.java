@@ -1,8 +1,9 @@
 package edu.java.domain.repository.jdbc;
 
-import edu.java.domain.repository.RepositoryRepository;
-import edu.java.domain.repository.mapper.RepositoryMapper;
-import edu.java.model.RepositoryModel;
+import edu.java.domain.repository.GithubRepositoryRepository;
+import edu.java.domain.repository.jdbc.mapper.GithubRepositoryMapper;
+import edu.java.model.GithubRepositoryModel;
+import edu.java.model.LinkModel;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -11,16 +12,25 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @AllArgsConstructor
-public class JdbcRepositoryRepository implements RepositoryRepository {
+public class JdbcGithubRepositoryRepository implements GithubRepositoryRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    public RepositoryModel getRepositoryByLinkId(UUID uuid) {
+    public GithubRepositoryModel getRepositoryByLinkId(UUID uuid) {
         String sql = "SELECT * FROM repositories WHERE link_id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new RepositoryMapper(), uuid);
+            return jdbcTemplate.queryForObject(sql, new GithubRepositoryMapper(), uuid);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public LinkModel addRepository(LinkModel linkModel, Integer subscribersCount) {
+        String sqlRelation = "INSERT INTO repositories(link_id, subscribers_count)  VALUES (?, ?)";
+
+        jdbcTemplate.update(sqlRelation, linkModel.linkId(), subscribersCount);
+
+        return linkModel;
     }
 
     @Override

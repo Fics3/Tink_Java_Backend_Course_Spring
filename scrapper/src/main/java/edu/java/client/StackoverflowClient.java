@@ -22,7 +22,7 @@ public class StackoverflowClient {
 
         Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
 
-        String apiUrl = String.format(applicationConfig.stackoverflowProperties().url(), questionId);
+        String apiUrl = String.format(applicationConfig.stackoverflowProperties().questions(), questionId);
 
         return stackoverflowWebClient
             .get()
@@ -31,5 +31,4 @@ public class StackoverflowClient {
             .bodyToMono(StackoverflowQuestionResponse.class)
             .retryWhen(retry);
     }
-
 }

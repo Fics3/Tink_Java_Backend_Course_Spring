@@ -13,7 +13,6 @@ import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static edu.java.domain.jooq.Tables.CHATS;
 import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
@@ -22,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Transactional
 class JooqLinksRepositoryTest extends IntegrationTest {
 
     @Autowired
@@ -31,8 +31,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     private DSLContext dslContext;
 
     @Test
-    @Rollback
-    @Transactional
     void addLinkTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -62,10 +60,9 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void addLink_handleNotExistChat() {
         // Arrange
+
         Long tgChatId = 999L; // Invalid chat ID
         String link = "http://example.com";
         OffsetDateTime lastUpdate = OffsetDateTime.now();
@@ -80,8 +77,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void removeLinkTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -112,8 +107,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void removeLink_NotFoundTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -127,8 +120,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void existsLinkForChatTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -159,8 +150,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void findStaleLinksTest() {
         // Arrange
         OffsetDateTime now = OffsetDateTime.now();
@@ -182,8 +171,6 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void updateLastUpdateTest() {
         // Arrange
         UUID linkId = UUID.randomUUID();
