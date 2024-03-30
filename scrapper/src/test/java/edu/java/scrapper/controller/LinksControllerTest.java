@@ -4,13 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.controller.LinksController;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.NotFoundScrapperException;
+import edu.java.rateLimit.RateLimitService;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Refill;
 import edu.java.service.LinkService;
 import java.net.URI;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.RemoveLinkRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -37,6 +43,15 @@ public class LinksControllerTest {
 
     @MockBean
     private LinkService linkService;
+
+    @MockBean
+    private RateLimitService rateLimitService;
+
+    @BeforeEach
+    public void setUp() {
+        Bandwidth bandwidth = Bandwidth.classic(10, Refill.greedy(10, Duration.ofHours(1)));
+        when(rateLimitService.resolveBucket(any())).thenReturn(Bucket.builder().addLimit(bandwidth).build());
+    }
 
     @Test
     void testGetLinks() throws Exception {

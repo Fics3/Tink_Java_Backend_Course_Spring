@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @Component
 @Getter
@@ -20,12 +21,15 @@ public class ScrapperClient {
     private final WebClient scrapperWebClient;
     private final ApplicationConfig applicationConfig;
 
+    private final Retry retry;
+
     public Mono<String> registerChat(Long chatId) {
         return scrapperWebClient
             .post()
             .uri(applicationConfig.scrapperProperties().chat(), chatId)
             .retrieve()
-            .bodyToMono(String.class);
+            .bodyToMono(String.class)
+            .retryWhen(retry);
     }
 
     public Mono<String> deleteChat(Long chatId) {
@@ -33,7 +37,8 @@ public class ScrapperClient {
             .delete()
             .uri(applicationConfig.scrapperProperties().chat(), chatId)
             .retrieve()
-            .bodyToMono(String.class);
+            .bodyToMono(String.class)
+            .retryWhen(retry);
     }
 
     public Mono<ListLinkResponse> getAllLinks(Long tgChatId) {
@@ -42,7 +47,8 @@ public class ScrapperClient {
             .uri(applicationConfig.scrapperProperties().links())
             .header(applicationConfig.scrapperProperties().tgChatId(), String.valueOf(tgChatId))
             .retrieve()
-            .bodyToMono(ListLinkResponse.class);
+            .bodyToMono(ListLinkResponse.class)
+            .retryWhen(retry);
     }
 
     public void addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
@@ -53,7 +59,9 @@ public class ScrapperClient {
             .body(Mono.just(addLinkRequest), AddLinkRequest.class)
             .retrieve()
             .toEntity(LinkResponse.class)
-            .onErrorResume(WebClientResponseException.class, Mono::error).block();
+            .onErrorResume(WebClientResponseException.class, Mono::error)
+            .retryWhen(retry)
+            .block();
     }
 
     public void removeLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
@@ -64,6 +72,8 @@ public class ScrapperClient {
             .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
             .retrieve()
             .toEntity(LinkResponse.class)
-            .onErrorResume(WebClientResponseException.class, Mono::error).block();
+            .onErrorResume(WebClientResponseException.class, Mono::error)
+            .retryWhen(retry)
+            .block();
     }
 }
