@@ -3,6 +3,7 @@ package edu.java.bot.controller;
 import edu.java.bot.exception.BotException;
 import edu.java.bot.exception.InternalServerBotException;
 import edu.java.bot.exception.NotFoundBotException;
+import edu.java.bot.exception.RateLimitBotException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -33,6 +34,12 @@ public class WebServerExceptionHandler {
     public ApiErrorResponse handleNotFoundException(BotException e) {
         return buildErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND, e.getDescription(), e);
 
+    }
+
+    @ExceptionHandler(RateLimitBotException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ApiErrorResponse handleRateLimitException(BotException e) {
+        return buildErrorResponse(e.getMessage(), HttpStatus.TOO_MANY_REQUESTS, e.getDescription(), e);
     }
 
     private ApiErrorResponse buildErrorResponse(String message, HttpStatus status, String description, Exception e) {

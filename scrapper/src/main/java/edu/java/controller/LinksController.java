@@ -33,6 +33,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
+
         jooqLinkService.add(tgChatId, addLinkRequest.uri());
         return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }

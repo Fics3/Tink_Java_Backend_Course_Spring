@@ -1,4 +1,4 @@
-package edu.java.configuration;
+package edu.java.configuration.repositoryAccess;
 
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;

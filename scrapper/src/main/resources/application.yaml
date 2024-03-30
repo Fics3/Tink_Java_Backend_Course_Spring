@@ -4,6 +4,21 @@ app:
     interval: 10s
     force-check-delay: 3600s
 
+  retry-properties:
+    attempts: 10
+    backoff: 2s
+    backoff-strategy: linear
+    retry-status-codes:
+      - 500
+      - 502
+      - 503
+      - 404
+
+  rate-limit-property:
+    delay-refill: 30s
+    limit: 100
+    refill-limit: 20
+
   stackoverflow-properties:
     base-url: https://api.stackexchange.com
     url: /questions/%d?site=stackoverflow

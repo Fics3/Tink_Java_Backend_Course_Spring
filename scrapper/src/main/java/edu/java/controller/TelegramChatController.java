@@ -2,7 +2,6 @@ package edu.java.controller;
 
 import edu.java.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,15 +16,15 @@ public class TelegramChatController {
     private ChatService jooqChatService;
 
     @PostMapping
-    public ResponseEntity<String> registerChat(@PathVariable Long id) {
+    public String registerChat(@PathVariable Long id) {
         jooqChatService.add(id);
-        return ResponseEntity.ok("Чат зарегестрирован");
+        return "Чат зарегестрирован";
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteChat(@PathVariable Long id) {
+    public String deleteChat(@PathVariable Long id) {
         jooqChatService.remove(id);
-        return ResponseEntity.ok("Чат успешно удален");
+        return "Чат успешно удален";
     }
 
 }
