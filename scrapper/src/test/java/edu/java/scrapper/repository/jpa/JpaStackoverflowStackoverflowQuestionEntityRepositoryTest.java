@@ -1,10 +1,10 @@
 package edu.java.scrapper.repository.jpa;
 
-import edu.java.domain.entity.ChatEntity;
-import edu.java.domain.entity.LinkEntity;
-import edu.java.domain.entity.QuestionEntity;
-import edu.java.domain.repository.jpa.JpaLinksRepository;
-import edu.java.domain.repository.jpa.JpaQuestionRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaStackoverflowQuestionEntityRepository;
+import edu.java.domain.repository.jpa.entity.ChatEntity;
+import edu.java.domain.repository.jpa.entity.LinkEntity;
+import edu.java.domain.repository.jpa.entity.StackoverflowQuestionEntity;
 import edu.java.scrapper.IntegrationTest;
 import jakarta.persistence.EntityManager;
 import java.time.OffsetDateTime;
@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class JpaQuestionRepositoryTest extends IntegrationTest {
+public class JpaStackoverflowStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
 
     @Autowired
-    private JpaQuestionRepository repository;
+    private JpaStackoverflowQuestionEntityRepository repository;
     @Autowired
-    private JpaLinksRepository jpaLinksRepository;
+    private JpaLinkEntityRepository jpaLinkEntityRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -31,7 +31,6 @@ public class JpaQuestionRepositoryTest extends IntegrationTest {
     @Transactional
     void testUpdateAnswerCount() {
         // Arrange
-
         LinkEntity link = new LinkEntity(
             new ChatEntity(),
             UUID.randomUUID(),
@@ -39,15 +38,15 @@ public class JpaQuestionRepositoryTest extends IntegrationTest {
             OffsetDateTime.now(),
             OffsetDateTime.now()
         );
-        jpaLinksRepository.save(link);
-        repository.save(new QuestionEntity(123, link, 0));
+        jpaLinkEntityRepository.save(link);
+        repository.save(new StackoverflowQuestionEntity(link, 0));
         entityManager.clear();
         // Act
         Integer newAnswerCount = 5;
         repository.updateAnswerCount(link.getLinkId(), newAnswerCount);
 
         // Assert
-        QuestionEntity updatedQuestion = repository.findByLink(link);
+        StackoverflowQuestionEntity updatedQuestion = repository.findByLink(link);
         assertThat(updatedQuestion.getAnswerCount()).isEqualTo(newAnswerCount);
     }
 }

@@ -27,7 +27,7 @@ public class GithubUpdateChecker implements UpdateChecker {
     @Override
     public int processUrlUpdates(LinkModel linkModel, int updateCount) {
         var repository = githubClient.fetchRepository(URI.create(linkModel.link())).block();
-        processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repository).updatedAt());
+        processLastUpdate(linkModel, updateCount, Objects.requireNonNull(repository).pushedAt());
         processSubscriberCount(linkModel, repository.subscribersCount());
         return updateCount;
     }

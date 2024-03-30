@@ -1,7 +1,6 @@
 package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.ChatRepository;
-import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.jdbc.mapper.ChatMapper;
 import edu.java.model.ChatModel;
 import java.time.OffsetDateTime;

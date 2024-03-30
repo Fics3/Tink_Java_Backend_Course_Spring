@@ -1,4 +1,4 @@
-package edu.java.domain.entity;
+package edu.java.domain.repository.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

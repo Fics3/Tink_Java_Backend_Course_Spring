@@ -1,8 +1,8 @@
 package edu.java.scrapper.repository.jpa;
 
-import edu.java.domain.entity.ChatEntity;
-import edu.java.domain.entity.LinkEntity;
-import edu.java.domain.repository.jpa.JpaLinksRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
+import edu.java.domain.repository.jpa.entity.ChatEntity;
+import edu.java.domain.repository.jpa.entity.LinkEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -17,12 +17,12 @@ import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class JpaLinksRepositoryTest {
+class JpaLinkEntityRepositoryTest {
 
     @Autowired
     EntityManager entityManager;
     @Autowired
-    private JpaLinksRepository repository;
+    private JpaLinkEntityRepository repository;
 
     @Test
     @Rollback

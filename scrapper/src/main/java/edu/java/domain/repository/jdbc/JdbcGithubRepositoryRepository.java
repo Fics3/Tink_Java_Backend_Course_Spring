@@ -38,4 +38,19 @@ public class JdbcGithubRepositoryRepository implements GithubRepositoryRepositor
         String sql = "UPDATE repositories set subscribers_count = ? where link_id = ?";
         jdbcTemplate.update(sql, subscribersCount, linkId);
     }
+
+    @Override
+    public void deleteRepository(Long tgChatId, String url) {
+        String sql = "SELECT links.link_id "
+            + "FROM links "
+            + "JOIN chat_link_relation ON links.link_id = chat_link_relation.link_id "
+            + "WHERE chat_link_relation.chat_id = ? AND links.link = ?";
+
+        UUID linkId = jdbcTemplate.queryForObject(sql, UUID.class, tgChatId, url);
+
+        String sqlDelete = "DELETE FROM repositories where link_id = ?";
+
+        jdbcTemplate.update(sqlDelete, linkId);
+    }
+
 }

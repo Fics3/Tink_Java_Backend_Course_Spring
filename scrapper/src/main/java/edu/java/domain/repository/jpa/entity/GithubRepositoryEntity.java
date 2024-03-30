@@ -1,6 +1,5 @@
-package edu.java.domain.entity;
+package edu.java.domain.repository.jpa.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,24 +13,23 @@ import lombok.Getter;
 @Entity
 @Getter
 @Table(name = "repositories")
-public class RepositoryEntity {
+public class GithubRepositoryEntity {
     @Id
     @Column(name = "repository_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer repositoryId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "link_id", referencedColumnName = "link_id")
     private LinkEntity link;
 
     private Integer subscribersCount;
 
-    public RepositoryEntity(Integer repositoryId, LinkEntity link, Integer subscribersCount) {
-        this.repositoryId = repositoryId;
+    public GithubRepositoryEntity(LinkEntity link, Integer subscribersCount) {
         this.link = link;
         this.subscribersCount = subscribersCount;
     }
 
-    public RepositoryEntity() {
+    public GithubRepositoryEntity() {
     }
 }

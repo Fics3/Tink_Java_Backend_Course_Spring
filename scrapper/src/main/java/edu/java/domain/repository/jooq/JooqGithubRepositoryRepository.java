@@ -7,6 +7,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
+import static edu.java.domain.jooq.Tables.LINKS;
 import static edu.java.domain.jooq.Tables.REPOSITORIES;
 
 @RequiredArgsConstructor
@@ -35,6 +37,20 @@ public class JooqGithubRepositoryRepository implements GithubRepositoryRepositor
     public void updateSubscribersCount(UUID linkId, Integer subscribersCount) {
         dslContext.update(REPOSITORIES)
             .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
+            .where(REPOSITORIES.LINK_ID.eq(linkId))
+            .execute();
+    }
+
+    @Override
+    public void deleteRepository(Long tgChatId, String url) {
+        UUID linkId = dslContext.select(LINKS.LINK_ID)
+            .from(CHAT_LINK_RELATION.join(LINKS)
+                .on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID)))
+            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId)
+                .and(LINKS.LINK.eq(url)))
+            .fetchOneInto(UUID.class);
+
+        dslContext.deleteFrom(REPOSITORIES)
             .where(REPOSITORIES.LINK_ID.eq(linkId))
             .execute();
     }

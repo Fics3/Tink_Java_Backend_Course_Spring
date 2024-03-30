@@ -21,11 +21,10 @@ public class GithubClient {
     public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
         try {
-            String apiUrl = String.format(applicationConfig.githubProperties().url(), urlSplit[1], urlSplit[2]);
             String owner = urlSplit[1];
             String repo = urlSplit[2];
 
-            String apiUrl = String.format(applicationConfig.githubProperties().repos(), owner, repo);
+            String apiUrl = String.format(applicationConfig.githubProperties().apiUrl(), owner, repo);
 
             return githubWebClient
                 .get()

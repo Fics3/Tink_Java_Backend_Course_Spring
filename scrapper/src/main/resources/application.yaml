@@ -29,7 +29,7 @@ app:
     repos: /repos/%s/%s
   bot-properties:
     url: http://localhost:8090
-  database-access-type: jooq
+  database-access-type: jpa
 
 spring:
   application:

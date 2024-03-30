@@ -5,7 +5,6 @@ import edu.java.bot.service.formatter.MessageFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.dto.LinkUpdateRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/updates")
 @RequiredArgsConstructor
 public class WebServerController {
+
+    private final TelegramBot telegramBot;
+    private final MessageFormatter markdownMessageFormatter;
+
     @PostMapping
     public String processUpdate(@RequestBody LinkUpdateRequest linkUpdateRequest) {
 

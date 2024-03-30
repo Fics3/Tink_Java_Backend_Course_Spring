@@ -1,8 +1,8 @@
 package edu.java.scrapper.repository.jooq;
 
 import edu.java.domain.jooq.tables.records.QuestionsRecord;
-import edu.java.domain.repository.jooq.JooqQuestionRepository;
-import edu.java.model.QuestionModel;
+import edu.java.domain.repository.jooq.JooqStackoverflowQuestionRepository;
+import edu.java.model.StackoverflowQuestionModel;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JooqQuestionRepositoryTest extends IntegrationTest {
 
     @Autowired
-    private JooqQuestionRepository jooqQuestionRepository;
+    private JooqStackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
 
     @Autowired
     private DSLContext dslContext;
@@ -49,7 +49,7 @@ class JooqQuestionRepositoryTest extends IntegrationTest {
             .execute();
 
         // Act
-        QuestionModel questionModel = jooqQuestionRepository.getQuestionByLinkId(linkId);
+        StackoverflowQuestionModel questionModel = jooqStackoverflowQuestionRepository.getQuestionByLinkId(linkId);
 
         // Assert
         assertThat(questionModel).isNotNull();
@@ -79,7 +79,7 @@ class JooqQuestionRepositoryTest extends IntegrationTest {
 
         // Act
         int updatedAnswerCount = 10;
-        jooqQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
+        jooqStackoverflowQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
 
         // Assert
         Result<QuestionsRecord> result = dslContext.selectFrom(QUESTIONS)

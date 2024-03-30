@@ -14,18 +14,18 @@ public class StackoverflowLinkAdder implements LinkAdder {
 
     private final ApplicationConfig applicationConfig;
     private final StackoverflowClient stackoverflowClient;
-    private final LinksRepository jooqLinksRepository;
-    private final StackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
+    private final LinksRepository linksRepository;
+    private final StackoverflowQuestionRepository stackoverflowQuestionRepository;
 
     @Override
     public LinkModel addLink(URI url, Long tgChatId) {
         var question = stackoverflowClient.fetchQuestion(url).block();
-        var link = jooqLinksRepository.addLink(
+        var link = linksRepository.addLink(
             tgChatId,
             url.toString(),
             Objects.requireNonNull(question).items().getFirst().lastActivityDate()
         );
-        return jooqStackoverflowQuestionRepository.addQuestion(
+        return stackoverflowQuestionRepository.addQuestion(
             link,
             question.items().getFirst().answerCount()
         );

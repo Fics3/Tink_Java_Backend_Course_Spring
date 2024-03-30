@@ -10,4 +10,6 @@ public interface GithubRepositoryRepository {
     LinkModel addRepository(LinkModel linkModel, Integer subscribersCount);
 
     void updateSubscribersCount(UUID linkId, Integer subscribersCount);
+
+    void deleteRepository(Long tgChatId, String url);
 }

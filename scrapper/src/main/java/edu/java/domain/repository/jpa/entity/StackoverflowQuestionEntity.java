@@ -1,4 +1,4 @@
-package edu.java.domain.entity;
+package edu.java.domain.repository.jpa.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,34 +6,33 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Entity
 @Getter
 @Table(name = "questions")
-public class QuestionEntity {
+public class StackoverflowQuestionEntity {
 
     @Id
     @Column(name = "question_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer questionId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "link_id")
     private LinkEntity link;
 
     @Column(name = "answer_count", nullable = false)
     private Integer answerCount;
 
-    public QuestionEntity(Integer questionId, LinkEntity link, Integer answerCount) {
-        this.questionId = questionId;
+    public StackoverflowQuestionEntity(LinkEntity link, Integer answerCount) {
         this.link = link;
         this.answerCount = answerCount;
     }
 
-    public QuestionEntity() {
+    public StackoverflowQuestionEntity() {
 
     }
 }

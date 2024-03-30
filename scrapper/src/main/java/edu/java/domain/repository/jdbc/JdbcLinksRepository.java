@@ -1,7 +1,6 @@
 package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.LinksRepository;
-import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.jdbc.mapper.LinkMapper;
 import edu.java.exception.BadRequestScrapperException;
 import edu.java.model.LinkModel;
@@ -46,14 +45,6 @@ public class JdbcLinksRepository implements LinksRepository {
         // Удаляем связи ссылки с чатами
         String sqlDeleteChatLinkRelation = "DELETE FROM chat_link_relation WHERE link_id = ?";
         jdbcTemplate.update(sqlDeleteChatLinkRelation, linkId);
-
-        // Удаляем ссылки из таблицы questions
-        String sqlDeleteQuestions = "DELETE FROM questions WHERE link_id = ?";
-        jdbcTemplate.update(sqlDeleteQuestions, linkId);
-
-        // Удаляем ссылки из таблицы repository
-        String sqlDeleteRepository = "DELETE FROM repositories WHERE link_id = ?";
-        jdbcTemplate.update(sqlDeleteRepository, linkId);
 
         // Удаляем саму ссылку из таблицы links
         String sqlDeleteLink = "DELETE FROM links WHERE link_id = ?";

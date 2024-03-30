@@ -1,8 +1,8 @@
 package edu.java.scrapper.repository.jooq;
 
 import edu.java.domain.jooq.tables.records.RepositoriesRecord;
-import edu.java.domain.repository.jooq.JooqRepositoryRepository;
-import edu.java.model.RepositoryModel;
+import edu.java.domain.repository.jooq.JooqGithubRepositoryRepository;
+import edu.java.model.GithubRepositoryModel;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JooqRepositoryRepositoryTest extends IntegrationTest {
 
     @Autowired
-    private JooqRepositoryRepository jooqRepositoryRepository;
+    private JooqGithubRepositoryRepository jooqGithubRepositoryRepository;
 
     @Autowired
     private DSLContext dslContext;
@@ -48,7 +48,7 @@ class JooqRepositoryRepositoryTest extends IntegrationTest {
             .execute();
 
         // Act
-        RepositoryModel repositoryModel = jooqRepositoryRepository.getRepositoryByLinkId(linkId);
+        GithubRepositoryModel repositoryModel = jooqGithubRepositoryRepository.getRepositoryByLinkId(linkId);
 
         // Assert
         assertThat(repositoryModel).isNotNull();
@@ -78,7 +78,7 @@ class JooqRepositoryRepositoryTest extends IntegrationTest {
 
         // Act
         int updatedSubscribersCount = 150;
-        jooqRepositoryRepository.updateSubscribersCount(linkId, updatedSubscribersCount);
+        jooqGithubRepositoryRepository.updateSubscribersCount(linkId, updatedSubscribersCount);
 
         // Assert
         Result<RepositoriesRecord> result = dslContext.selectFrom(REPOSITORIES)

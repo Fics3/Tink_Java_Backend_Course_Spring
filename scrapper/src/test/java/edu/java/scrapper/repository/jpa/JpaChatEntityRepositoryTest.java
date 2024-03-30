@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository.jpa;
 
-import edu.java.domain.entity.ChatEntity;
-import edu.java.domain.repository.jpa.JpaChatRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaChatEntityRepository;
+import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.scrapper.IntegrationTest;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-class JpaChatRepositoryTest extends IntegrationTest {
+class JpaChatEntityRepositoryTest extends IntegrationTest {
 
     @Autowired
-    private JpaChatRepository chatRepository;
+    private JpaChatEntityRepository chatRepository;
 
     @Test
     @Rollback

@@ -38,4 +38,18 @@ public class JdbcStackoverflowQuestionRepository implements StackoverflowQuestio
         String sql = "UPDATE questions set answer_count = ? where link_id = ?";
         jdbcTemplate.update(sql, integer, linkId);
     }
+
+    @Override
+    public void deleteQuestion(Long tgChatId, String url) {
+        String sql = "SELECT links.link_id "
+            + "FROM links "
+            + "JOIN chat_link_relation ON links.link_id = chat_link_relation.link_id "
+            + "WHERE chat_link_relation.chat_id = ? AND links.link = ?";
+
+        UUID linkId = jdbcTemplate.queryForObject(sql, UUID.class, tgChatId, url);
+
+        String sqlDelete = "DELETE FROM questions where link_id = ?";
+
+        jdbcTemplate.update(sqlDelete, linkId);
+    }
 }

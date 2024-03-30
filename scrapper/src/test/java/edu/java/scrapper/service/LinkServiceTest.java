@@ -1,7 +1,9 @@
 package edu.java.scrapper.service;
 
 import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
+import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.model.LinkModel;
 import edu.java.service.LinkService;
@@ -39,6 +41,10 @@ public class LinkServiceTest {
     private LinkAdder linkAdder;
     @Mock
     private Map<String, LinkAdder> linkAdders;
+    @Mock
+    private GithubRepositoryRepository githubRepositoryRepository;
+    @Mock
+    private StackoverflowQuestionRepository stackoverflowQuestionRepository;
     @InjectMocks
     private LinkService linkService;
 
@@ -47,7 +53,8 @@ public class LinkServiceTest {
         MockitoAnnotations.openMocks(this);
         linkAdders = new HashMap<>();
         linkAdders.put("test.com", linkAdder);
-        linkService = new LinkService(linkAdders, linksRepository);
+        linkService =
+            new LinkService(linkAdders, linksRepository, githubRepositoryRepository, stackoverflowQuestionRepository);
     }
 
     @Test
@@ -79,9 +86,7 @@ public class LinkServiceTest {
         when(linksRepository.existsLinkForChat(tgChatId, url.toString())).thenReturn(true);
 
         // Act & Assert
-        assertThrows(DuplicateLinkScrapperException.class, () -> {
-            linkService.add(tgChatId, url);
-        });
+        assertThrows(DuplicateLinkScrapperException.class, () -> linkService.add(tgChatId, url));
 
         // Verify that addLink method is not called
         verify(linksRepository, never()).addLink(anyLong(), anyString(), any());
