@@ -70,7 +70,7 @@ public class GithubLinkAdderTest {
         when(githubRepositoryRepository.addRepository(linkModel, subscribersCount)).thenReturn(linkModel);
 
         // Act
-        LinkModel addedLink = linkAdder.addLink(url, tgChatId);
+        linkAdder.addLink(url, tgChatId);
 
         // Assert
         verify(jooqLinksRepository, times(1)).addLink(

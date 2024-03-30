@@ -1,7 +1,12 @@
 package edu.java.scrapper.repository.jpa;
 
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaStackoverflowQuestionEntityRepositoryTest.java
 import edu.java.domain.repository.jpa.entitiesRepository.JpaLinkEntityRepository;
 import edu.java.domain.repository.jpa.entitiesRepository.JpaStackoverflowQuestionEntityRepository;
+========
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaStackoverflowQuestionEntityRepository;
+>>>>>>>> ee69c78 (hw7 done):scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaStackoverflowStackoverflowQuestionEntityRepositoryTest.java
 import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.domain.repository.jpa.entity.LinkEntity;
 import edu.java.domain.repository.jpa.entity.StackoverflowQuestionEntity;
@@ -16,8 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaStackoverflowQuestionEntityRepositoryTest.java
 @Transactional
 public class JpaStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
+========
+public class JpaStackoverflowStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
+>>>>>>>> ee69c78 (hw7 done):scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaStackoverflowStackoverflowQuestionEntityRepositoryTest.java
 
     @Autowired
     private JpaStackoverflowQuestionEntityRepository repository;

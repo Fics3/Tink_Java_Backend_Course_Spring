@@ -5,6 +5,7 @@ import edu.java.controller.LinksController;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.NotFoundScrapperException;
 import edu.java.rateLimit.RateLimitService;
+import edu.java.service.LinkService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;

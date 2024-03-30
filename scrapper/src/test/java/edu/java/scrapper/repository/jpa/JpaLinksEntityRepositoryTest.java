@@ -1,6 +1,10 @@
 package edu.java.scrapper.repository.jpa;
 
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaLinksEntityRepositoryTest.java
 import edu.java.domain.repository.jpa.entitiesRepository.JpaLinkEntityRepository;
+========
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
+>>>>>>>> ee69c78 (hw7 done):scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaLinkEntityRepositoryTest.java
 import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.domain.repository.jpa.entity.LinkEntity;
 import jakarta.persistence.EntityManager;
@@ -16,8 +20,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaLinksEntityRepositoryTest.java
 @Transactional
 class JpaLinksEntityRepositoryTest {
+========
+class JpaLinkEntityRepositoryTest {
+>>>>>>>> ee69c78 (hw7 done):scrapper/src/test/java/edu/java/scrapper/repository/jpa/JpaLinkEntityRepositoryTest.java
 
     @Autowired
     EntityManager entityManager;
