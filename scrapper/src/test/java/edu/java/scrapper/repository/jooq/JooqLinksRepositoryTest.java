@@ -71,7 +71,10 @@ class JooqLinksRepositoryTest extends IntegrationTest {
         OffsetDateTime lastUpdate = OffsetDateTime.now();
 
         // Act & Assert
-        BadRequestScrapperException exception = assertThrows(BadRequestScrapperException.class, () -> jooqLinksRepository.addLink(tgChatId, link, lastUpdate));
+        BadRequestScrapperException exception = assertThrows(
+            BadRequestScrapperException.class,
+            () -> jooqLinksRepository.addLink(tgChatId, link, lastUpdate)
+        );
         assertThat(exception).isNotNull();
         assertThat(exception.getMessage()).isEqualTo("Пользователь не зарегестрирован");
     }

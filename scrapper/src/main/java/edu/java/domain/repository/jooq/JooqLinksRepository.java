@@ -13,8 +13,6 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
 import static edu.java.domain.jooq.Tables.LINKS;
-import static edu.java.domain.jooq.Tables.QUESTIONS;
-import static edu.java.domain.jooq.Tables.REPOSITORIES;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,14 +58,6 @@ public class JooqLinksRepository implements LinksRepository {
                 .where(CHAT_LINK_RELATION.LINK_ID.eq(linkId))
                 .execute();
 
-            dsl.deleteFrom(QUESTIONS)
-                .where(QUESTIONS.LINK_ID.eq(linkId))
-                .execute();
-
-            dsl.deleteFrom(REPOSITORIES)
-                .where(REPOSITORIES.LINK_ID.eq(linkId))
-                .execute();
-
             dsl.deleteFrom(LINKS)
                 .where(LINKS.LINK_ID.eq(linkId))
                 .execute();
@@ -88,6 +78,15 @@ public class JooqLinksRepository implements LinksRepository {
                 linksRecord.getLastUpdate(),
                 linksRecord.getLastCheck()
             ));
+    }
+
+    @Override
+    public List<LinkModel> findLinksByChatId(Long tgChatId) {
+        return dsl.select(LINKS.LINK_ID, LINKS.LINK, LINKS.LAST_UPDATE, LINKS.LAST_CHECK)
+            .from(CHAT_LINK_RELATION)
+            .join(LINKS).on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID))
+            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId))
+            .fetchInto(LinkModel.class);
     }
 
     @Override
@@ -124,44 +123,11 @@ public class JooqLinksRepository implements LinksRepository {
     }
 
     @Override
-    public List<LinkModel> findLinksByChatId(Long tgChatId) {
-        return dsl.select(LINKS.LINK_ID, LINKS.LINK, LINKS.LAST_UPDATE, LINKS.LAST_CHECK)
-            .from(CHAT_LINK_RELATION)
-            .join(LINKS).on(CHAT_LINK_RELATION.LINK_ID.eq(LINKS.LINK_ID))
-            .where(CHAT_LINK_RELATION.CHAT_ID.eq(tgChatId))
-            .fetchInto(LinkModel.class);
-    }
-
-    @Override
     public void updateChecked(UUID linkId, OffsetDateTime checkedAt) {
         dsl.update(LINKS)
             .set(LINKS.LAST_CHECK, checkedAt)
             .where(LINKS.LINK_ID.eq(linkId))
             .execute();
-    }
-
-    @Override
-    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(QUESTIONS)
-            .set(QUESTIONS.LINK_ID, link.linkId())
-            .set(QUESTIONS.ANSWER_COUNT, answerCount)
-            .execute();
-
-        return link;
-    }
-
-    @Override
-    public LinkModel addRepository(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer subscribersCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        dsl.insertInto(REPOSITORIES)
-            .set(REPOSITORIES.LINK_ID, link.linkId())
-            .set(REPOSITORIES.SUBSCRIBERS_COUNT, subscribersCount)
-            .execute();
-
-        return link;
     }
 
 }

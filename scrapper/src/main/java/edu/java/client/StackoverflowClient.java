@@ -20,7 +20,7 @@ public class StackoverflowClient {
 
         Integer questionId = Integer.parseInt(urlSplit[1].split("/")[0]);
 
-        String apiUrl = String.format(applicationConfig.stackoverflowProperties().url(), questionId);
+        String apiUrl = String.format(applicationConfig.stackoverflowProperties().apiUrl(), questionId);
 
         return stackoverflowWebClient
             .get()

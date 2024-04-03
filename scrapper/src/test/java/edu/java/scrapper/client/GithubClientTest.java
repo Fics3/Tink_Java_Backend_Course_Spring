@@ -36,8 +36,9 @@ public class GithubClientTest {
         );
 
         when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
-            "/repos/%s/%s",
-            "https://api.github.com"
+            "github.com",
+            "https://api.github.com",
+            "/repos/%s/%s"
         ));
 
         when(githubWebClient.fetchRepository(any(URI.class)))

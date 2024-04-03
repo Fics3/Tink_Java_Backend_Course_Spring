@@ -1,37 +1,37 @@
 package edu.java.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@RequiredArgsConstructor
 public class ClientConfig {
 
+    private final ApplicationConfig applicationConfig;
+
     @Bean
-    public WebClient githubWebClient(@Value("${app.github-properties.base-url}") String githubUrl) {
+    public WebClient githubWebClient() {
         return WebClient
             .builder()
-            .baseUrl(githubUrl)
+            .baseUrl(applicationConfig.githubProperties().apiUrl())
             .build();
     }
 
     @Bean
-    public WebClient stackoverflowWebClient(
-        @Value("${app.stackoverflow-properties.base-url}") String stackoverflowUrl
-    ) {
+    public WebClient stackoverflowWebClient() {
         return WebClient
             .builder()
-            .baseUrl(stackoverflowUrl)
+            .baseUrl(applicationConfig.stackoverflowProperties().apiUrl())
             .build();
     }
 
     @Bean
-    public WebClient botWebClient(@Value("${app.bot-properties.url}") String botUrl) {
+    public WebClient botWebClient() {
         return WebClient
             .builder()
-            .baseUrl(botUrl)
+            .baseUrl(applicationConfig.botProperties().url())
             .build();
     }
 }
-

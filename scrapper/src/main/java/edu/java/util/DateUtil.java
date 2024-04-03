@@ -6,12 +6,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.TimeZone;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public final class DateUtil {
-
-    private DateUtil() {
-
-    }
 
     public static OffsetDateTime getTimestampWithTimezone(Timestamp rs) {
 
