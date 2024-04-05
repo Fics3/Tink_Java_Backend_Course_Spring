@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository.jpa;
 
-import edu.java.domain.repository.jpa.entitiesRepository.JpaGithubRepositoryEntityRepository;
-import edu.java.domain.repository.jpa.entitiesRepository.JpaLinkEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaGithubRepositoryEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
 import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.domain.repository.jpa.entity.GithubRepositoryEntity;
 import edu.java.domain.repository.jpa.entity.LinkEntity;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Transactional
-public class JpaGithubRepositoryEntityGithubRepositoryTest extends IntegrationTest {
+public class JpaGithubRepositoryEntityRepositoryTest extends IntegrationTest {
 
     @Autowired
     private JpaGithubRepositoryEntityRepository jpaGithubRepositoryEntityRepository;

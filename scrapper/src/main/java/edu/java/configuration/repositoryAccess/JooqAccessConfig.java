@@ -1,6 +1,5 @@
 package edu.java.configuration.repositoryAccess;
 
-import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
 import edu.java.configuration.ClientConfig;
@@ -13,6 +12,7 @@ import edu.java.domain.repository.jooq.JooqStackoverflowQuestionRepository;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdater;
+import edu.java.service.NotificationService;
 import edu.java.service.linkAdder.GithubLinkAdder;
 import edu.java.service.linkAdder.LinkAdder;
 import edu.java.service.linkAdder.StackoverflowLinkAdder;
@@ -68,7 +68,7 @@ public class JooqAccessConfig {
     public GithubUpdateChecker githubUpdateChecker(
         ClientConfig clientConfig,
         GithubClient githubClient,
-        BotClient botClient,
+        NotificationService notificationService,
         JooqChatRepository jooqChatRepository,
         JooqLinksRepository jooqLinksRepository,
         GithubRepositoryRepository jooqGithubRepositoryRepository
@@ -76,7 +76,7 @@ public class JooqAccessConfig {
         return new GithubUpdateChecker(
             clientConfig,
             githubClient,
-            botClient,
+            notificationService,
             jooqChatRepository,
             jooqLinksRepository,
             jooqGithubRepositoryRepository
@@ -87,7 +87,7 @@ public class JooqAccessConfig {
     public StackoverflowUpdateChecker stackoverflowUpdateChecker(
         ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
-        BotClient botClient,
+        NotificationService notificationService,
         JooqChatRepository jooqChatRepository,
         JooqLinksRepository jooqLinksRepository,
         StackoverflowQuestionRepository jooqStackoverflowQuestionRepository
@@ -95,7 +95,7 @@ public class JooqAccessConfig {
         return new StackoverflowUpdateChecker(
             clientConfig,
             stackoverflowClient,
-            botClient,
+            notificationService,
             jooqChatRepository,
             jooqLinksRepository,
             jooqStackoverflowQuestionRepository

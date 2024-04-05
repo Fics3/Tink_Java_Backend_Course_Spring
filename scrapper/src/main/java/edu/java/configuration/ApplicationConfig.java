@@ -16,7 +16,11 @@ public record ApplicationConfig(
     Scheduler scheduler,
     @NestedConfigurationProperty
     @NotNull
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    @NestedConfigurationProperty
+    @NotNull
+    KafkaProperties kafkaProperties,
+    boolean isUseQueue
 ) {
     public enum AccessType {
         JDBC,
@@ -27,4 +31,8 @@ public record ApplicationConfig(
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
+    public record KafkaProperties(Topic topic) {
+        public record Topic(String name, Integer partitionsNum, Integer replicasNum) {
+        }
+    }
 }

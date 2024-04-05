@@ -1,5 +1,14 @@
 app:
   telegram-token: ${TELEGRAM_API_KEY}
+  kafka-properties:
+    topic:
+      name: topic1
+      partitions-num: 10
+      replicas-num: 1
+    dlq-topic:
+      name: topic_dlq
+      partitions-num: 10
+      replicas-num: 1
 
 client:
   scrapper-properties:
@@ -44,6 +53,10 @@ bucket4j:
               unit: seconds
               refill-capacity: 50
               refill-speed: greedy
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    bootstrapServers: localhost:9092
 
 server:
   port: 8090

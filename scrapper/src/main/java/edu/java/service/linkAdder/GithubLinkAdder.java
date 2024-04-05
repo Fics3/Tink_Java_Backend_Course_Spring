@@ -9,6 +9,7 @@ import edu.java.model.LinkModel;
 import java.net.URI;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class GithubLinkAdder implements LinkAdder {
@@ -19,6 +20,7 @@ public class GithubLinkAdder implements LinkAdder {
     private final GithubRepositoryRepository githubRepositoryRepository;
 
     @Override
+    @Transactional
     public LinkModel addLink(URI url, Long tgChatId) {
         var repository = githubClient.fetchRepository(url).block();
         if (repository != null && repository.name() == null) {

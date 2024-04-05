@@ -4,7 +4,14 @@ app:
     interval: 10s
     force-check-delay: 3600s
 
+  kafka-properties:
+    topic:
+      name: topic1
+      partitions-num: 10
+      replicas-num: 1
+
   database-access-type: jpa
+  is-use-queue: true
 
 
 client:
@@ -47,7 +54,6 @@ client:
         - 502
         - 503
         - 404
-
 spring:
   application:
     name: scrapper
@@ -58,6 +64,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    bootstrapServers: localhost:9092
+
   cache:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider

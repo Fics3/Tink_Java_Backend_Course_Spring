@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository.jpa;
 
-import edu.java.domain.repository.jpa.entitiesRepository.JpaLinkEntityRepository;
-import edu.java.domain.repository.jpa.entitiesRepository.JpaStackoverflowQuestionEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaLinkEntityRepository;
+import edu.java.domain.repository.jpa.entitesRepository.JpaStackoverflowQuestionEntityRepository;
 import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.domain.repository.jpa.entity.LinkEntity;
 import edu.java.domain.repository.jpa.entity.StackoverflowQuestionEntity;

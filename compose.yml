@@ -29,6 +29,53 @@ services:
     networks:
       - backend
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+    volumes:
+      - ./scrapper/src/main/resources/docker/zookeeper_jaas_config.conf:/etc/zookeeper/config/zookeeper_jaas.conf
+
+  kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://127.0.0.1:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./scrapper/src/main/resources/docker/kafka_jaas_config.conf:/etc/kafka/kafka_config_jaas.conf
+
+
+  schema-registry:
+    container_name: schema-registry
+    image: confluentinc/cp-schema-registry:7.4.4
+    restart: always
+    depends_on:
+      - zookeeper
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://:9092'
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    ports:
+      - "28081:8081"
+
 volumes:
   postgresql: { }
 
