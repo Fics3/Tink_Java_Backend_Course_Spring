@@ -8,6 +8,7 @@ import edu.java.model.LinkModel;
 import java.net.URI;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class StackoverflowLinkAdder implements LinkAdder {
@@ -18,6 +19,7 @@ public class StackoverflowLinkAdder implements LinkAdder {
     private final StackoverflowQuestionRepository stackoverflowQuestionRepository;
 
     @Override
+    @Transactional
     public LinkModel addLink(URI url, Long tgChatId) {
         var question = stackoverflowClient.fetchQuestion(url).block();
         var link = linksRepository.addLink(

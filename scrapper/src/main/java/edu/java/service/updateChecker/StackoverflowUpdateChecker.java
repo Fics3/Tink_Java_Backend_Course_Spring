@@ -1,29 +1,31 @@
 package edu.java.service.updateChecker;
 
-import edu.java.client.BotClient;
 import edu.java.client.StackoverflowClient;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.model.LinkModel;
+import edu.java.service.NotificationService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class StackoverflowUpdateChecker implements UpdateChecker {
     private final ApplicationConfig applicationConfig;
     private final StackoverflowClient stackoverflowClient;
-    private final BotClient botClient;
-    private final ChatRepository jooqChatRepository;
-    private final LinksRepository jooqLinksRepository;
-    private final StackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
+    private final NotificationService notificationService;
+    private final ChatRepository chatRepository;
+    private final LinksRepository linksRepository;
+    private final StackoverflowQuestionRepository stackoverflowQuestionRepository;
 
     @Override
+    @Transactional
     public int processUrlUpdates(LinkModel linkModel, int updateCount) {
         var question = stackoverflowClient.fetchQuestion(URI.create(linkModel.link())).block();
         processLastUpdate(
@@ -39,29 +41,29 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         var url = URI.create(linkModel.link());
         int tmpCount = updateCount;
         if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            notificationService.sendNotification(formLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Ссылка обновлена " + linkModel.link()
-            )).subscribe();
+            ));
             tmpCount++;
-            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
         }
     }
 
     private void processAnswerCount(LinkModel linkModel, Integer answerCount) {
         var url = URI.create(linkModel.link());
-        var questionModel = jooqStackoverflowQuestionRepository.getQuestionByLinkId(linkModel.linkId());
+        var questionModel = stackoverflowQuestionRepository.getQuestionByLinkId(linkModel.linkId());
         if (questionModel == null) {
             return;
         }
         var questionCount = questionModel.answerCount();
         if (answerCount != null && !questionCount.equals(answerCount)) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            notificationService.sendNotification(formLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Количество ответов обновилось: " + answerCount
-            )).subscribe();
+            ));
         }
     }
 
@@ -70,7 +72,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-            jooqChatRepository.findChatsByLinkId(linkId)
+            chatRepository.findChatsByLinkId(linkId)
         );
     }
 

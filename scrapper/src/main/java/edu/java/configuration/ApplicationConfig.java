@@ -32,7 +32,11 @@ public record ApplicationConfig(
     RetryProperties retryProperties,
     @NestedConfigurationProperty
     @NotNull
-    RateLimitProperty rateLimitProperty
+    RateLimitProperty rateLimitProperty,
+    @NestedConfigurationProperty
+    @NotNull
+    KafkaProperties kafkaProperties,
+    boolean isUseQueue
 ) {
     public enum AccessType {
         JDBC,
@@ -67,4 +71,8 @@ public record ApplicationConfig(
     public record RateLimitProperty(Integer limit, Integer refillLimit, Duration delayRefill) {
     }
 
+    public record KafkaProperties(Topic topic) {
+        public record Topic(String name, Integer partitionsNum, Integer replicasNum) {
+        }
+    }
 }

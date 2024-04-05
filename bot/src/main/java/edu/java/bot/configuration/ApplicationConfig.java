@@ -23,7 +23,10 @@ public record ApplicationConfig(
     RetryProperties retryProperties,
     @NotNull
     @NestedConfigurationProperty
-    RateLimitProperty rateLimitProperty
+    RateLimitProperty rateLimitProperty,
+    @NotNull
+    @NestedConfigurationProperty
+    KafkaProperties kafkaProperties
 ) {
     public record ScrapperProperties(String chat, String links, String tgChatId, String url) {
     }
@@ -43,4 +46,11 @@ public record ApplicationConfig(
     public record RateLimitProperty(Integer limit, Integer refillLimit, Duration delayRefill) {
     }
 
+    public record KafkaProperties(Topic topic, DlqTopic dlqTopic) {
+        public record Topic(String name, Integer partitionsNum, Integer replicasNum) {
+        }
+
+        public record DlqTopic(String name, Integer partitionsNum, Integer replicasNum) {
+        }
+    }
 }

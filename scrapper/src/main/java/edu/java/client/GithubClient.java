@@ -24,7 +24,7 @@ public class GithubClient {
             String owner = urlSplit[1];
             String repo = urlSplit[2];
 
-            String apiUrl = String.format(applicationConfig.githubProperties().apiUrl(), owner, repo);
+            String apiUrl = String.format(applicationConfig.githubProperties().repos(), owner, repo);
 
             return githubWebClient
                 .get()

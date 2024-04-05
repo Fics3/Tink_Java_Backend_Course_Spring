@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class JpaStackoverflowStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
+public class JpaStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
 
     @Autowired
     private JpaStackoverflowQuestionEntityRepository repository;
