@@ -2,7 +2,6 @@ package edu.java.bot.client;
 
 import edu.java.bot.configuration.ApplicationConfig;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
@@ -13,10 +12,14 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Getter
-@RequiredArgsConstructor
 public class ScrapperClient {
     private final WebClient scrapperWebClient;
     private final ApplicationConfig applicationConfig;
+
+    public ScrapperClient(WebClient scrapperWebClient, ApplicationConfig applicationConfig) {
+        this.scrapperWebClient = scrapperWebClient;
+        this.applicationConfig = applicationConfig;
+    }
 
     public Mono<String> registerChat(Long chatId) {
         return scrapperWebClient

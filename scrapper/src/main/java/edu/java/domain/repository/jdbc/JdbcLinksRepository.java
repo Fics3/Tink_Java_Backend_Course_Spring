@@ -95,15 +95,4 @@ public class JdbcLinksRepository implements LinksRepository {
         String sql = "UPDATE links SET last_check = ? WHERE link_id = ?";
         jdbcTemplate.update(sql, checkedAt, linkId);
     }
-
-    public LinkModel addQuestion(Long tgChatId, String string, OffsetDateTime lastUpdate, Integer answerCount) {
-        var link = addLink(tgChatId, string, lastUpdate);
-
-        String sqlRelation = "INSERT INTO questions(link_id, answer_count)  VALUES (?, ?)";
-
-        jdbcTemplate.update(sqlRelation, link.linkId(), answerCount);
-
-        return link;
-    }
-
 }

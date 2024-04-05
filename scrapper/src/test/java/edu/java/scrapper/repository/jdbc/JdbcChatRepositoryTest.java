@@ -3,25 +3,17 @@ package edu.java.scrapper.repository.jdbc;
 import edu.java.domain.repository.jdbc.JdbcChatRepository;
 import edu.java.domain.repository.jdbc.mapper.ChatMapper;
 import edu.java.model.ChatModel;
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/JdbcChatRepositoryTest.java
-import edu.java.repository.jdbc.JdbcChatRepository;
-import edu.java.repository.mapper.ChatMapper;
-========
->>>>>>>> 5d3111d (hw5 bonus):scrapper/src/test/java/edu/java/scrapper/repository/jdbc/JdbcChatRepositoryTest.java
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/JdbcChatRepositoryTest.java
-@Transactional
-========
->>>>>>>> 5d3111d (hw5 bonus):scrapper/src/test/java/edu/java/scrapper/repository/jdbc/JdbcChatRepositoryTest.java
 public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcChatRepository jdbcChatRepository;
@@ -29,6 +21,8 @@ public class JdbcChatRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
+    @Transactional
+    @Rollback
     void addChatTest() {
         // Arrange
         Long chatId = 123456789L;
@@ -45,6 +39,8 @@ public class JdbcChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void removeChatTest() {
         // Arrange
         Long chatId = 123456789L;
@@ -60,6 +56,8 @@ public class JdbcChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void findAllChatsTest() {
         // Arrange&Act
         var chats = jdbcChatRepository.findAllChats();
