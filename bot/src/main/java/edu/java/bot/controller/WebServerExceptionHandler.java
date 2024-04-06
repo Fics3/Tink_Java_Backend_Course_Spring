@@ -1,12 +1,12 @@
 package edu.java.bot.controller;
 
+import edu.java.bot.exception.BadRequestBotException;
 import edu.java.bot.exception.BotException;
 import edu.java.bot.exception.InternalServerBotException;
 import edu.java.bot.exception.NotFoundBotException;
 import edu.java.bot.exception.RateLimitBotException;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.coyote.BadRequestException;
 import org.example.dto.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +23,7 @@ public class WebServerExceptionHandler {
 
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(BadRequestBotException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleBadRequestException(BotException e) {
         return buildErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST, e.getDescription(), e);
