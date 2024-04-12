@@ -1,7 +1,5 @@
-package edu.java.scrapper.client;
+package edu.java.bot.client;
 
-import edu.java.client.BotClient;
-import org.example.dto.LinkUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -10,27 +8,44 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-import static org.mockito.ArgumentMatchers.any;
 
-@WebFluxTest(BotClient.class)
-class BotClientTest {
+@WebFluxTest(ScrapperClient.class)
+class ScrapperClientTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
     @MockBean
-    private BotClient botWebClient;
+    private ScrapperClient scrapperClient;
 
     @Test
-    @DisplayName("Should return 404 when post")
+    @DisplayName("Should return code 404 when register chat")
     void registerChat_shouldReturnInternalServerError() {
         // Arrange
         long chatId = 123;
-        Mockito.when(botWebClient.sendUpdate(any(LinkUpdateRequest.class)))
+        Mockito.when(scrapperClient.registerChat(chatId))
             .thenReturn(Mono.error(new RuntimeException("Some error message")));
 
         // Act & Assert
         webTestClient.post()
-            .uri("/updates", chatId)
+            .uri("/tg-chat/{id}", chatId)
             .exchange()
             .expectStatus().is4xxClientError();
+    }
+
+    @Test
+    @DisplayName("Should return code 404 when delete chat")
+    void deleteChat_shouldReturnInternalServerError() {
+        // Arrange
+        long chatId = 123;
+        Mockito.when(scrapperClient.deleteChat(chatId))
+            .thenReturn(Mono.error(new RuntimeException("Some error message")));
+
+        // Act & Assert
+        webTestClient.delete()
+            .uri("/tg-chat/{id}", chatId)
+            .exchange()
+            .expectStatus().is4xxClientError();
+    }
+
 }
