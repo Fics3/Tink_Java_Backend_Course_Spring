@@ -9,6 +9,7 @@ import edu.java.service.ChatService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import io.micrometer.core.instrument.Counter;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ public class TelegramChatControllerTest {
 
     @MockBean
     private ChatService chatService;
+
+    @MockBean
+    private Counter messageCounter;
 
     @MockBean
     private RateLimitService rateLimitService;

@@ -9,6 +9,7 @@ import edu.java.service.LinkService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import io.micrometer.core.instrument.Counter;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -43,6 +44,9 @@ public class LinksControllerTest {
 
     @MockBean
     private LinkService jdbcLinkService;
+
+    @MockBean
+    private Counter messageCounter;
 
     @MockBean
     private RateLimitService rateLimitService;
