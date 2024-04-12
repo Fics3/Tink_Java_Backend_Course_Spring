@@ -33,4 +33,5 @@ class BotClientTest {
             .uri("/updates", chatId)
             .exchange()
             .expectStatus().is4xxClientError();
+    }
 }
