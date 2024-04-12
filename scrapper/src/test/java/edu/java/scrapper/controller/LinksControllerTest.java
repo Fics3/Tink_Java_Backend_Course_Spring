@@ -5,6 +5,7 @@ import edu.java.controller.LinksController;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.NotFoundScrapperException;
 import edu.java.service.LinkService;
+import io.micrometer.core.instrument.Counter;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -37,6 +38,9 @@ public class LinksControllerTest {
 
     @MockBean
     private LinkService jdbcLinkService;
+
+    @MockBean
+    private Counter messageCounter;
 
     @Test
     void testGetLinks() throws Exception {

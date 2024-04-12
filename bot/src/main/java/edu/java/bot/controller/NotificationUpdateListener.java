@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.service.NotificationService;
+import io.micrometer.core.instrument.Counter;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class NotificationUpdateListener implements UpdatesListener {
 
     private final TelegramBot telegramBot;
     private final NotificationService notificationService;
+    private final Counter messageCounter;
 
     @PostConstruct
     public void init() {

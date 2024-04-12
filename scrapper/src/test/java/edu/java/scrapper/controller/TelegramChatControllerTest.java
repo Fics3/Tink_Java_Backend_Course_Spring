@@ -5,6 +5,7 @@ import edu.java.exception.BadRequestScrapperException;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.exception.InternalServerScrapperException;
 import edu.java.service.ChatService;
+import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,6 +28,9 @@ public class TelegramChatControllerTest {
 
     @MockBean
     private ChatService chatService;
+
+    @MockBean
+    private Counter messageCounter;
 
     @Test
     public void testRegisterChat() throws Exception {
