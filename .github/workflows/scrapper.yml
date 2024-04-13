@@ -8,6 +8,10 @@ on:
       - link-parser/**
       - scrapper/**
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: Fics3/Tink_Java_Backend_Course_Spring/scrapper
+
 jobs:
   build:
     runs-on: ubuntu-latest
