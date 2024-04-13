@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: Fics3/Tink_Java_Backend_Course_Spring/bot
+  IMAGE_NAME: ${{ github.repository }}/bot
 
 jobs:
   build:
