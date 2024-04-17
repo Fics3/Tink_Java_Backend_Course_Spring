@@ -12,7 +12,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: fics3/tink_java_backend_course_spring/bot
 
 jobs:
   build:
@@ -42,13 +42,6 @@ jobs:
           min-coverage-changed-files: 30
           title: Code Coverage
           update-comment: true
-
-      - name: Format repo slug
-        uses: actions/github-script@v4
-        id: repo_slug
-        with:
-          result-encoding: string
-          script: return `ghcr.io/${github.repository.toLowerCase()}`
 
       - name: Docker image build
         run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f ${{ github.workspace }}/bot/bot.Dockerfile ${{ github.workspace }}/bot
