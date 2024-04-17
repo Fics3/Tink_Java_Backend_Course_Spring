@@ -5,7 +5,7 @@ app:
     chat: /tg-chat/{id}
     links: /links
     tg-chat-id: Tg-Chat-Id
-    url: http://localhost:8080
+    url: ${SCRAPPER_URL}
 
   kafka-properties:
     topic:
@@ -40,11 +40,11 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    bootstrapServers: localhost:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   server:
-    port: 8091
+    port: ${MANAGEMENT_PORT}
   endpoints:
     web:
       exposure:
@@ -58,7 +58,7 @@ management:
 
 
 server:
-  port: 8090
+  port: ${SERVER_PORT}
 
 logging:
   config: classpath:log4j2-plain.xml
@@ -66,6 +66,5 @@ logging:
 springdoc:
   api-docs:
     enabled: true
-
-swagger-ui:
-  path: /swagger-ui
+  swagger-ui:
+    path: /swagger-ui

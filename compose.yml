@@ -1,4 +1,43 @@
 services:
+
+  bot:
+    image: sha256:ebbc24a7063a4980a19b6bf8dc4fd30eb758676e86539e79662ba1476fc15870
+    depends_on:
+      - scrapper
+    ports:
+      - 8090:8090
+      - 8091:8091
+    networks:
+      - backend
+    environment:
+      TELEGRAM_API_KEY: 6879045060:AAGzTnaYdJXj3ASQKfPW1KszAOK5DTQCqC0
+      SCRAPPER_URL: "http://scrapper:8080"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+      SERVER_PORT: 8090
+      MANAGEMENT_PORT: 8091
+
+  scrapper:
+    image: sha256:c07462360092bdd718e99a47acb2cdc8d8b3e3dee73627219cfade277b71d7be
+    depends_on:
+      - liquibase-migrations
+      - postgresql
+      - kafka
+      - grafana
+    ports:
+      - 8080:8080
+      - 8081:8081
+    networks:
+      - backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/scrapper
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+      BOT_URL: "http://bot:8090"
+      SERVER_PORT: 8080
+      MANAGEMENT_PORT: 8081
+
+
   postgresql:
     image: postgres:16
     ports:
@@ -40,9 +79,12 @@ services:
       ZOOKEEPER_SERVER_ID: 1
     volumes:
       - ./scrapper/src/main/resources/docker/zookeeper_jaas_config.conf:/etc/zookeeper/config/zookeeper_jaas.conf
+    networks:
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
+    hostname: kafka
     container_name: kafka
     depends_on:
       - zookeeper
@@ -52,14 +94,15 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_LISTENERS: "PLAINTEXT://:9092"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://127.0.0.1:9092"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,OUTSIDE://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_LISTENERS_TIMEOUT_MS: "30000"
     volumes:
       - ./scrapper/src/main/resources/docker/kafka_jaas_config.conf:/etc/kafka/kafka_config_jaas.conf
-
+    networks:
+      - backend
 
   schema-registry:
     container_name: schema-registry
@@ -75,6 +118,8 @@ services:
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     ports:
       - "28081:8081"
+    networks:
+      - backend
 
   prometheus:
     container_name: prometheus

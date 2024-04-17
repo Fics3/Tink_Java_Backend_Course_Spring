@@ -34,7 +34,7 @@ app:
     api-url: https://api.github.com
     repos: /repos/%s/%s
   bot-properties:
-    url: http://localhost:8090
+    url: ${BOT_URL}
   database-access-type: jpa
   is-use-queue: true
 
@@ -51,11 +51,11 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    bootstrapServers: localhost:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
 
 management:
   server:
-    port: 8081
+    port: ${MANAGEMENT_PORT}
   endpoints:
     web:
       exposure:
@@ -68,7 +68,7 @@ management:
       application: ${spring.application.name}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 logging:
   config: classpath:log4j2-plain.xml
@@ -76,6 +76,5 @@ logging:
 springdoc:
   api-docs:
     enabled: true
-
-swagger-ui:
-  path: /swagger-ui
+  swagger-ui:
+    path: /swagger-ui

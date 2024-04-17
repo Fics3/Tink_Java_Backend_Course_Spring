@@ -3,6 +3,7 @@ package edu.java.bot.client;
 import edu.java.bot.configuration.ApplicationConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
@@ -18,6 +19,7 @@ import reactor.util.retry.Retry;
 @Component
 @Getter
 @RequiredArgsConstructor
+@Log4j2
 public class ScrapperClient {
     private final WebClient scrapperWebClient;
     private final ApplicationConfig applicationConfig;
@@ -42,6 +44,7 @@ public class ScrapperClient {
     }
 
     public Mono<ListLinkResponse> getAllLinks(Long tgChatId) {
+        log.debug(applicationConfig.scrapperProperties().url());
         return scrapperWebClient
             .get()
             .uri(applicationConfig.scrapperProperties().links())

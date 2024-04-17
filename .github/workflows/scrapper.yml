@@ -36,17 +36,21 @@ jobs:
         if: ( github.event_name != 'workflow_dispatch' )
         with:
           paths: ${{ github.workspace }}/scrapper/target/site/jacoco/jacoco.xml
-          token: ${{ secrets.TOKEN_GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 30
           min-coverage-changed-files: 30
           title: Code Coverage
           update-comment: true
+
+      - name: docker image build
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f ${{ github.workspace }}/bot/bot.Dockerfile ${{ github.workspace }}/bot
+
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.TOKEN_GITHUB }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7

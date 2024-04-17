@@ -1,10 +1,12 @@
 FROM openjdk:21
 LABEL authors="digital-nishtyak"
 
-ENV TELEGRAM_API_KEY=$TELEGRAM_API_KEY
+ENV TELEGRAM_API_KEY=${TELEGRAM_API_KEY} \
+    SCRAPPER_URL=${SCRAPPER_URL} \
+    KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS} \
+    SERVER_PORT=${SERVER_POST} \
+    MANAGEMENT_PORT=${MANAGEMENT_PORT}
 
-COPY target/bot.jar app/bot.jar
+COPY ./target/bot.jar bot.jar
 
-WORKDIR /app
-
-CMD ["java", "-jar", "bot.jar"]
+ENTRYPOINT ["java","-jar","/bot.jar"]
