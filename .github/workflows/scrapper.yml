@@ -12,7 +12,7 @@ on:
       - hw10
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/scrapper
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -59,9 +59,6 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Docker image build
-        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f ${{ github.workspace }}/scrapper/scrapper.Dockerfile ${{ github.workspace }}/scrapper
 
       - name: Docker image push
         if: github.ref == 'refs/heads/hw10'
