@@ -44,7 +44,7 @@ client:
         - 404
         - 400
   bot-properties:
-    url: http://localhost:8090
+    url: ${BOT_URL}
     retry-policy:
       attempts: 5
       backoff: 2s
@@ -92,7 +92,7 @@ bucket4j:
               refill-speed: greedy
 management:
   server:
-    port: 8081
+    port: ${MANAGEMENT_PORT}
   endpoints:
     web:
       exposure:
@@ -105,7 +105,7 @@ management:
       application: ${spring.application.name}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 logging:
   config: classpath:log4j2-plain.xml

@@ -1,6 +1,7 @@
 package edu.java.bot;
 
 import edu.java.bot.client.ScrapperClient;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +19,11 @@ class ScrapperClientTest {
 
     @MockBean
     private ScrapperClient scrapperClient;
+
+    @BeforeAll
+    static void setUp() {
+        System.setProperty("SERVER_PORT", "8090");
+    }
 
     @Test
     @DisplayName("Should return code 404 when register chat")
