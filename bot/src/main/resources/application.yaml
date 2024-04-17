@@ -11,7 +11,7 @@ client:
     chat: /tg-chat/{id}
     links: /links
     tg-chat-id: Tg-Chat-Id
-    url: ${SCRAPPER_URL}
+    url: ${SCRAPPER_URL:-http://localhost:8080}
     retry-policy:
       attempts: 10
       backoff: 2s
@@ -36,7 +36,7 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:-localhost:9092}
   liquibase:
     enabled: false
 
@@ -57,7 +57,7 @@ bucket4j:
 
 management:
   server:
-    port: ${MANAGEMENT_PORT}
+    port: ${MANAGEMENT_PORT:-8091}
   endpoints:
     web:
       exposure:
@@ -71,7 +71,7 @@ management:
 
 
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:-8090}
 
 logging:
   config: classpath:log4j2-plain.xml

@@ -24,10 +24,6 @@ public abstract class IntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
-        System.setProperty("MANAGEMENT_PORT", "8081");
-        System.setProperty("SERVER_PORT", "8080");
-        System.setProperty("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092");
-
         POSTGRES = new PostgreSQLContainer<>("postgres:15")
             .withDatabaseName("scrapper")
             .withUsername("postgres")

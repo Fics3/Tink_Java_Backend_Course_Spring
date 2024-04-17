@@ -13,7 +13,6 @@ app:
   database-access-type: jpa
   is-use-queue: "true"
 
-
 client:
   stackoverflow-properties:
     domain: stackoverflow.com
@@ -44,7 +43,7 @@ client:
         - 404
         - 400
   bot-properties:
-    url: ${BOT_URL}
+    url: ${BOT_URL:-http://localhost:8090}
     retry-policy:
       attempts: 5
       backoff: 2s
@@ -53,6 +52,7 @@ client:
         - 500
         - 502
         - 503
+
 spring:
   application:
     name: scrapper
@@ -66,7 +66,7 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS:-localhost:9092}
 
   cache:
     jcache:
@@ -92,7 +92,7 @@ bucket4j:
               refill-speed: greedy
 management:
   server:
-    port: ${MANAGEMENT_PORT}
+    port: ${MANAGEMENT_PORT:-8081}
   endpoints:
     web:
       exposure:
@@ -105,7 +105,7 @@ management:
       application: ${spring.application.name}
 
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:8080}
 
 logging:
   config: classpath:log4j2-plain.xml
