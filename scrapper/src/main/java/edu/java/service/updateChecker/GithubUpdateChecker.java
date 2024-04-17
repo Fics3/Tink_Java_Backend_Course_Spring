@@ -2,7 +2,7 @@ package edu.java.service.updateChecker;
 
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
@@ -17,7 +17,7 @@ import org.example.dto.LinkUpdateRequest;
 @RequiredArgsConstructor
 public class GithubUpdateChecker implements UpdateChecker {
 
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final GithubClient githubClient;
     private final BotClient botClient;
     private final ChatRepository jooqChatRepository;
@@ -36,7 +36,7 @@ public class GithubUpdateChecker implements UpdateChecker {
         var url = URI.create(linkModel.link());
         int tmpCount = updateCount;
         if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            botClient.sendUpdate(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Ссылка обновлена " + linkModel.link()
@@ -55,7 +55,7 @@ public class GithubUpdateChecker implements UpdateChecker {
         if (subscribersCount != null
             && !subscribersCount.equals(jooqGithubRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
             .subscribersCount())) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            botClient.sendUpdate(createLinkUpdateRequest(
                 linkModel.linkId(),
                 URI.create(linkModel.link()),
                 "Число подписчиков изменилось, теперь: " + subscribersCount
@@ -63,7 +63,7 @@ public class GithubUpdateChecker implements UpdateChecker {
         }
     }
 
-    private LinkUpdateRequest formLinkUpdateRequest(UUID linkId, URI url, String description) {
+    private LinkUpdateRequest createLinkUpdateRequest(UUID linkId, URI url, String description) {
         return new LinkUpdateRequest(
             linkId,
             url,
@@ -74,6 +74,6 @@ public class GithubUpdateChecker implements UpdateChecker {
 
     @Override
     public String getDomain() {
-        return applicationConfig.githubProperties().domain();
+        return clientConfig.githubProperties().domain();
     }
 }

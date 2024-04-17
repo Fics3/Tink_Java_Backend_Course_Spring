@@ -3,7 +3,7 @@ package edu.java.configuration.repositoryAccess;
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.domain.repository.jpa.JpaChatRepository;
@@ -66,7 +66,7 @@ public class JpaAccessConfig {
 
     @Bean
     public GithubUpdateChecker githubUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         BotClient botClient,
         JpaChatRepository jpaChatRepository,
@@ -74,7 +74,7 @@ public class JpaAccessConfig {
         GithubRepositoryRepository jpaGithubRepositoryRepository
     ) {
         return new GithubUpdateChecker(
-            applicationConfig,
+            clientConfig,
             githubClient,
             botClient,
             jpaChatRepository,
@@ -85,7 +85,7 @@ public class JpaAccessConfig {
 
     @Bean
     public StackoverflowUpdateChecker stackoverflowUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         BotClient botClient,
         JpaChatRepository jpaChatRepository,
@@ -93,7 +93,7 @@ public class JpaAccessConfig {
         StackoverflowQuestionRepository jpaStackoverflowQuestionRepository
     ) {
         return new StackoverflowUpdateChecker(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             botClient,
             jpaChatRepository,
@@ -104,13 +104,13 @@ public class JpaAccessConfig {
 
     @Bean
     public GithubLinkAdder githubLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         JpaLinksRepository jpaLinksRepository,
         JpaGithubRepositoryRepository jpaGithubRepositoryRepository
     ) {
         return new GithubLinkAdder(
-            applicationConfig,
+            clientConfig,
             githubClient,
             jpaLinksRepository,
             jpaGithubRepositoryRepository
@@ -119,13 +119,13 @@ public class JpaAccessConfig {
 
     @Bean
     public StackoverflowLinkAdder stackoverflowLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         JpaLinksRepository jpaLinksRepository,
         JpaStackoverflowQuestionRepository jpaStackoverflowQuestionRepository
     ) {
         return new StackoverflowLinkAdder(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             jpaLinksRepository,
             jpaStackoverflowQuestionRepository

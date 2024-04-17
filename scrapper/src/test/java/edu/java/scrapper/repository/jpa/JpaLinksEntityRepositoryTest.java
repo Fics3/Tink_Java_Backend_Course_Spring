@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Transactional
 class JpaLinksEntityRepositoryTest {
 
     @Autowired
@@ -25,8 +25,6 @@ class JpaLinksEntityRepositoryTest {
     private JpaLinkEntityRepository repository;
 
     @Test
-    @Rollback
-    @Transactional
     void testFindLinkEntityByLink() {
         // Arrange
         LinkEntity linkEntity = new LinkEntity(
@@ -47,8 +45,6 @@ class JpaLinksEntityRepositoryTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void testFindByLinkId() {
         // Arrange
         LinkEntity linkEntity = new LinkEntity(
@@ -70,8 +66,6 @@ class JpaLinksEntityRepositoryTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void testFindByLastCheckAfter() {
         // Arrange
         LinkEntity linkEntity1 = new LinkEntity(
@@ -103,8 +97,6 @@ class JpaLinksEntityRepositoryTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void testUpdateChecked() {
         // Arrange
         OffsetDateTime now = OffsetDateTime.now();
@@ -129,8 +121,6 @@ class JpaLinksEntityRepositoryTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void testUpdateLastUpdate() {
         // Arrange
         LinkEntity linkEntity = new LinkEntity(

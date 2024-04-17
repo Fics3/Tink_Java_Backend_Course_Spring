@@ -3,7 +3,7 @@ package edu.java.configuration.repositoryAccess;
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.domain.repository.jdbc.JdbcChatRepository;
@@ -66,7 +66,7 @@ public class JdbcAccessConfig {
 
     @Bean
     public GithubUpdateChecker githubUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         BotClient botClient,
         JdbcChatRepository jdbcChatRepository,
@@ -74,7 +74,7 @@ public class JdbcAccessConfig {
         GithubRepositoryRepository jdbcGithubRepositoryRepository
     ) {
         return new GithubUpdateChecker(
-            applicationConfig,
+            clientConfig,
             githubClient,
             botClient,
             jdbcChatRepository,
@@ -85,7 +85,7 @@ public class JdbcAccessConfig {
 
     @Bean
     public StackoverflowUpdateChecker stackoverflowUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         BotClient botClient,
         JdbcChatRepository jdbcChatRepository,
@@ -93,7 +93,7 @@ public class JdbcAccessConfig {
         StackoverflowQuestionRepository jdbcStackoverflowQuestionRepository
     ) {
         return new StackoverflowUpdateChecker(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             botClient,
             jdbcChatRepository,
@@ -104,13 +104,13 @@ public class JdbcAccessConfig {
 
     @Bean
     public GithubLinkAdder githubLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         JdbcLinksRepository jdbcLinksRepository,
         JdbcGithubRepositoryRepository jdbcGithubRepositoryRepository
     ) {
         return new GithubLinkAdder(
-            applicationConfig,
+            clientConfig,
             githubClient,
             jdbcLinksRepository,
             jdbcGithubRepositoryRepository
@@ -119,13 +119,13 @@ public class JdbcAccessConfig {
 
     @Bean
     public StackoverflowLinkAdder stackoverflowLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         JdbcLinksRepository jdbcLinksRepository,
         JdbcStackoverflowQuestionRepository jdbcStackoverflowQuestionRepository
     ) {
         return new StackoverflowLinkAdder(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             jdbcLinksRepository,
             jdbcStackoverflowQuestionRepository

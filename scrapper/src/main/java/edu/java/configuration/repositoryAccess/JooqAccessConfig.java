@@ -3,7 +3,7 @@ package edu.java.configuration.repositoryAccess;
 import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.domain.repository.jooq.JooqChatRepository;
@@ -66,7 +66,7 @@ public class JooqAccessConfig {
 
     @Bean
     public GithubUpdateChecker githubUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         BotClient botClient,
         JooqChatRepository jooqChatRepository,
@@ -74,7 +74,7 @@ public class JooqAccessConfig {
         GithubRepositoryRepository jooqGithubRepositoryRepository
     ) {
         return new GithubUpdateChecker(
-            applicationConfig,
+            clientConfig,
             githubClient,
             botClient,
             jooqChatRepository,
@@ -85,7 +85,7 @@ public class JooqAccessConfig {
 
     @Bean
     public StackoverflowUpdateChecker stackoverflowUpdateChecker(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         BotClient botClient,
         JooqChatRepository jooqChatRepository,
@@ -93,7 +93,7 @@ public class JooqAccessConfig {
         StackoverflowQuestionRepository jooqStackoverflowQuestionRepository
     ) {
         return new StackoverflowUpdateChecker(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             botClient,
             jooqChatRepository,
@@ -104,13 +104,13 @@ public class JooqAccessConfig {
 
     @Bean
     public GithubLinkAdder githubLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         GithubClient githubClient,
         JooqLinksRepository jooqLinksRepository,
         JooqGithubRepositoryRepository jooqGithubRepositoryRepository
     ) {
         return new GithubLinkAdder(
-            applicationConfig,
+            clientConfig,
             githubClient,
             jooqLinksRepository,
             jooqGithubRepositoryRepository
@@ -119,13 +119,13 @@ public class JooqAccessConfig {
 
     @Bean
     public StackoverflowLinkAdder stackoverflowLinkAdder(
-        ApplicationConfig applicationConfig,
+        ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
         JooqLinksRepository jooqLinksRepository,
         JooqStackoverflowQuestionRepository jooqStackoverflowQuestionRepository
     ) {
         return new StackoverflowLinkAdder(
-            applicationConfig,
+            clientConfig,
             stackoverflowClient,
             jooqLinksRepository,
             jooqStackoverflowQuestionRepository

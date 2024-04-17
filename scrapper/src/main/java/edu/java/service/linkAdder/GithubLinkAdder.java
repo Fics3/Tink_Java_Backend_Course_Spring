@@ -1,7 +1,7 @@
 package edu.java.service.linkAdder;
 
 import edu.java.client.GithubClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.exception.BadRequestScrapperException;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GithubLinkAdder implements LinkAdder {
 
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final GithubClient githubClient;
     private final LinksRepository linksRepository;
     private final GithubRepositoryRepository githubRepositoryRepository;
@@ -37,6 +37,6 @@ public class GithubLinkAdder implements LinkAdder {
 
     @Override
     public String getDomain() {
-        return applicationConfig.githubProperties().domain();
+        return clientConfig.githubProperties().domain();
     }
 }

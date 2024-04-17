@@ -12,11 +12,11 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Transactional
 public class JpaStackoverflowQuestionEntityRepositoryTest extends IntegrationTest {
 
     @Autowired
@@ -27,8 +27,6 @@ public class JpaStackoverflowQuestionEntityRepositoryTest extends IntegrationTes
     private EntityManager entityManager;
 
     @Test
-    @Rollback
-    @Transactional
     void testUpdateAnswerCount() {
         // Arrange
         LinkEntity link = new LinkEntity(

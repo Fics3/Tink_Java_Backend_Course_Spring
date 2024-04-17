@@ -10,12 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "links")
 @Getter
 @Setter
+@NoArgsConstructor
 public class LinkEntity {
 
     @Id
@@ -48,7 +50,4 @@ public class LinkEntity {
         this.lastCheck = lastCheck;
     }
 
-    public LinkEntity() {
-
-    }
 }

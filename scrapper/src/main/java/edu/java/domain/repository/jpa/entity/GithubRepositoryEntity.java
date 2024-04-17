@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "repositories")
+@NoArgsConstructor
 public class GithubRepositoryEntity {
     @Id
     @Column(name = "repository_id")
@@ -30,6 +32,4 @@ public class GithubRepositoryEntity {
         this.subscribersCount = subscribersCount;
     }
 
-    public GithubRepositoryEntity() {
-    }
 }

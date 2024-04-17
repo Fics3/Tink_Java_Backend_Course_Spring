@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "questions")
+@NoArgsConstructor
 public class StackoverflowQuestionEntity {
 
     @Id
@@ -32,7 +34,4 @@ public class StackoverflowQuestionEntity {
         this.answerCount = answerCount;
     }
 
-    public StackoverflowQuestionEntity() {
-
-    }
 }

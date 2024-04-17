@@ -1,7 +1,7 @@
 package edu.java.service.linkAdder;
 
 import edu.java.client.StackoverflowClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
 import edu.java.model.LinkModel;
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StackoverflowLinkAdder implements LinkAdder {
 
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final StackoverflowClient stackoverflowClient;
     private final LinksRepository linksRepository;
     private final StackoverflowQuestionRepository stackoverflowQuestionRepository;
@@ -33,6 +33,6 @@ public class StackoverflowLinkAdder implements LinkAdder {
 
     @Override
     public String getDomain() {
-        return applicationConfig.stackoverflowProperties().domain();
+        return clientConfig.stackoverflowProperties().domain();
     }
 }

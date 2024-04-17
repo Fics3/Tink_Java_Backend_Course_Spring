@@ -11,10 +11,12 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "chats")
 @Getter
+@NoArgsConstructor
 public class ChatEntity {
 
     @Id
@@ -41,14 +43,6 @@ public class ChatEntity {
         this.telegramChatId = telegramChatId;
         this.createdAt = createdAt;
         this.links = links;
-    }
-
-    public ChatEntity(Long telegramChatId) {
-        this.telegramChatId = telegramChatId;
-    }
-
-    public ChatEntity() {
-
     }
 
 }

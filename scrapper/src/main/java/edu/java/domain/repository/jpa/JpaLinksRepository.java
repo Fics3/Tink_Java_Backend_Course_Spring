@@ -6,6 +6,7 @@ import edu.java.domain.repository.jpa.entitiesRepository.JpaLinkEntityRepository
 import edu.java.domain.repository.jpa.entity.ChatEntity;
 import edu.java.domain.repository.jpa.entity.LinkEntity;
 import edu.java.exception.BadRequestScrapperException;
+import edu.java.exception.NotFoundScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -27,7 +28,7 @@ public class JpaLinksRepository implements LinksRepository {
     @Override
     public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
         var chat = jpaChatEntityRepository.findByTelegramChatId(tgChatId)
-            .orElseThrow(() -> new BadRequestScrapperException(USER_NOT_REGISTERED, ERROR));
+            .orElseThrow(() -> new NotFoundScrapperException(USER_NOT_REGISTERED, ERROR));
         var linkEntity = new LinkEntity(
             chat,
             UUID.randomUUID(),

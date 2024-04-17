@@ -1,6 +1,6 @@
 package edu.java.client;
 
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.exception.BadRequestScrapperException;
 import java.net.URI;
 import lombok.AllArgsConstructor;
@@ -13,13 +13,13 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public class GithubClient {
 
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final WebClient githubWebClient;
 
     public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
         try {
-            String apiUrl = String.format(applicationConfig.githubProperties().apiUrl(), urlSplit[1], urlSplit[2]);
+            String apiUrl = String.format(clientConfig.githubProperties().apiUrl(), urlSplit[1], urlSplit[2]);
 
             return githubWebClient
                 .get()

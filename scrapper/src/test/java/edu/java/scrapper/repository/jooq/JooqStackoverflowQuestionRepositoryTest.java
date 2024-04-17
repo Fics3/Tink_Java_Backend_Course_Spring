@@ -11,7 +11,6 @@ import org.jooq.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static edu.java.domain.jooq.Tables.LINKS;
 import static edu.java.domain.jooq.Tables.QUESTIONS;
@@ -19,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Transactional
 class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
 
     @Autowired
@@ -28,8 +28,6 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
     private DSLContext dslContext;
 
     @Test
-    @Rollback
-    @Transactional
     void getQuestionByLinkIdTest() {
         // Arrange
         UUID linkId = UUID.randomUUID();
@@ -59,8 +57,6 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void updateAnswerCountTest() {
         // Arrange
         UUID linkId = UUID.randomUUID();

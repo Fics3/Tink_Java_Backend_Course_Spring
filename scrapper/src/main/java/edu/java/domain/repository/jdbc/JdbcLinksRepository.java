@@ -2,7 +2,7 @@ package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.jdbc.mapper.LinkMapper;
-import edu.java.exception.BadRequestScrapperException;
+import edu.java.exception.NotFoundScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -21,7 +21,7 @@ public class JdbcLinksRepository implements LinksRepository {
 
     public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
         if (!jdbcChatRepository.existsChat(tgChatId)) {
-            throw new BadRequestScrapperException("Такого чата не существует", "Нет");
+            throw new NotFoundScrapperException("Такого чата не существует", "Нет");
         }
         String sql = "INSERT INTO links (link_id, link, last_update, last_check) VALUES (?, ?, ?, ?)";
         UUID linkId = UUID.randomUUID();

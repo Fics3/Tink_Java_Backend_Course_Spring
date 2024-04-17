@@ -2,7 +2,7 @@ package edu.java.service.updateChecker;
 
 import edu.java.client.BotClient;
 import edu.java.client.StackoverflowClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.StackoverflowQuestionRepository;
@@ -16,7 +16,7 @@ import org.example.dto.LinkUpdateRequest;
 
 @RequiredArgsConstructor
 public class StackoverflowUpdateChecker implements UpdateChecker {
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
     private final ChatRepository jooqChatRepository;
@@ -39,7 +39,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         var url = URI.create(linkModel.link());
         int tmpCount = updateCount;
         if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            botClient.sendUpdate(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Ссылка обновлена " + linkModel.link()
@@ -57,7 +57,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         }
         var questionCount = questionModel.answerCount();
         if (answerCount != null && !questionCount.equals(answerCount)) {
-            botClient.sendUpdate(formLinkUpdateRequest(
+            botClient.sendUpdate(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Количество ответов обновилось: " + answerCount
@@ -65,7 +65,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         }
     }
 
-    private LinkUpdateRequest formLinkUpdateRequest(UUID linkId, URI url, String description) {
+    private LinkUpdateRequest createLinkUpdateRequest(UUID linkId, URI url, String description) {
         return new LinkUpdateRequest(
             linkId,
             url,
@@ -76,6 +76,6 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
 
     @Override
     public String getDomain() {
-        return applicationConfig.stackoverflowProperties().domain();
+        return clientConfig.stackoverflowProperties().domain();
     }
 }

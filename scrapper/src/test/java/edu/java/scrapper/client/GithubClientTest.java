@@ -1,7 +1,7 @@
 package edu.java.scrapper.client;
 
 import edu.java.client.GithubClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import org.example.dto.GithubRepositoryResponse;
@@ -22,7 +22,7 @@ public class GithubClientTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private ApplicationConfig applicationConfig;
+    private ClientConfig clientConfig;
 
     @MockBean
     private GithubClient githubWebClient;
@@ -35,7 +35,7 @@ public class GithubClientTest {
             OffsetDateTime.now(), 123
         );
 
-        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
+        when(clientConfig.githubProperties()).thenReturn(new ClientConfig.GithubProperties(
             "github.com",
             "https://api.github.com",
             "/repos/%s/%s"

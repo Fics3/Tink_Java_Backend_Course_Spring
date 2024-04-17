@@ -9,7 +9,6 @@ import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static edu.java.domain.jooq.Tables.CHATS;
 import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
@@ -17,6 +16,7 @@ import static edu.java.domain.jooq.Tables.LINKS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 class JooqChatRepositoryTest extends IntegrationTest {
 
     @Autowired
@@ -26,8 +26,6 @@ class JooqChatRepositoryTest extends IntegrationTest {
     private DSLContext dslContext;
 
     @Test
-    @Rollback
-    @Transactional
     void addChatTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -40,8 +38,6 @@ class JooqChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void removeChatTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -58,8 +54,6 @@ class JooqChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void findAllChat() {
         // Arrange
         Long tgChatId = 123L;
@@ -76,8 +70,6 @@ class JooqChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void existsChatTest() {
         // Arrange
         Long tgChatId = 123L;
@@ -94,8 +86,6 @@ class JooqChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Rollback
-    @Transactional
     void findChatsByLinkIdTest() {
         // Arrange
         UUID uuid = UUID.randomUUID();

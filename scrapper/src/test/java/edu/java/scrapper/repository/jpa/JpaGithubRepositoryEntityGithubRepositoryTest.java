@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Transactional
 public class JpaGithubRepositoryEntityGithubRepositoryTest extends IntegrationTest {
 
     @Autowired
@@ -26,7 +27,6 @@ public class JpaGithubRepositoryEntityGithubRepositoryTest extends IntegrationTe
     private EntityManager entityManager;
 
     @Test
-    @Transactional
     void testUpdateSubscribersCount() {
         // Arrange
         LinkEntity link = new LinkEntity(
