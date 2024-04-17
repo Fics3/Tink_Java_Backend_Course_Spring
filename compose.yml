@@ -10,7 +10,7 @@ services:
     networks:
       - backend
     environment:
-      TELEGRAM_API_KEY: 6879045060:AAGzTnaYdJXj3ASQKfPW1KszAOK5DTQCqC0
+      TELEGRAM_API_KEY: 'ne podglyadivai)'
       SCRAPPER_URL: "http://scrapper:8080"
       KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
       SERVER_PORT: 8090
