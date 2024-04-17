@@ -13,7 +13,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +43,6 @@ public class WebServerControllerTest {
 
     @MockBean
     private RateLimitService rateLimitService;
-
-    @BeforeAll
-    public static void setUpBeforeAll() {
-        System.setProperty("SERVER_PORT", "8090");
-    }
 
     @BeforeEach
     public void setUp() {
