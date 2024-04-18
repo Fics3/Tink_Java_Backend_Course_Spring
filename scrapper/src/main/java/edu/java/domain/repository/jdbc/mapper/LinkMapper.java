@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:scrapper/src/main/java/edu/java/domain/repository/jdbc/mapper/LinkMapper.java
 package edu.java.domain.repository.jdbc.mapper;
-========
-package edu.java.domain.repository.mapper;
->>>>>>>> 1b59763 (hw5 bonus):scrapper/src/main/java/edu/java/domain/repository/mapper/LinkMapper.java
 
 import edu.java.model.LinkModel;
 import java.sql.ResultSet;

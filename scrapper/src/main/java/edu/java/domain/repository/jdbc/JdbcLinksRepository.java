@@ -1,8 +1,8 @@
 package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.LinksRepository;
-import edu.java.domain.repository.jdbc.mapper.LinkMapper;
-import edu.java.exception.NotFoundScrapperException;
+import edu.java.domain.repository.mapper.LinkMapper;
+import edu.java.exception.BadRequestScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;

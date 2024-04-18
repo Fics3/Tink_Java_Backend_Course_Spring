@@ -22,7 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
 
     @Autowired
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqStackoverflowQuestionRepositoryTest.java
     private JooqStackoverflowQuestionRepository jooqQuestionRepository;
+========
+    private JooqStackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
+>>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqQuestionRepositoryTest.java
 
     @Autowired
     private DSLContext dslContext;
@@ -47,7 +51,11 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
             .execute();
 
         // Act
+<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqStackoverflowQuestionRepositoryTest.java
         StackoverflowQuestionModel stackoverflowQuestionModel = jooqQuestionRepository.getQuestionByLinkId(linkId);
+========
+        StackoverflowQuestionModel questionModel = jooqStackoverflowQuestionRepository.getQuestionByLinkId(linkId);
+>>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqQuestionRepositoryTest.java
 
         // Assert
         assertThat(stackoverflowQuestionModel).isNotNull();
@@ -75,7 +83,7 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
 
         // Act
         int updatedAnswerCount = 10;
-        jooqQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
+        jooqStackoverflowQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
 
         // Assert
         Result<QuestionsRecord> result = dslContext.selectFrom(QUESTIONS)

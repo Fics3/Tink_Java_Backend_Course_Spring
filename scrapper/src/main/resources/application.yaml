@@ -19,9 +19,6 @@ app:
     limit: 100
     refill-limit: 20
 
-  database-access-type: jpa
-
-client:
   stackoverflow-properties:
     domain: stackoverflow.com
     api-url: https://api.stackexchange.com

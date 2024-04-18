@@ -1,7 +1,6 @@
 package edu.java.service.updateChecker;
 
 import edu.java.client.BotClient;
-import edu.java.client.GithubClient;
 import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.GithubRepositoryRepository;
@@ -13,6 +12,7 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
+import edu.java.client.GithubClient;
 
 @RequiredArgsConstructor
 public class GithubUpdateChecker implements UpdateChecker {

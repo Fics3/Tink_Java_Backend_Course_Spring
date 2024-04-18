@@ -17,15 +17,6 @@ public record ApplicationConfig(
     Scheduler scheduler,
     @NestedConfigurationProperty
     @NotNull
-    StackoverflowProperties stackoverflowProperties,
-    @NestedConfigurationProperty
-    @NotNull
-    GithubProperties githubProperties,
-    @NestedConfigurationProperty
-    @NotNull
-    BotClient botProperties,
-    @NestedConfigurationProperty
-    @NotNull
     AccessType databaseAccessType,
     @NestedConfigurationProperty
     @NotNull
@@ -41,15 +32,6 @@ public record ApplicationConfig(
     }
 
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
-    }
-
-    public record StackoverflowProperties(String domain, String apiUrl, String questions) {
-    }
-
-    public record GithubProperties(String domain, String apiUrl, String repos) {
-    }
-
-    public record BotClient(String url) {
     }
 
     public record RetryProperties(Integer attempts,
