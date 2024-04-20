@@ -22,11 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JooqGithubRepositoryRepositoryTest extends IntegrationTest {
 
     @Autowired
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqGithubRepositoryRepositoryTest.java
     private JooqGithubRepositoryRepository jooqRepositoryRepository;
-========
-    private JooqGithubRepositoryRepository jooqGithubRepositoryRepository;
->>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqRepositoryRepositoryTest.java
 
     @Autowired
     private DSLContext dslContext;
@@ -50,11 +46,7 @@ class JooqGithubRepositoryRepositoryTest extends IntegrationTest {
             .execute();
 
         // Act
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqGithubRepositoryRepositoryTest.java
         GithubRepositoryModel githubRepositoryModel = jooqRepositoryRepository.getRepositoryByLinkId(linkId);
-========
-        GithubRepositoryModel repositoryModel = jooqGithubRepositoryRepository.getRepositoryByLinkId(linkId);
->>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqRepositoryRepositoryTest.java
 
         // Assert
         assertThat(githubRepositoryModel).isNotNull();
@@ -82,7 +74,7 @@ class JooqGithubRepositoryRepositoryTest extends IntegrationTest {
 
         // Act
         int updatedSubscribersCount = 150;
-        jooqGithubRepositoryRepository.updateSubscribersCount(linkId, updatedSubscribersCount);
+        jooqRepositoryRepository.updateSubscribersCount(linkId, updatedSubscribersCount);
 
         // Assert
         Result<RepositoriesRecord> result = dslContext.selectFrom(REPOSITORIES)

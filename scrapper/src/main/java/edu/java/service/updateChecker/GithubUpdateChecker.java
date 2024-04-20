@@ -1,6 +1,7 @@
 package edu.java.service.updateChecker;
 
 import edu.java.client.BotClient;
+import edu.java.client.GithubClient;
 import edu.java.configuration.ClientConfig;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.GithubRepositoryRepository;
@@ -12,7 +13,6 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
-import edu.java.client.GithubClient;
 
 @RequiredArgsConstructor
 public class GithubUpdateChecker implements UpdateChecker {
@@ -20,8 +20,8 @@ public class GithubUpdateChecker implements UpdateChecker {
     private final ClientConfig clientConfig;
     private final GithubClient githubClient;
     private final BotClient botClient;
-    private final ChatRepository jooqChatRepository;
-    private final LinksRepository jooqLinksRepository;
+    private final ChatRepository chatRepository;
+    private final LinksRepository linksRepository;
     private final GithubRepositoryRepository jooqGithubRepositoryRepository;
 
     @Override
@@ -42,9 +42,9 @@ public class GithubUpdateChecker implements UpdateChecker {
                 "Ссылка обновлена " + linkModel.link()
             )).subscribe();
             tmpCount++;
-            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
         }
-        jooqLinksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
+        linksRepository.updateChecked(linkModel.linkId(), OffsetDateTime.now());
     }
 
     private void processSubscriberCount(LinkModel linkModel, Integer subscribersCount) {
@@ -68,7 +68,7 @@ public class GithubUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-            jooqChatRepository.findChatsByLinkId(linkId)
+            chatRepository.findChatsByLinkId(linkId)
         );
     }
 

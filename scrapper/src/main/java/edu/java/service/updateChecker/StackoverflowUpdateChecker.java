@@ -13,17 +13,19 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 public class StackoverflowUpdateChecker implements UpdateChecker {
     private final ClientConfig clientConfig;
     private final StackoverflowClient stackoverflowClient;
     private final BotClient botClient;
-    private final ChatRepository jooqChatRepository;
-    private final LinksRepository jooqLinksRepository;
+    private final ChatRepository chatRepository;
+    private final LinksRepository linksRepository;
     private final StackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
 
     @Override
+    @Transactional
     public int processUrlUpdates(LinkModel linkModel, int updateCount) {
         var question = stackoverflowClient.fetchQuestion(URI.create(linkModel.link())).block();
         processLastUpdate(
@@ -45,7 +47,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
                 "Ссылка обновлена " + linkModel.link()
             )).subscribe();
             tmpCount++;
-            jooqLinksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
+            linksRepository.updateLastUpdate(linkModel.linkId(), lastUpdate);
         }
     }
 
@@ -70,7 +72,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-            jooqChatRepository.findChatsByLinkId(linkId)
+        chatRepository.findChatsByLinkId(linkId)
         );
     }
 

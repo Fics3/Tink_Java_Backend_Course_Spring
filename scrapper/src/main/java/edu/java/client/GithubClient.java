@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import static edu.java.configuration.retry.RetryUtils.createRetry;
 
 @Component
 @AllArgsConstructor
@@ -16,15 +17,15 @@ public class GithubClient {
 
     private final ClientConfig clientConfig;
     private final WebClient githubWebClient;
-    private final Retry retry;
 
     public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
+        Retry retry = createRetry(clientConfig.githubProperties().retryPolicy());
 
         try {
             String owner = urlSplit[1];
             String repo = urlSplit[2];
-            String apiUrl = String.format(clientConfig.githubProperties().apiUrl(), owner, repo);
+            String apiUrl = String.format(clientConfig.githubProperties().repos(), owner, repo);
 
             return githubWebClient
                 .get()

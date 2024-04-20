@@ -1,31 +1,49 @@
 app:
   telegram-token: ${TELEGRAM_API_KEY}
 
+client:
   scrapper-properties:
     chat: /tg-chat/{id}
     links: /links
     tg-chat-id: Tg-Chat-Id
     url: http://localhost:8080
-
-  retry-properties:
-    attempts: 10
-    backoff: 2s
-    backoff-strategy: linear
-    retry-status-codes:
-      - 500
-      - 502
-      - 503
-      - 404
-  rate-limit-property:
-    delay-refill: 30s
-    limit: 100
-    refill-limit: 20
+    retry-policy:
+      attempts: 10
+      backoff: 2s
+      backoff-strategy: linear
+      retry-status-codes:
+        - 500
+        - 502
+        - 503
+        - 404
 
 spring:
   application:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: buckets
+      url: .*
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"You have exhausted your API Request Quota\" }"
+      rate-limits:
+        - cache-key: "getRemoteAddr()"
+          bandwidths:
+            - capacity: 100
+              time: 100
+              unit: seconds
+              refill-capacity: 50
+              refill-speed: greedy
 
 server:
   port: 8090

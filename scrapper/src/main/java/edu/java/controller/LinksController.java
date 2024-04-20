@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LinksController {
 
-    private final LinkService jooqLinkService;
+    private final LinkService linkService;
 
     @GetMapping
     public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
-        List<LinkResponse> linkResponses = jooqLinkService.findAll(tgChatId);
+        List<LinkResponse> linkResponses = linkService.findAll(tgChatId);
         return new ListLinkResponse(linkResponses, linkResponses.size());
     }
 
@@ -35,7 +35,7 @@ public class LinksController {
         @RequestBody AddLinkRequest addLinkRequest
     ) {
 
-        jooqLinkService.add(tgChatId, addLinkRequest.uri());
+        linkService.add(tgChatId, addLinkRequest.uri());
         return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }
 
@@ -44,7 +44,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-        jooqLinkService.remove(tgChatId, removeLinkRequest.link());
+        linkService.remove(tgChatId, removeLinkRequest.link());
         return new LinkResponse(removeLinkRequest.link(), OffsetDateTime.now());
     }
 }

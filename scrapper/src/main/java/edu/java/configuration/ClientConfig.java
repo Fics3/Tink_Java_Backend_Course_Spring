@@ -1,5 +1,6 @@
 package edu.java.configuration;
 
+import edu.java.configuration.retry.RetryPolicy;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -44,12 +45,12 @@ public record ClientConfig(
             .build();
     }
 
-    public record StackoverflowProperties(String domain, String apiUrl, String questions) {
+    public record StackoverflowProperties(String domain, String apiUrl, String questions, RetryPolicy retryPolicy) {
     }
 
-    public record GithubProperties(String domain, String apiUrl, String repos) {
+    public record GithubProperties(String domain, String apiUrl, String repos, RetryPolicy retryPolicy) {
     }
 
-    public record BotClient(String url) {
+    public record BotClient(String url, RetryPolicy retryPolicy) {
     }
 }

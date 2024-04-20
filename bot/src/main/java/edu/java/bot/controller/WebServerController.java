@@ -23,7 +23,7 @@ public class WebServerController {
     public String processUpdate(@RequestBody LinkUpdateRequest linkUpdateRequest) {
 
         for (var id : linkUpdateRequest.tgChatIds()) {
-            telegramBot.execute(markdownMessageFormatter.formatMessage(linkUpdateRequest, id));
+            telegramBot.execute(markdownMessageFormatter.formatUpdateMessage(linkUpdateRequest, id));
         }
 
         return "Обноавление обработано";

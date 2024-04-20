@@ -2,6 +2,7 @@ package edu.java.scrapper.client;
 
 import edu.java.client.GithubClient;
 import edu.java.configuration.ClientConfig;
+import edu.java.configuration.retry.RetryPolicy;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import org.example.dto.GithubRepositoryResponse;
@@ -38,7 +39,8 @@ public class GithubClientTest {
         when(clientConfig.githubProperties()).thenReturn(new ClientConfig.GithubProperties(
             "github.com",
             "https://api.github.com",
-            "/repos/%s/%s"
+            "/repos/%s/%s",
+            new RetryPolicy()
         ));
 
         when(githubWebClient.fetchRepository(any(URI.class)))
@@ -53,3 +55,5 @@ public class GithubClientTest {
     }
 
 }
+
+

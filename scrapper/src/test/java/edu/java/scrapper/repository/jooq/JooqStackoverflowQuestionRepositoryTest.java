@@ -4,14 +4,14 @@ import edu.java.domain.jooq.tables.records.QuestionsRecord;
 import edu.java.domain.repository.jooq.JooqStackoverflowQuestionRepository;
 import edu.java.model.StackoverflowQuestionModel;
 import edu.java.scrapper.IntegrationTest;
-import java.time.OffsetDateTime;
-import java.util.UUID;
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 import static edu.java.domain.jooq.Tables.LINKS;
 import static edu.java.domain.jooq.Tables.QUESTIONS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,11 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
 
     @Autowired
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqStackoverflowQuestionRepositoryTest.java
     private JooqStackoverflowQuestionRepository jooqQuestionRepository;
-========
-    private JooqStackoverflowQuestionRepository jooqStackoverflowQuestionRepository;
->>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqQuestionRepositoryTest.java
 
     @Autowired
     private DSLContext dslContext;
@@ -51,11 +47,7 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
             .execute();
 
         // Act
-<<<<<<<< HEAD:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqStackoverflowQuestionRepositoryTest.java
         StackoverflowQuestionModel stackoverflowQuestionModel = jooqQuestionRepository.getQuestionByLinkId(linkId);
-========
-        StackoverflowQuestionModel questionModel = jooqStackoverflowQuestionRepository.getQuestionByLinkId(linkId);
->>>>>>>> origin/hw7:scrapper/src/test/java/edu/java/scrapper/repository/jooq/JooqQuestionRepositoryTest.java
 
         // Assert
         assertThat(stackoverflowQuestionModel).isNotNull();
@@ -83,7 +75,7 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
 
         // Act
         int updatedAnswerCount = 10;
-        jooqStackoverflowQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
+        jooqQuestionRepository.updateAnswerCount(linkId, updatedAnswerCount);
 
         // Assert
         Result<QuestionsRecord> result = dslContext.selectFrom(QUESTIONS)
