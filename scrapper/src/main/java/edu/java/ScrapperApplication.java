@@ -1,15 +1,13 @@
 package edu.java;
 
-import edu.java.configuration.ApplicationConfig;
-import edu.java.configuration.ClientConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ApplicationConfig.class, ClientConfig.class})
+@ConfigurationPropertiesScan("edu.java.configuration")
 @EnableScheduling
 @EnableCaching
 public class ScrapperApplication {

@@ -72,7 +72,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
             linkId,
             url,
             description,
-        chatRepository.findChatsByLinkId(linkId)
+            chatRepository.findChatsByLinkId(linkId)
         );
     }
 

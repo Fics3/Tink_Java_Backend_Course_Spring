@@ -1,28 +1,46 @@
 package edu.java.bot.client;
 
 import edu.java.bot.configuration.ClientConfig;
+import edu.java.bot.configuration.retry.RetryBuilder;
+import edu.java.bot.configuration.retry.RetryPolicy;
+import java.util.Map;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.example.dto.AddLinkRequest;
 import org.example.dto.LinkResponse;
 import org.example.dto.ListLinkResponse;
 import org.example.dto.RemoveLinkRequest;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
-import static edu.java.bot.configuration.retry.RetryUtils.createRetry;
 
 @Component
 @Getter
-@RequiredArgsConstructor
 public class ScrapperClient {
     private final WebClient scrapperWebClient;
     private final ClientConfig clientConfig;
+    @Qualifier("retryBuilder")
+    private final Map<RetryPolicy.BackoffStrategy, RetryBuilder> retryBuilderMap;
+
+    public ScrapperClient(
+        WebClient scrapperWebClient,
+        ClientConfig clientConfig,
+        Map<RetryPolicy.BackoffStrategy, RetryBuilder> retryBuilderMap
+    ) {
+        this.scrapperWebClient = scrapperWebClient;
+        this.clientConfig = clientConfig;
+        this.retryBuilderMap = retryBuilderMap;
+    }
 
     public Mono<String> registerChat(Long chatId) {
-        var retry = createRetry(clientConfig.scrapperProperties().retryPolicy());
+        var retry = retryBuilderMap.get(clientConfig.scrapperProperties().retryPolicy().getBackoffStrategy())
+            .build(
+                clientConfig.scrapperProperties().retryPolicy().getAttempts(),
+                clientConfig.scrapperProperties().retryPolicy().getBackoff(),
+                clientConfig.scrapperProperties().retryPolicy().getRetryStatusCodes()
+            );
         return scrapperWebClient
             .post()
             .uri(clientConfig.scrapperProperties().chat(), chatId)
@@ -32,7 +50,12 @@ public class ScrapperClient {
     }
 
     public Mono<String> deleteChat(Long chatId) {
-        var retry = createRetry(clientConfig.scrapperProperties().retryPolicy());
+        var retry = retryBuilderMap.get(clientConfig.scrapperProperties().retryPolicy().getBackoffStrategy())
+            .build(
+                clientConfig.scrapperProperties().retryPolicy().getAttempts(),
+                clientConfig.scrapperProperties().retryPolicy().getBackoff(),
+                clientConfig.scrapperProperties().retryPolicy().getRetryStatusCodes()
+            );
         return scrapperWebClient
             .delete()
             .uri(clientConfig.scrapperProperties().chat(), chatId)
@@ -42,7 +65,12 @@ public class ScrapperClient {
     }
 
     public Mono<ListLinkResponse> getAllLinks(Long tgChatId) {
-        var retry = createRetry(clientConfig.scrapperProperties().retryPolicy());
+        var retry = retryBuilderMap.get(clientConfig.scrapperProperties().retryPolicy().getBackoffStrategy())
+            .build(
+                clientConfig.scrapperProperties().retryPolicy().getAttempts(),
+                clientConfig.scrapperProperties().retryPolicy().getBackoff(),
+                clientConfig.scrapperProperties().retryPolicy().getRetryStatusCodes()
+            );
         return scrapperWebClient
             .get()
             .uri(clientConfig.scrapperProperties().links())
@@ -53,7 +81,12 @@ public class ScrapperClient {
     }
 
     public void addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
-        var retry = createRetry(clientConfig.scrapperProperties().retryPolicy());
+        var retry = retryBuilderMap.get(clientConfig.scrapperProperties().retryPolicy().getBackoffStrategy())
+            .build(
+                clientConfig.scrapperProperties().retryPolicy().getAttempts(),
+                clientConfig.scrapperProperties().retryPolicy().getBackoff(),
+                clientConfig.scrapperProperties().retryPolicy().getRetryStatusCodes()
+            );
         scrapperWebClient
             .post()
             .uri(clientConfig.scrapperProperties().links())
@@ -67,7 +100,12 @@ public class ScrapperClient {
     }
 
     public void removeLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
-        var retry = createRetry(clientConfig.scrapperProperties().retryPolicy());
+        var retry = retryBuilderMap.get(clientConfig.scrapperProperties().retryPolicy().getBackoffStrategy())
+            .build(
+                clientConfig.scrapperProperties().retryPolicy().getAttempts(),
+                clientConfig.scrapperProperties().retryPolicy().getBackoff(),
+                clientConfig.scrapperProperties().retryPolicy().getRetryStatusCodes()
+            );
         scrapperWebClient
             .method(HttpMethod.DELETE)
             .uri(clientConfig.scrapperProperties().links())

@@ -2,20 +2,24 @@ package edu.java.configuration.retry;
 
 import java.time.Duration;
 import java.util.List;
-import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 import reactor.util.retry.Retry;
-import static edu.java.configuration.retry.RetryUtils.createFilterExceptionsShouldBeRetried;
 
 @Log4j2
-@UtilityClass
-public class ConstantRetry {
-    public static Retry constantRetry(List<Integer> statusCodes, Integer attempts, Duration backoff) {
+@Component
+public class ConstantRetry extends RetryBuilder {
+    @Override
+    public Retry build(Integer attempts, Duration backoff, List<Integer> statusCodes) {
         return Retry.fixedDelay(
                 attempts,
                 backoff
-            ).filter(createFilterExceptionsShouldBeRetried(statusCodes))
+            ).filter(filterExceptionsShouldBeRetried(statusCodes))
             .doBeforeRetry(x -> log.info("ПОВТОР!!"));
     }
 
+    @Override
+    public RetryPolicy.BackoffStrategy backoffStrategy() {
+        return RetryPolicy.BackoffStrategy.constant;
+    }
 }

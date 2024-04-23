@@ -3,13 +3,13 @@ package edu.java.bot.retry;
 import edu.java.bot.configuration.retry.ConstantRetry;
 import edu.java.bot.configuration.retry.ExponentRetry;
 import edu.java.bot.configuration.retry.LinearRetry;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.util.retry.Retry;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
 
 public class RetryBehaviorTest {
 
@@ -19,7 +19,8 @@ public class RetryBehaviorTest {
         int attempts = 3;
         Duration backoff = Duration.ofMillis(100);
 
-        Retry retry = ConstantRetry.constantRetry(statusCodes, attempts, backoff);
+        var builder = new ConstantRetry();
+        Retry retry = builder.build(attempts, backoff, statusCodes);
 
         // Проверяем, что происходит ошибка
         StepVerifier.create(Mono.error(new RuntimeException("Test error")).retryWhen(retry))
@@ -38,8 +39,8 @@ public class RetryBehaviorTest {
         List<Integer> statusCodes = Arrays.asList(500, 502, 503);
         Integer attempts = 3;
         Duration backoff = Duration.ofSeconds(2);
-
-        Retry retry = ExponentRetry.exponentRetry(statusCodes, attempts, backoff);
+        var builder = new ExponentRetry();
+        Retry retry = builder.build(attempts, backoff, statusCodes);
 
         // Используем StepVerifier.withVirtualTime() для работы с виртуальным временем
         StepVerifier.withVirtualTime(() ->
@@ -62,8 +63,8 @@ public class RetryBehaviorTest {
         List<Integer> statusCodes = Arrays.asList(500, 502, 503);
         int attempts = 6;
         Duration backoff = Duration.ofSeconds(2);
-
-        Retry retry = LinearRetry.linearRetry(statusCodes, attempts, backoff);
+        var builder = new LinearRetry();
+        Retry retry = builder.build(attempts, backoff, statusCodes);
 
         StepVerifier.withVirtualTime(() ->
                 Mono.delay(Duration.ofSeconds(5))
@@ -80,4 +81,5 @@ public class RetryBehaviorTest {
             .expectError()
             .verify();
     }
+
 }

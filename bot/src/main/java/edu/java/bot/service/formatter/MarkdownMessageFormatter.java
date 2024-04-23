@@ -10,10 +10,10 @@ public class MarkdownMessageFormatter implements MessageFormatter {
     @Override
     public SendMessage formatUpdateMessage(LinkUpdateRequest linkUpdateRequest, Long tgChatId) {
         String message = String.format(
-                """
-                        *Поступили обновления по ссылке!*
-                        Ссылка: [%s](%s)
-                        %s""",
+            """
+                *Поступили обновления по ссылке!*
+                Ссылка: [%s](%s)
+                %s""",
             linkUpdateRequest.url().toString(),
             linkUpdateRequest.url(),
             linkUpdateRequest.description()
