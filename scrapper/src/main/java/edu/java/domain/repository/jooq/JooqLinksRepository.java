@@ -2,7 +2,7 @@ package edu.java.domain.repository.jooq;
 
 import edu.java.domain.jooq.tables.records.LinksRecord;
 import edu.java.domain.repository.LinksRepository;
-import edu.java.exception.BadRequestScrapperException;
+import edu.java.exception.NotFoundScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -13,8 +13,6 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import static edu.java.domain.jooq.Tables.CHAT_LINK_RELATION;
 import static edu.java.domain.jooq.Tables.LINKS;
-import static edu.java.domain.jooq.Tables.QUESTIONS;
-import static edu.java.domain.jooq.Tables.REPOSITORIES;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,7 +24,7 @@ public class JooqLinksRepository implements LinksRepository {
     @Override
     public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
         if (!jooqChatRepository.existsChat(tgChatId)) {
-            throw new BadRequestScrapperException("Пользователь не зарегестрирован", "Зарегистрируйстесь");
+            throw new NotFoundScrapperException("Пользователь не зарегестрирован", "Зарегистрируйстесь");
         }
 
         UUID linkId = UUID.randomUUID();
@@ -58,14 +56,6 @@ public class JooqLinksRepository implements LinksRepository {
 
             dsl.deleteFrom(CHAT_LINK_RELATION)
                 .where(CHAT_LINK_RELATION.LINK_ID.eq(linkId))
-                .execute();
-
-            dsl.deleteFrom(QUESTIONS)
-                .where(QUESTIONS.LINK_ID.eq(linkId))
-                .execute();
-
-            dsl.deleteFrom(REPOSITORIES)
-                .where(REPOSITORIES.LINK_ID.eq(linkId))
                 .execute();
 
             dsl.deleteFrom(LINKS)

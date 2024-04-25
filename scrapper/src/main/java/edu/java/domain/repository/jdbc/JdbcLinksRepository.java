@@ -2,6 +2,7 @@ package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.repository.LinksRepository;
 import edu.java.domain.repository.jdbc.mapper.LinkMapper;
+import edu.java.exception.NotFoundScrapperException;
 import edu.java.model.LinkModel;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -16,8 +17,12 @@ import org.springframework.stereotype.Repository;
 public class JdbcLinksRepository implements LinksRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final JdbcChatRepository jdbcChatRepository;
 
     public LinkModel addLink(Long tgChatId, String link, OffsetDateTime lastUpdate) {
+        if (!jdbcChatRepository.existsChat(tgChatId)) {
+            throw new NotFoundScrapperException("Такого чата не существует", "Нет");
+        }
         String sql = "INSERT INTO links (link_id, link, last_update, last_check) VALUES (?, ?, ?, ?)";
         UUID linkId = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now();
@@ -95,4 +100,5 @@ public class JdbcLinksRepository implements LinksRepository {
         String sql = "UPDATE links SET last_check = ? WHERE link_id = ?";
         jdbcTemplate.update(sql, checkedAt, linkId);
     }
+
 }

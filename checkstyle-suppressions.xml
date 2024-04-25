@@ -7,4 +7,5 @@
 <suppressions>
     <suppress checks="EmptyLineSeparator" files="edu/java/domain/jooq/DefaultSchema.java"/>
     <suppress checks="ImportOrder" files="edu/java/domain/jooq/DefaultSchema.java"/>
+    <suppress checks="AvoidStarImport" files="edu/java/domain/jooq/DefaultSchema.java"/>
 </suppressions>

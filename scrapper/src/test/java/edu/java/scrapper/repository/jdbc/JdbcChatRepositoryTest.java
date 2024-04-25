@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcChatRepository jdbcChatRepository;
@@ -21,8 +22,6 @@ public class JdbcChatRepositoryTest extends IntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    @Transactional
-    @Rollback
     void addChatTest() {
         // Arrange
         Long chatId = 123456789L;
@@ -39,8 +38,6 @@ public class JdbcChatRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     void removeChatTest() {
         // Arrange
         Long chatId = 123456789L;

@@ -36,12 +36,12 @@ public class LinksControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private LinkService jdbcLinkService;
+    private LinkService linkService;
 
     @Test
     void testGetLinks() throws Exception {
         Long tgChatId = 123456L;
-        when(jdbcLinkService.findAll(tgChatId)).thenReturn(Collections.emptyList());
+        when(linkService.findAll(tgChatId)).thenReturn(Collections.emptyList());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Tg-Chat-Id", tgChatId.toString());
@@ -63,7 +63,7 @@ public class LinksControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Tg-Chat-Id", Long.toString(tgChatId));
 
-        when(jdbcLinkService.remove(
+        when(linkService.remove(
             anyLong(),
             any(URI.class)
         )).thenAnswer(invocation -> new LinkResponse(URI.create(uri), OffsetDateTime.now()));
@@ -88,13 +88,13 @@ public class LinksControllerTest {
                 .content(new ObjectMapper().writeValueAsString(removeLinkRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.url").value(link));
-        verify(jdbcLinkService).remove(tgChatId, URI.create(link));
+        verify(linkService).remove(tgChatId, URI.create(link));
     }
 
     @Test
     public void testDeleteLink_NotFound() throws Exception {
         Long chatId = 123456L;
-        doThrow(new NotFoundScrapperException("Conflict", "Description")).when(jdbcLinkService)
+        doThrow(new NotFoundScrapperException("Conflict", "Description")).when(linkService)
             .remove(anyLong(), any(URI.class));
 
         mockMvc.perform(delete("/links/{id}", chatId)
@@ -110,7 +110,7 @@ public class LinksControllerTest {
 
         // Stubbing the service method to throw DuplicateLinkScrapperException
         doThrow(new DuplicateLinkScrapperException("Duplicate Link", "Description"))
-            .when(jdbcLinkService).remove(anyLong(), any(URI.class));
+            .when(linkService).remove(anyLong(), any(URI.class));
 
         // Act & Assert
         mockMvc.perform(delete("/links")

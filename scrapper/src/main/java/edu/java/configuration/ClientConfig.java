@@ -1,21 +1,30 @@
 package edu.java.configuration;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Configuration
-@RequiredArgsConstructor
-public class ClientConfig {
-
-    private final ApplicationConfig applicationConfig;
-
+@Validated
+@ConfigurationProperties(prefix = "client", ignoreUnknownFields = false)
+public record ClientConfig(
+    @NestedConfigurationProperty
+    @NotNull
+    StackoverflowProperties stackoverflowProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    GithubProperties githubProperties,
+    @NestedConfigurationProperty
+    @NotNull
+    BotClient botProperties
+) {
     @Bean
     public WebClient githubWebClient() {
         return WebClient
             .builder()
-            .baseUrl(applicationConfig.githubProperties().apiUrl())
+            .baseUrl(githubProperties().apiUrl())
             .build();
     }
 
@@ -23,7 +32,7 @@ public class ClientConfig {
     public WebClient stackoverflowWebClient() {
         return WebClient
             .builder()
-            .baseUrl(applicationConfig.stackoverflowProperties().apiUrl())
+            .baseUrl(stackoverflowProperties().apiUrl())
             .build();
     }
 
@@ -31,8 +40,16 @@ public class ClientConfig {
     public WebClient botWebClient() {
         return WebClient
             .builder()
-            .baseUrl(applicationConfig.botProperties().url())
+            .baseUrl(botProperties().url())
             .build();
     }
-}
 
+    public record StackoverflowProperties(String domain, String apiUrl, String questions) {
+    }
+
+    public record GithubProperties(String domain, String apiUrl, String repos) {
+    }
+
+    public record BotClient(String url) {
+    }
+}

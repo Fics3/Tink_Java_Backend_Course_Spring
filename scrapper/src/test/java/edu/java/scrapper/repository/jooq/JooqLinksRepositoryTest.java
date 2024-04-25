@@ -2,7 +2,7 @@ package edu.java.scrapper.repository.jooq;
 
 import edu.java.domain.jooq.tables.records.LinksRecord;
 import edu.java.domain.repository.jooq.JooqLinksRepository;
-import edu.java.exception.BadRequestScrapperException;
+import edu.java.exception.NotFoundScrapperException;
 import edu.java.model.LinkModel;
 import edu.java.scrapper.IntegrationTest;
 import java.time.Duration;
@@ -62,14 +62,13 @@ class JooqLinksRepositoryTest extends IntegrationTest {
     @Test
     void addLink_handleNotExistChat() {
         // Arrange
-
         Long tgChatId = 999L; // Invalid chat ID
         String link = "http://example.com";
         OffsetDateTime lastUpdate = OffsetDateTime.now();
 
         // Act & Assert
-        BadRequestScrapperException exception = assertThrows(
-            BadRequestScrapperException.class,
+        NotFoundScrapperException exception = assertThrows(
+            NotFoundScrapperException.class,
             () -> jooqLinksRepository.addLink(tgChatId, link, lastUpdate)
         );
         assertThat(exception).isNotNull();

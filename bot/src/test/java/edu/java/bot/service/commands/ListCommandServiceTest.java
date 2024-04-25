@@ -1,70 +1,91 @@
 package edu.java.bot.service.commands;
 
-import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
-import edu.java.bot.service.commands.resourcesHandlers.Link;
-import java.net.URISyntaxException;
-import java.util.Map;
+import edu.java.bot.service.ScrapperService;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.List;
+import org.example.dto.LinkResponse;
+import org.example.dto.ListLinkResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ListCommandServiceTest {
 
+    @Mock
+    private ScrapperService scrapperService;
+
+    @Mock
     private NotificationService notificationService;
 
+    @InjectMocks
+    private ListCommandService listCommandService;
+
     @BeforeEach
-    void setUp() {
-        Map<String, CommandService> commandMap = mock();
-        notificationService = new NotificationService(commandMap);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @DisplayName("not registered - should return special message")
-    void testExecuteNotRegistered() {
+    @DisplayName("should return links if response not empty")
+    public void testExecuteReturnsSavedLinks() {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
-        long chatId = 123;
+        long chatId = 123456789;
+        String message = "/list";
+        List<LinkResponse> linkResponses =
+            List.of(new LinkResponse(URI.create("https://example.com"), OffsetDateTime.now()));
+        ListLinkResponse listLinkResponse = new ListLinkResponse(linkResponses, 1);
+        when(scrapperService.getAllLinks(chatId)).thenReturn(listLinkResponse);
 
         // Act
-        String result = listCommand.execute(chatId, "some message", notificationService);
+        String result = listCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Для просмотра ссылок необходимо зарегестрироваться /start");
+        assertThat(result).isEqualTo("Сохраненные ссылки:\nhttps://example.com");
+        verify(scrapperService, times(1)).getAllLinks(chatId);
     }
 
     @Test
-    @DisplayName("registered user - no links - special message")
-    public void testExecute_UserRegisteredWithEmptyLinkList_ReturnsNoLinksMessage() {
+    @DisplayName("should return empty links message if response empty")
+    public void testExecuteReturnsNoSavedLinksMessage() {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
-        long chatId = 1234567L;
-        notificationService.getLinkMap().put(chatId, new User(chatId));
+        long chatId = 123456789;
+        String message = "/list";
+        List<LinkResponse> linkResponses =
+            List.of();
+        ListLinkResponse listLinkResponse = new ListLinkResponse(linkResponses, 1);
+        when(scrapperService.getAllLinks(chatId)).thenReturn(listLinkResponse);
 
         // Act
-        String result = listCommand.execute(chatId, "/list", notificationService);
+        String result = listCommandService.execute(chatId, message, notificationService);
 
         // Assert
         assertThat(result).isEqualTo("Нет сохраненных ссылок");
+        verify(scrapperService, times(1)).getAllLinks(chatId);
     }
 
     @Test
-    @DisplayName("several links - check correct message format")
-    public void testExecute_UserRegisteredWithLinks_ReturnsFormattedLinks() throws URISyntaxException {
+    @DisplayName("should return not registered message if user not registered")
+    public void testExecuteReturnsNoRegisteredMessage() {
         // Arrange
-        ListCommandService listCommand = new ListCommandService();
-        long chatId = 1234567L;
-        User user = new User(chatId);
-        user.addLink(Link.parse("https://example.com"));
-        user.addLink(Link.parse("https://example.org"));
-        notificationService.getLinkMap().put(chatId, user);
+        long chatId = 123456789;
+        String message = "/list";
+        when(scrapperService.getAllLinks(chatId)).thenThrow(WebClientResponseException.class);
 
         // Act
-        String result = listCommand.execute(chatId, "/list", notificationService);
+        String result = listCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Сохраненные ссылки:\nhttps://example.com\nhttps://example.org");
+        assertThat(result).isEqualTo("Для просмотра ссылок необходимо зарегестрироваться /start");
+        verify(scrapperService, times(1)).getAllLinks(chatId);
     }
 }

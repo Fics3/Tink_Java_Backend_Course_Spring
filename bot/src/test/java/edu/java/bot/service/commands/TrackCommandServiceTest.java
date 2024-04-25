@@ -1,104 +1,132 @@
 package edu.java.bot.service.commands;
 
-import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.ScrapperService;
 import edu.java.bot.service.commands.resourcesHandlers.ChainResourceHandler;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TrackCommandServiceTest {
 
     @Mock
+    private NotificationService notificationService;
+
+    @Mock
     private ChainResourceHandler chainResourceHandler;
 
     @Mock
-    private NotificationService notificationService;
+    private ScrapperService scrapperService;
 
     @InjectMocks
-    private TrackCommandService trackCommand;
+    private TrackCommandService trackCommandService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @DisplayName("registered user - should use method for checking link")
-    void testExecuteSuccessfully() {
+    @DisplayName("Valid command and link not tracked - returns success message")
+    public void testExecuteReturnsSuccessMessage() {
         // Arrange
-        long chatId = 123456L;
-        String message = "/track https://github.com/example";
-
-        // Mock LinkMap
-        User user = new User(chatId);
-        Map<Long, User> linkMap = Map.of(chatId, user);
-
-        when(notificationService.getLinkMap()).thenReturn(linkMap);
-
-        when(chainResourceHandler
-            .handleLink(
-                chatId,
-                "https://github.com/example",
-                notificationService
-            )).thenReturn("Ссылка добавлена");
+        long chatId = 123456789;
+        String message = "/track https://example.com";
+        String resource = "https://example.com";
+        when(chainResourceHandler.handleLink(chatId, resource)).thenReturn("Success");
 
         // Act
-        String result = trackCommand.execute(chatId, message, notificationService);
+        String result = trackCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Ссылка добавлена");
+        assertThat(result).isEqualTo("Success");
     }
 
     @Test
-    @DisplayName("not registered user - should not add link")
-    void testExecuteNotRegistered() {
+    @DisplayName("Invalid command - returns error message")
+    public void testExecuteReturnsErrorMessage() {
         // Arrange
-        long chatId = 789012L;
-        String message = "/track https://github.com/example";
-
-        when(notificationService.getLinkMap()).thenReturn(new HashMap<>());
-
-        when(chainResourceHandler.handleLink(anyLong(), anyString(), any(NotificationService.class)))
-            .thenReturn("Link added successfully");
+        long chatId = 123456789;
+        String message = "/track";
+        String errorMessage = "Неверный формат команды: /track {URL}";
 
         // Act
-        String result = trackCommand.execute(chatId, message, notificationService);
+        String result = trackCommandService.execute(chatId, message, notificationService);
+
+        // Assert
+        assertThat(result).isEqualTo(errorMessage);
+    }
+
+    @Test
+    @DisplayName("Not registered - returns not registered message")
+    public void testExecuteReturnsNoRegisteredMessage() {
+        // Arrange
+        long chatId = 123456789;
+        String message = "/track https://example.com";
+        when(chainResourceHandler.handleLink(chatId, "https://example.com"))
+            .thenThrow(new WebClientResponseException(
+                HttpStatus.BAD_REQUEST.value(),
+                "No Registered",
+                null,
+                null,
+                null
+            ));
+
+        // Act
+        String result = trackCommandService.execute(chatId, message, notificationService);
 
         // Assert
         assertThat(result).isEqualTo("Для отслеживания ссылок необходимо зарегестрироваться /start");
-        verify(chainResourceHandler, never()).handleLink(anyLong(), anyString(), any(NotificationService.class));
     }
 
     @Test
-    @DisplayName("handle invalid link format")
-    void testExecuteInvalidFormat() {
+    @DisplayName("Link already tracked - returns link already tracked message")
+    public void testExecuteReturnsLinkAlreadyExistMessage() {
         // Arrange
-        long chatId = 123456L;
-        String message = "/track";
-
-        Map<Long, User> linkMap = new HashMap<>();
-        User user = new User(chatId);
-        linkMap.put(chatId, user);
-        when(notificationService.getLinkMap()).thenReturn(linkMap);
+        long chatId = 123456789;
+        String message = "/track https://example.com";
+        when(chainResourceHandler.handleLink(chatId, "https://example.com"))
+            .thenThrow(new WebClientResponseException(
+                HttpStatus.CONFLICT.value(),
+                "Link Already Exists",
+                null,
+                null,
+                null
+            ));
 
         // Act
-        String result = trackCommand.execute(chatId, message, notificationService);
+        String result = trackCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Неверный формат команды: /track {URL}");
-        verify(chainResourceHandler, never()).handleLink(anyLong(), anyString(), any(NotificationService.class));
+        assertThat(result).isEqualTo("Вы уже отслеживаете такую ссылку");
+    }
+
+    @Test
+    @DisplayName("Internal server error - returns default error message")
+    public void testExecuteReturnsDefaultErrorMessage() {
+        // Arrange
+        long chatId = 123456789;
+        String message = "/track https://example.com";
+        when(chainResourceHandler.handleLink(chatId, "https://example.com"))
+            .thenThrow(new WebClientResponseException(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal Server Error",
+                null,
+                null,
+                null
+            ));
+
+        // Act
+        String result = trackCommandService.execute(chatId, message, notificationService);
+
+        // Assert
+        assertThat(result).isEqualTo("Ошибка, попробуйте позже");
     }
 }

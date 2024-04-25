@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static edu.java.domain.jooq.Tables.LINKS;
 import static edu.java.domain.jooq.Tables.QUESTIONS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
@@ -81,6 +82,6 @@ class JooqStackoverflowQuestionRepositoryTest extends IntegrationTest {
             .where(QUESTIONS.LINK_ID.eq(linkId))
             .fetch();
         assertThat(result).isNotEmpty();
-        assertThat(result.getFirst().getValue(QUESTIONS.ANSWER_COUNT)).isEqualTo(updatedAnswerCount);
+        assertEquals(updatedAnswerCount, result.getFirst().getValue(QUESTIONS.ANSWER_COUNT));
     }
 }

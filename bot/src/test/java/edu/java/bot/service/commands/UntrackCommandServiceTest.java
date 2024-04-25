@@ -1,12 +1,9 @@
 package edu.java.bot.service.commands;
 
-import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
-import edu.java.bot.service.commands.resourcesHandlers.Link;
+import edu.java.bot.service.ScrapperService;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,65 +11,53 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 
-class UntrackCommandServiceTest {
+public class UntrackCommandServiceTest {
 
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private ScrapperService scrapperService;
+
     @InjectMocks
-    private UntrackCommandService untrackCommand;
+    private UntrackCommandService untrackCommandService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @DisplayName("registered user - should remove link from tracked list")
-    void testExecuteSuccessfully() throws URISyntaxException {
+    @DisplayName("Valid command and valid URL - returns success message")
+    public void testExecute_ValidCommandAndValidUrl_ReturnsSuccessMessage() throws URISyntaxException {
         // Arrange
-        long chatId = 123456L;
-        String urlToRemove = "https://example.com";
-        NotificationService notificationService = mock(NotificationService.class);
-
-        // Создание мока User с одной ссылкой
-        User mockedUser = mock(User.class);
-        ArrayList<Link> links = new ArrayList<>();
-        links.add(Link.parse(urlToRemove));
-        when(mockedUser.getLinks()).thenReturn(links);
-
-        // Устанавливаем мокированное значение для getLinkMap()
-        when(notificationService.getLinkMap()).thenReturn(Map.of(chatId, mockedUser));
-
-        UntrackCommandService untrackCommand = new UntrackCommandService();
+        long chatId = 123456789;
+        String message = "/untrack https://example.com";
+        URI uri = new URI("https://example.com");
+        doNothing().when(scrapperService).deleteLink(chatId, uri);
 
         // Act
-        String result = untrackCommand.execute(chatId, "/untrack " + urlToRemove, notificationService);
+        String result = untrackCommandService.execute(chatId, message, notificationService);
 
         // Assert
         assertThat(result).isEqualTo("Для просмотра ваших ссылок введите /list");
-        assertThat(links.size()).isZero();
     }
 
     @Test
-    @DisplayName("unregistered user - should return message to register first")
-    void testExecuteUnregisteredUser() {
+    @DisplayName("Invalid command format - returns error message")
+    public void testExecute_InvalidCommandFormat_ReturnsErrorMessage() {
         // Arrange
-        long chatId = 123456L;
-        String message = "/untrack https://github.com/example";
-
-        // Mock LinkMap with null user
-        Map<Long, User> linkMap = new HashMap<>();
-        when(notificationService.getLinkMap()).thenReturn(linkMap);
+        long chatId = 123456789;
+        String message = "/untrack";
+        String expectedErrorMessage = "Неверный формат команды: /untrack {URL}";
 
         // Act
-        String result = untrackCommand.execute(chatId, message, notificationService);
+        String result = untrackCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("Для удаления ссылок необходимо зарегестрироваться /start");
+        assertThat(result).isEqualTo(expectedErrorMessage);
     }
-}
 
+}

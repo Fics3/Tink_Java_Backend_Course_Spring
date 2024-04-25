@@ -1,63 +1,61 @@
 package edu.java.bot.service.commands;
 
-import edu.java.bot.model.User;
 import edu.java.bot.service.NotificationService;
-import java.util.HashMap;
-import java.util.Map;
+import edu.java.bot.service.ScrapperService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class StartCommandServiceTest {
 
-    @Test
-    @DisplayName("register user - data base should be not null")
-    void testExecute() {
-        // Arrange
-        long chatId = 123456L;
-        NotificationService notificationService = mock(NotificationService.class);
+    @Mock
+    private ScrapperService scrapperService;
 
-        // Ensure that getLinkMap() returns a non-null value
-        when(notificationService.getLinkMap()).thenReturn(new HashMap<>());
+    @Mock
+    private NotificationService notificationService;
 
-        StartCommandService startCommand = new StartCommandService();
+    @InjectMocks
+    private StartCommandService startCommandService;
 
-        // Act
-        String result = startCommand.execute(chatId, "", notificationService);
-
-        // Assert
-        assertThat(result).isEqualTo("Hello world");
-
-        Map<Long, User> linkMap = notificationService.getLinkMap();
-        assertThat(linkMap).isNotEmpty();
-
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    @DisplayName("should return command name")
-    void testGetName() {
+    @DisplayName("should return welcome message")
+    public void testExecuteReturnWelcomeMessage() {
         // Arrange
-        StartCommandService startCommand = new StartCommandService();
-
+        long chatId = 123456789;
+        String message = "/start";
+        doNothing().when(scrapperService).registerChat(chatId);
         // Act
-        String result = startCommand.getName();
+        String result = startCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("/start");
+        assertThat(result).isEqualTo(
+            "Привет, я умею отслеживать вопросы на stackoverflow и репозитории на github");
     }
 
     @Test
-    @DisplayName("should return command description")
-    void testGetDescription() {
+    @DisplayName("verify that chat registered")
+    public void testExecuteRegisterNewChat() {
         // Arrange
-        StartCommandService startCommand = new StartCommandService();
-
+        long chatId = 123456789;
+        String message = "/start";
+        doNothing().when(scrapperService).registerChat(chatId);
         // Act
-        String result = startCommand.getDescription();
+        startCommandService.execute(chatId, message, notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("registration");
+        verify(scrapperService, times(1)).registerChat(chatId);
     }
+
 }

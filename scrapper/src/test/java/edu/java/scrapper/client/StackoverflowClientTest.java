@@ -19,14 +19,14 @@ public class StackoverflowClientTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private StackoverflowClient stackoverflowClient;
+    private StackoverflowClient stackoverflowWebClient;
 
     @Test
     public void testFetchQuestion() {
         // Arrange
         StackoverflowQuestionResponse response = mock(StackoverflowQuestionResponse.class);
 
-        when(stackoverflowClient.fetchQuestion(URI.create("https://api.stackexchange.com")))
+        when(stackoverflowWebClient.fetchQuestion(URI.create("https://api.stackexchange.com")))
             .thenReturn(Mono.just(response));
 
         // Act&Assert

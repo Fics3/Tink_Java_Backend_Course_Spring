@@ -1,6 +1,7 @@
 package edu.java.client;
 
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
+import edu.java.exception.BadRequestScrapperException;
 import java.net.URI;
 import lombok.AllArgsConstructor;
 import org.example.dto.GithubRepositoryResponse;
@@ -12,21 +13,22 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public class GithubClient {
 
-    private final ApplicationConfig applicationConfig;
+    private final ClientConfig clientConfig;
     private final WebClient githubWebClient;
 
     public Mono<GithubRepositoryResponse> fetchRepository(URI url) {
         String[] urlSplit = url.getPath().split("/");
-        String owner = urlSplit[1];
-        String repo = urlSplit[2];
+        try {
+            String apiUrl = String.format(clientConfig.githubProperties().apiUrl(), urlSplit[1], urlSplit[2]);
 
-        String apiUrl = String.format(applicationConfig.githubProperties().repos(), owner, repo);
-
-        return githubWebClient
-            .get()
-            .uri(apiUrl)
-            .retrieve()
-            .bodyToMono(GithubRepositoryResponse.class);
+            return githubWebClient
+                .get()
+                .uri(apiUrl)
+                .retrieve()
+                .bodyToMono(GithubRepositoryResponse.class);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new BadRequestScrapperException("Неправильный тип ссылки", "");
+        }
     }
 
 }

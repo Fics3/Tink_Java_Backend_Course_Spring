@@ -1,7 +1,7 @@
 package edu.java.scrapper.client;
 
 import edu.java.client.GithubClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.configuration.ClientConfig;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import org.example.dto.GithubRepositoryResponse;
@@ -22,10 +22,10 @@ public class GithubClientTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private ApplicationConfig applicationConfig;
+    private ClientConfig clientConfig;
 
     @MockBean
-    private GithubClient githubClient;
+    private GithubClient githubWebClient;
 
     @Test
     @DisplayName("test for check the required response body")
@@ -35,13 +35,13 @@ public class GithubClientTest {
             OffsetDateTime.now(), 123
         );
 
-        when(applicationConfig.githubProperties()).thenReturn(new ApplicationConfig.GithubProperties(
+        when(clientConfig.githubProperties()).thenReturn(new ClientConfig.GithubProperties(
             "github.com",
             "https://api.github.com",
             "/repos/%s/%s"
         ));
 
-        when(githubClient.fetchRepository(any(URI.class)))
+        when(githubWebClient.fetchRepository(any(URI.class)))
             .thenReturn(Mono.just(response));
 
         // Act & Assert

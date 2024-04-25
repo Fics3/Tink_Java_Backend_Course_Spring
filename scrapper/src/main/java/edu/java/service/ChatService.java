@@ -7,19 +7,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRepository jooqChatRepository;
+    private final ChatRepository chatRepository;
 
     public void add(Long tgChatId) {
-        if (jooqChatRepository.existsChat(tgChatId)) {
+        if (chatRepository.existsChat(tgChatId)) {
             throw new DuplicateRegistrationScrapperException(
                 "Повторная регистрация",
                 "Такой пользователь уже зарегистрирован"
             );
         }
-        jooqChatRepository.addChat(tgChatId);
+        chatRepository.addChat(tgChatId);
     }
 
     public void remove(Long tgChatId) {
-        jooqChatRepository.removeChat(tgChatId);
+        chatRepository.removeChat(tgChatId);
     }
 }

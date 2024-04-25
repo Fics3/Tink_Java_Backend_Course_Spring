@@ -4,6 +4,9 @@ app:
     interval: 10s
     force-check-delay: 3600s
 
+  database-access-type: jpa
+
+client:
   stackoverflow-properties:
     domain: stackoverflow.com
     api-url: https://api.stackexchange.com
@@ -14,7 +17,7 @@ app:
     repos: /repos/%s/%s
   bot-properties:
     url: http://localhost:8090
-  database-access-type: jooq
+
 
 spring:
   application:

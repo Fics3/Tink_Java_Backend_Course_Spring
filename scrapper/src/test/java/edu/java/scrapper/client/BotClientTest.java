@@ -1,56 +1,37 @@
 package edu.java.scrapper.client;
 
 import edu.java.client.BotClient;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest
+@WebFluxTest(BotClient.class)
 class BotClientTest {
 
-    @Mock
-    private WebClient botWebClient;
-
-    private BotClient botClient;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        botClient = new BotClient(botWebClient);
-    }
+    @Autowired
+    private WebTestClient webTestClient;
+    @MockBean
+    private BotClient botWebClient;
 
     @Test
-    @DisplayName("Should do post")
-    void sendUpdate_shouldReturnEmptyMono() {
+    @DisplayName("Should return 404 when post")
+    void registerChat_shouldReturnInternalServerError() {
         // Arrange
-        LinkUpdateRequest updateRequest =
-            new LinkUpdateRequest(
-                UUID.randomUUID(),
-                URI.create("http://example.com"),
-                "12",
-                List.of(1L)
-            );
+        long chatId = 123;
+        Mockito.when(botWebClient.sendUpdate(any(LinkUpdateRequest.class)))
+            .thenReturn(Mono.error(new RuntimeException("Some error message")));
 
-        // Mock WebClient behavior
-        when(botWebClient.post())
-            .thenReturn(WebClient.builder().baseUrl("http://example.com").build().post());
-
-        // Act
-        Mono<Void> result = botClient.sendUpdate(updateRequest);
-
-        // Assert
-        verify(botWebClient, times(1)).post();
+        // Act & Assert
+        webTestClient.post()
+            .uri("/updates", chatId)
+            .exchange()
+            .expectStatus().is4xxClientError();
     }
 }

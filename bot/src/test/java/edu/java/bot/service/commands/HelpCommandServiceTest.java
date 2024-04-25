@@ -1,62 +1,66 @@
 package edu.java.bot.service.commands;
 
 import edu.java.bot.service.NotificationService;
+import edu.java.bot.service.ScrapperService;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class HelpCommandServiceTest {
+
+    @Mock
+    private NotificationService notificationService;
+
+    @InjectMocks
+    private HelpCommandService helpCommandService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    @DisplayName("should return all commands")
-    void testExecute() {
+    @DisplayName("execute - returns commands")
+    public void testExecuteReturnsCommands() {
         // Arrange
-        long chatId = 123456L;
-        NotificationService notificationService = mock(NotificationService.class);
-
-        // Mocking the command map
+        ScrapperService scrapperService = mock(ScrapperService.class);
         Map<String, CommandService> commandMap = new HashMap<>();
-        commandMap.put("/command1", mock(CommandService.class));
-        commandMap.put("/command2", mock(CommandService.class));
-
+        commandMap.put("/start", new StartCommandService(scrapperService));
+        commandMap.put("/list", new ListCommandService(scrapperService));
+        commandMap.put("/help", new HelpCommandService());
         when(notificationService.getCommandMap()).thenReturn(commandMap);
 
-        HelpCommandService helpCommand = new HelpCommandService();
-
         // Act
-        String result = helpCommand.execute(chatId, "", notificationService);
+        String result = helpCommandService.execute(123456789, "/help", notificationService);
 
         // Assert
-        assertEquals("[/command2, /command1]", result);
+        assertThat(result).isEqualTo(
+            """
+                /list - отобразить все отслеживаемые ссылки
+                /help - отобразить все команды бота
+                /start - регистрация"""
+        );
     }
 
     @Test
-    @DisplayName("should return command name")
-    void testGetName() {
+    @DisplayName("execute - returns empty string")
+    public void testExecuteReturnsEmptyString() {
         // Arrange
-        HelpCommandService helpCommand = new HelpCommandService();
+        Map<String, CommandService> commandMap = new HashMap<>();
+        when(notificationService.getCommandMap()).thenReturn(commandMap);
 
         // Act
-        String result = helpCommand.getName();
+        String result = helpCommandService.execute(123456789, "/help", notificationService);
 
         // Assert
-        assertThat(result).isEqualTo("/help");
-    }
-
-    @Test
-    @DisplayName("should return command description")
-    void testGetDescription() {
-        // Arrange
-        HelpCommandService helpCommand = new HelpCommandService();
-
-        // Act
-        String result = helpCommand.getDescription();
-
-        // Assert
-        assertThat(result).isEqualTo("show all bot commands");
+        assertThat(result).isEmpty();
     }
 }

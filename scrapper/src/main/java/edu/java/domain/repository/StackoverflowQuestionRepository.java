@@ -12,4 +12,5 @@ public interface StackoverflowQuestionRepository {
 
     void updateAnswerCount(UUID linkId, Integer integer);
 
+    void deleteQuestion(Long tgChatId, String url);
 }
