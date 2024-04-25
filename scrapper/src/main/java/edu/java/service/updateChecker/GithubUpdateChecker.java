@@ -38,7 +38,7 @@ public class GithubUpdateChecker implements UpdateChecker {
         var url = URI.create(linkModel.link());
         int tmpCount = updateCount;
         if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
-            notificationService.sendNotification(formLinkUpdateRequest(
+            notificationService.sendNotification(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Ссылка обновлена " + linkModel.link()
@@ -57,7 +57,7 @@ public class GithubUpdateChecker implements UpdateChecker {
         if (subscribersCount != null
             && !subscribersCount.equals(githubRepositoryRepository.getRepositoryByLinkId(linkModel.linkId())
             .subscribersCount())) {
-            notificationService.sendNotification(formLinkUpdateRequest(
+            notificationService.sendNotification(createLinkUpdateRequest(
                 linkModel.linkId(),
                 URI.create(linkModel.link()),
                 "Число подписчиков изменилось, теперь: " + subscribersCount

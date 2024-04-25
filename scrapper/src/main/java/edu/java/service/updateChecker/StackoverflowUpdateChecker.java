@@ -41,7 +41,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         var url = URI.create(linkModel.link());
         int tmpCount = updateCount;
         if (lastUpdate != null && lastUpdate.isAfter(linkModel.lastUpdate())) {
-            notificationService.sendNotification(formLinkUpdateRequest(
+            notificationService.sendNotification(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Ссылка обновлена " + linkModel.link()
@@ -59,7 +59,7 @@ public class StackoverflowUpdateChecker implements UpdateChecker {
         }
         var questionCount = questionModel.answerCount();
         if (answerCount != null && !questionCount.equals(answerCount)) {
-            notificationService.sendNotification(formLinkUpdateRequest(
+            notificationService.sendNotification(createLinkUpdateRequest(
                 linkModel.linkId(),
                 url,
                 "Количество ответов обновилось: " + answerCount

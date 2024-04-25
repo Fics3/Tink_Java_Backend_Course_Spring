@@ -14,6 +14,6 @@ public class UpdateService {
     private final MessageFormatter markdownMessageFormatter;
 
     public void processUpdate(LinkUpdateRequest linkUpdateRequest, Long id) {
-        telegramBot.execute(markdownMessageFormatter.formatMessage(linkUpdateRequest, id));
+        telegramBot.execute(markdownMessageFormatter.formatUpdateMessage(linkUpdateRequest, id));
     }
 }
