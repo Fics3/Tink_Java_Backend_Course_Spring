@@ -80,7 +80,7 @@ public class JpaLinksRepository implements LinksRepository {
     @Override
     public List<LinkModel> findLinksByChatId(Long tgChatId) {
         var chat = jpaChatEntityRepository.findByTelegramChatId(tgChatId)
-            .orElseThrow(() -> new BadRequestScrapperException(USER_NOT_REGISTERED, ERROR));
+            .orElseThrow(() -> new NotFoundScrapperException(USER_NOT_REGISTERED, ERROR));
         return jpaLinkEntityRepository.findAllByChatsContains(chat).stream().map(linkEntity -> new LinkModel(
             linkEntity.getLinkId(),
             linkEntity.getLink(),

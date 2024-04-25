@@ -11,13 +11,41 @@ client:
     domain: stackoverflow.com
     api-url: https://api.stackexchange.com
     questions: /questions/%d?site=stackoverflow
+    retry-policy:
+      attempts: 5
+      backoff: 2s
+      backoff-strategy: linear
+      retry-status-codes:
+        - 500
+        - 502
+        - 503
+        - 404
+        - 400
   github-properties:
     domain: github.com
     api-url: https://api.github.com
     repos: /repos/%s/%s
+    retry-policy:
+      attempts: 5
+      backoff: 2s
+      backoff-strategy: linear
+      retry-status-codes:
+        - 500
+        - 502
+        - 503
+        - 404
+        - 400
   bot-properties:
     url: http://localhost:8090
-
+    retry-policy:
+      attempts: 5
+      backoff: 2s
+      backoff-strategy: linear
+      retry-status-codes:
+        - 500
+        - 502
+        - 503
+        - 404
 
 spring:
   application:
@@ -29,6 +57,28 @@ spring:
     url: jdbc:postgresql://localhost:5432/scrapper
     username: postgres
     password: postgres
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: buckets
+      url: .*
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\": \"You have exhausted your API Request Quota\" }"
+      rate-limits:
+        - cache-key: "getRemoteAddr()"
+          bandwidths:
+            - capacity: 100
+              time: 100
+              unit: seconds
+              refill-capacity: 50
+              refill-speed: greedy
 
 server:
   port: 8080
@@ -39,6 +89,5 @@ logging:
 springdoc:
   api-docs:
     enabled: true
-
-swagger-ui:
-  path: /swagger-ui
+  swagger-ui:
+    path: /swagger-ui

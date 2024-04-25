@@ -5,6 +5,7 @@ import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.exception.InternalServerScrapperException;
 import edu.java.exception.NotFoundScrapperException;
+import edu.java.exception.RateLimitScrapperException;
 import edu.java.exception.ScrapperException;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,12 @@ public class WebServerExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiErrorResponse handleDuplicateLinkException(ScrapperException e) {
         return buildErrorResponse(e.getMessage(), HttpStatus.CONFLICT, e.getDescription(), e);
+    }
+
+    @ExceptionHandler(RateLimitScrapperException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ApiErrorResponse handleRateLimitException(ScrapperException e) {
+        return buildErrorResponse(e.getMessage(), HttpStatus.TOO_MANY_REQUESTS, e.getDescription(), e);
     }
 
     private ApiErrorResponse buildErrorResponse(String message, HttpStatus status, String description, Exception e) {
