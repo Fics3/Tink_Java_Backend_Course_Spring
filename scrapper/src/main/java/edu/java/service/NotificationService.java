@@ -1,24 +1,17 @@
 package edu.java.service;
 
-import edu.java.client.BotClient;
-import edu.java.configuration.ApplicationConfig;
+import edu.java.service.updateSender.BotUpdateSender;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.LinkUpdateRequest;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
-    private final ApplicationConfig applicationConfig;
-    private final ScrapperQueueProducer scrapperQueueProducer;
-    private final BotClient botClient;
+    private final BotUpdateSender botUpdateSender;
 
     public void sendNotification(LinkUpdateRequest linkUpdateRequest) {
-        if (applicationConfig.isUseQueue()) {
-            scrapperQueueProducer.send(linkUpdateRequest);
-        } else {
-            botClient.sendUpdate(linkUpdateRequest).block();
-        }
+        botUpdateSender.sendUpdate(linkUpdateRequest);
     }
 }

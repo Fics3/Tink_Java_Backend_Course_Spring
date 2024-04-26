@@ -38,6 +38,10 @@ spring:
       - buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    bootstrapServers: localhost:9092
 
 bucket4j:
   enabled: true
@@ -53,10 +57,6 @@ bucket4j:
               unit: seconds
               refill-capacity: 50
               refill-speed: greedy
-  kafka:
-    consumer:
-      auto-offset-reset: earliest
-    bootstrapServers: localhost:9092
 
 server:
   port: 8090

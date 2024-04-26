@@ -11,7 +11,7 @@ app:
       replicas-num: 1
 
   database-access-type: jpa
-  is-use-queue: true
+  is-use-queue: "true"
 
 
 client:
