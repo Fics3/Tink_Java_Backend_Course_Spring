@@ -18,17 +18,16 @@ public class KafkaNotificationProcessorService {
     private final ApplicationConfig applicationConfig;
 
     @KafkaListener(id = "myId",
-                   topics = "${app.kafka-properties.topic.name}",
+                   topics = "topic1",
                    containerFactory = "linkUpdateKafkaListenerFactory")
     public void listen(LinkUpdateRequest linkUpdateRequest) {
         log.info("Сообщение от кафки: " + linkUpdateRequest);
         try {
             for (var id : linkUpdateRequest.tgChatIds()) {
-
                 updateService.processUpdate(linkUpdateRequest, id);
             }
         } catch (Exception e) {
-            log.info("Битое сообщение -> DLQ: ");
+            log.info("Битое сообщение -> DLQ: " + linkUpdateRequest.tgChatIds());
             kafkaTemplate.send(applicationConfig.kafkaProperties().dlqTopic().name(), linkUpdateRequest);
         }
     }

@@ -14,10 +14,7 @@ public record ApplicationConfig(
     KafkaProperties kafkaProperties
 ) {
 
-    public record KafkaProperties(Topic topic, DlqTopic dlqTopic) {
-        public record Topic(String name, Integer partitionsNum, Integer replicasNum) {
-        }
-
+    public record KafkaProperties(DlqTopic dlqTopic) {
         public record DlqTopic(String name, Integer partitionsNum, Integer replicasNum) {
         }
     }

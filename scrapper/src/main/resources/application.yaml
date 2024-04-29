@@ -67,7 +67,7 @@ spring:
   kafka:
     consumer:
       auto-offset-reset: earliest
-    bootstrapServers: localhost:9092
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
 
   cache:
     jcache:

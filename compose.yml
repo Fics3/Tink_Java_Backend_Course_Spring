@@ -12,7 +12,6 @@ services:
     networks:
       - backend
 
-
   liquibase-migrations:
     image: liquibase/liquibase:4.25
     depends_on:
@@ -39,13 +38,19 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
     volumes:
-      - ./scrapper/src/main/resources/docker/zookeeper_jaas_config.conf:/etc/zookeeper/config/zookeeper_jaas.conf
+      - zookeeper_volume:/etc/zookeeper/config
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   kafka:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-kafka:latest
     container_name: kafka
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -53,13 +58,18 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENERS: "PLAINTEXT://:9092"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://127.0.0.1:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
-      - ./scrapper/src/main/resources/docker/kafka_jaas_config.conf:/etc/kafka/kafka_config_jaas.conf
-
+      - kafka_volume:/etc/kafka/config
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   schema-registry:
     container_name: schema-registry
@@ -76,8 +86,11 @@ services:
     ports:
       - "28081:8081"
 
+
 volumes:
   postgresql: { }
+  zookeeper_volume: { }
+  kafka_volume: { }
 
 networks:
   backend: { }

@@ -1,11 +1,11 @@
 package edu.java.scrapper.retry;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
 import edu.java.configuration.retry.ConstantRetry;
 import edu.java.configuration.retry.ExponentRetry;
 import edu.java.configuration.retry.LinearRetry;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

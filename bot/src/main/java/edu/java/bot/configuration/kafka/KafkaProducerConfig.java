@@ -1,5 +1,6 @@
-package edu.java.configuration;
+package edu.java.bot.configuration.kafka;
 
+import edu.java.bot.configuration.ApplicationConfig;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +19,18 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
 @RequiredArgsConstructor
-public class KafkaConfig {
+public class KafkaProducerConfig {
 
     private final ApplicationConfig applicationConfig;
     @Value("${spring.kafka.bootstrapServers}")
     private String boostrapServers;
 
     @Bean
-    public NewTopic topic() {
-        return TopicBuilder.name(applicationConfig.kafkaProperties().topic().name())
-            .partitions(applicationConfig.kafkaProperties().topic().partitionsNum())
-            .replicas(applicationConfig.kafkaProperties().topic().replicasNum())
+    public NewTopic dlqTopic() {
+        return TopicBuilder.name(applicationConfig.kafkaProperties().dlqTopic().name())
+            .replicas(applicationConfig.kafkaProperties().dlqTopic().replicasNum())
+            .partitions(applicationConfig.kafkaProperties().dlqTopic().partitionsNum())
             .build();
-    }
-
-    @Bean
-    public ProducerFactory<String, LinkUpdateRequest> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(configProps());
     }
 
     @Bean
@@ -44,11 +40,17 @@ public class KafkaConfig {
         return new KafkaTemplate<>(producerFactory);
     }
 
-    private Map<String, Object> configProps() {
+    @Bean
+    public ProducerFactory<String, LinkUpdateRequest> producerFactory() {
+        return new DefaultKafkaProducerFactory<>(configPropsProducer());
+    }
+
+    private Map<String, Object> configPropsProducer() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, boostrapServers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return configProps;
     }
+
 }
