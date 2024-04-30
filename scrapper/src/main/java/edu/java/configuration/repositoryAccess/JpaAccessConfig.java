@@ -1,6 +1,5 @@
 package edu.java.configuration.repositoryAccess;
 
-import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.client.StackoverflowClient;
 import edu.java.configuration.ClientConfig;
@@ -13,6 +12,7 @@ import edu.java.domain.repository.jpa.JpaStackoverflowQuestionRepository;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdater;
+import edu.java.service.NotificationService;
 import edu.java.service.linkAdder.GithubLinkAdder;
 import edu.java.service.linkAdder.LinkAdder;
 import edu.java.service.linkAdder.StackoverflowLinkAdder;
@@ -68,7 +68,7 @@ public class JpaAccessConfig {
     public GithubUpdateChecker githubUpdateChecker(
         ClientConfig clientConfig,
         GithubClient githubClient,
-        BotClient botClient,
+        NotificationService notificationService,
         JpaChatRepository jpaChatRepository,
         JpaLinksRepository jpaLinksRepository,
         GithubRepositoryRepository jpaGithubRepositoryRepository
@@ -76,7 +76,7 @@ public class JpaAccessConfig {
         return new GithubUpdateChecker(
             clientConfig,
             githubClient,
-            botClient,
+            notificationService,
             jpaChatRepository,
             jpaLinksRepository,
             jpaGithubRepositoryRepository
@@ -87,7 +87,7 @@ public class JpaAccessConfig {
     public StackoverflowUpdateChecker stackoverflowUpdateChecker(
         ClientConfig clientConfig,
         StackoverflowClient stackoverflowClient,
-        BotClient botClient,
+        NotificationService notificationService,
         JpaChatRepository jpaChatRepository,
         JpaLinksRepository jpaLinksRepository,
         StackoverflowQuestionRepository jpaStackoverflowQuestionRepository
@@ -95,7 +95,7 @@ public class JpaAccessConfig {
         return new StackoverflowUpdateChecker(
             clientConfig,
             stackoverflowClient,
-            botClient,
+            notificationService,
             jpaChatRepository,
             jpaLinksRepository,
             jpaStackoverflowQuestionRepository

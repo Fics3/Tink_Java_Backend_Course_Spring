@@ -1,11 +1,11 @@
 package edu.java.scrapper.service.updateChecker;
 
-import edu.java.client.BotClient;
 import edu.java.client.GithubClient;
 import edu.java.domain.repository.ChatRepository;
 import edu.java.domain.repository.GithubRepositoryRepository;
 import edu.java.domain.repository.LinksRepository;
 import edu.java.model.LinkModel;
+import edu.java.service.NotificationService;
 import edu.java.service.updateChecker.GithubUpdateChecker;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -28,7 +28,7 @@ public class GithubUpdateCheckerTest {
     private GithubClient githubClient;
 
     @Mock
-    private BotClient botClient;
+    private NotificationService notificationService;
 
     @Mock
     private GithubRepositoryRepository jooqGithubRepositoryRepository;
@@ -65,14 +65,13 @@ public class GithubUpdateCheckerTest {
             null
         )));
 
-        when(botClient.sendUpdate(any(LinkUpdateRequest.class))).thenReturn(Mono.empty());
         when(jooqGithubRepositoryRepository.getRepositoryByLinkId(any(UUID.class))).thenReturn(null);
         when(chatRepository.findChatsByLinkId(any(UUID.class))).thenReturn(null);
         // Act
-        int updateCount = updateChecker.processUrlUpdates(linkModel, 0);
+        updateChecker.processUrlUpdates(linkModel, 0);
 
         // Assert
-        verify(botClient, times(1)).sendUpdate(any(LinkUpdateRequest.class));
+        verify(notificationService, times(1)).sendNotification(any(LinkUpdateRequest.class));
         verify(jooqLinksRepository, times(1)).updateLastUpdate(any(UUID.class), any(OffsetDateTime.class));
     }
 }

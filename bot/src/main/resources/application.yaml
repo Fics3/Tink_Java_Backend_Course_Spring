@@ -1,5 +1,10 @@
 app:
   telegram-token: ${TELEGRAM_API_KEY}
+  kafka-properties:
+    dlq-topic:
+      name: topic_dlq
+      partitions-num: 10
+      replicas-num: 1
 
 client:
   scrapper-properties:
@@ -29,6 +34,12 @@ spring:
       - buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+    bootstrapServers: ${KAFKA_BOOTSTRAP_SERVERS}
+  liquibase:
+    enabled: false
 
 bucket4j:
   enabled: true
