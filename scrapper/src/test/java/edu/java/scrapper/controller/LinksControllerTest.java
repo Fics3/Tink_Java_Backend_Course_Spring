@@ -55,7 +55,7 @@ public class LinksControllerTest {
                 .header("Tg-Chat-Id", tgChatId.toString()))
             .andExpect(status().isOk())
             .andReturn();
-
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -77,6 +77,7 @@ public class LinksControllerTest {
                 .content(asJsonString(addLinkRequest)))
             .andExpect(status().isOk())
             .andReturn();
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -93,6 +94,7 @@ public class LinksControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.url").value(link));
         verify(jdbcLinkService).remove(tgChatId, URI.create(link));
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -122,6 +124,7 @@ public class LinksControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(removeLinkRequest)))
             .andExpect(status().isConflict());
+        verify(messageCounter).increment();
     }
 
     public String asJsonString(final Object obj) {

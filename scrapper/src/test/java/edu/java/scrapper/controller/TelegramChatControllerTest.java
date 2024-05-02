@@ -45,6 +45,7 @@ public class TelegramChatControllerTest {
 
         // Assert
         verify(chatService).add(chatId);
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -60,6 +61,8 @@ public class TelegramChatControllerTest {
 
         // Assert
         verify(chatService).remove(chatId);
+        verify(messageCounter).increment();
+
     }
 
     @Test
@@ -73,6 +76,7 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isInternalServerError());
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -83,6 +87,8 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -94,5 +100,6 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
+        verify(messageCounter).increment();
     }
 }

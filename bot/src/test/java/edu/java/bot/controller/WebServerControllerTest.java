@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.bot.exception.BadRequestBotException;
 import edu.java.bot.exception.InternalServerBotException;
 import edu.java.bot.exception.NotFoundBotException;
+import edu.java.bot.service.UpdateService;
+import io.micrometer.core.instrument.Counter;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -22,7 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(WebServerController.class)
-@AutoConfigureMockMvc
 public class WebServerControllerTest {
 
     @Autowired
@@ -32,7 +32,10 @@ public class WebServerControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private WebServerController webServerController;
+    private UpdateService updateService;
+
+    @MockBean
+    private Counter messageCounter;
 
     @Test
     public void testProcessUpdate_Success() throws Exception {
@@ -46,14 +49,14 @@ public class WebServerControllerTest {
                 .content(objectMapper.writeValueAsString(linkUpdateRequest)))
             .andExpect(status().isOk());
 
-        verify(webServerController).processUpdate(any(LinkUpdateRequest.class));
+        verify(messageCounter).increment();
     }
 
     @Test
     public void testHandleException_InternalServerBotException() throws Exception {
         // Arrange
         doThrow(new InternalServerBotException("test", "testD"))
-            .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
+            .when(updateService).processUpdate(any(), any());
 
         LinkUpdateRequest request = new LinkUpdateRequest(UUID.randomUUID(), URI.create("sds"), "sdsd", List.of(1L));
 
@@ -62,12 +65,13 @@ public class WebServerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(request)))
             .andExpect(status().isInternalServerError());
+        verify(messageCounter).increment();
     }
 
     @Test
     public void testHandleException_BadRequestException() throws Exception {
         doThrow(new BadRequestBotException("test", "testD"))
-            .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
+            .when(updateService).processUpdate(any(), any());
 
         mockMvc.perform(post("/updates"))
             .andExpect(status().isBadRequest());
@@ -77,7 +81,7 @@ public class WebServerControllerTest {
     public void testHandleException_NotFoundException() throws Exception {
         // Arrange
         doThrow(new NotFoundBotException("test", "testD"))
-            .when(webServerController).processUpdate(any(LinkUpdateRequest.class));
+            .when(updateService).processUpdate(any(), any());
 
         LinkUpdateRequest request = new LinkUpdateRequest(UUID.randomUUID(), URI.create("sds"), "sdsd", List.of(1L));
 
@@ -86,6 +90,7 @@ public class WebServerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(request)))
             .andExpect(status().isNotFound());
+        verify(messageCounter).increment();
     }
 
     private String asJsonString(final Object obj) {

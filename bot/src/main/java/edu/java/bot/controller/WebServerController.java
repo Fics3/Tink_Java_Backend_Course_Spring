@@ -21,11 +21,10 @@ public class WebServerController {
 
     @PostMapping
     public String processUpdate(@RequestBody LinkUpdateRequest linkUpdateRequest) {
+        messageCounter.increment();
         for (var id : linkUpdateRequest.tgChatIds()) {
             updateService.processUpdate(linkUpdateRequest, id);
-            messageCounter.increment();
         }
-
         return "Обноавление обработано";
     }
 

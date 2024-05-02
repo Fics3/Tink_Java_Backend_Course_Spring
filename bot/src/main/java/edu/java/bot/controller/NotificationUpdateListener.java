@@ -29,6 +29,7 @@ public class NotificationUpdateListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
+        messageCounter.increment();
         updates.forEach(update -> {
             if (update.message() == null) {
                 return;

@@ -8,41 +8,33 @@ import edu.java.bot.service.NotificationService;
 import io.micrometer.core.instrument.Counter;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest(classes = {NotificationUpdateListener.class, TestConfig.class})
 class NotificationUpdateListenerTest {
 
-    @Mock
+    @MockBean
     private TelegramBot telegramBot;
 
-    @Mock
+    @MockBean
     private NotificationService notificationService;
 
     @MockBean
     private Counter messageCounter;
 
-    @InjectMocks
+    @Autowired
     private NotificationUpdateListener updateListener;
-
-    @BeforeEach
-    void setUp() {
-        openMocks(this);
-        updateListener = new NotificationUpdateListener(telegramBot, notificationService, messageCounter);
-    }
 
     @Test
     @DisplayName("null update message - no interaction")
@@ -55,7 +47,9 @@ class NotificationUpdateListenerTest {
         int result = updateListener.process(List.of(update));
 
         // Assert
-        verifyNoInteractions(telegramBot);
+        verify(telegramBot).setUpdatesListener(any());
+        verifyNoMoreInteractions(telegramBot);
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -79,5 +73,6 @@ class NotificationUpdateListenerTest {
 
         //Assert
         verify(notificationService).processCommand(update, telegramBot);
+        verify(messageCounter).increment();
     }
 }
