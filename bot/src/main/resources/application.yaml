@@ -20,7 +20,6 @@ client:
         - 500
         - 502
         - 503
-        - 404
 
 spring:
   application:
@@ -55,6 +54,21 @@ bucket4j:
               unit: seconds
               refill-capacity: 50
               refill-speed: greedy
+
+management:
+  server:
+    port: 8091
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+      base-path: /
+      path-mapping:
+        prometheus: /metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 
 server:
   port: 8090

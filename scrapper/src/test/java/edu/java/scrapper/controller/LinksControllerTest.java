@@ -5,6 +5,7 @@ import edu.java.controller.LinksController;
 import edu.java.exception.DuplicateLinkScrapperException;
 import edu.java.exception.NotFoundScrapperException;
 import edu.java.service.LinkService;
+import io.micrometer.core.instrument.Counter;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -38,6 +39,9 @@ public class LinksControllerTest {
     @MockBean
     private LinkService jdbcLinkService;
 
+    @MockBean
+    private Counter messageCounter;
+
     @Test
     void testGetLinks() throws Exception {
         Long tgChatId = 123456L;
@@ -51,7 +55,7 @@ public class LinksControllerTest {
                 .header("Tg-Chat-Id", tgChatId.toString()))
             .andExpect(status().isOk())
             .andReturn();
-
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -73,6 +77,7 @@ public class LinksControllerTest {
                 .content(asJsonString(addLinkRequest)))
             .andExpect(status().isOk())
             .andReturn();
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -89,6 +94,7 @@ public class LinksControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.url").value(link));
         verify(jdbcLinkService).remove(tgChatId, URI.create(link));
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -118,6 +124,7 @@ public class LinksControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(removeLinkRequest)))
             .andExpect(status().isConflict());
+        verify(messageCounter).increment();
     }
 
     public String asJsonString(final Object obj) {

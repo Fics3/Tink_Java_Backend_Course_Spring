@@ -1,6 +1,7 @@
 package edu.java.controller;
 
 import edu.java.service.LinkService;
+import io.micrometer.core.instrument.Counter;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 @RequiredArgsConstructor
 public class LinksController {
-
     private final LinkService linkService;
+    private final Counter messageCounter;
 
     @GetMapping
     public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
+        messageCounter.increment();
         List<LinkResponse> linkResponses = linkService.findAll(tgChatId);
         return new ListLinkResponse(linkResponses, linkResponses.size());
     }
@@ -34,7 +36,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody AddLinkRequest addLinkRequest
     ) {
-
+        messageCounter.increment();
         linkService.add(tgChatId, addLinkRequest.uri());
         return new LinkResponse(addLinkRequest.uri(), OffsetDateTime.now());
     }
@@ -44,6 +46,7 @@ public class LinksController {
         @RequestHeader("Tg-Chat-Id") Long tgChatId,
         @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
+        messageCounter.increment();
         linkService.remove(tgChatId, removeLinkRequest.link());
         return new LinkResponse(removeLinkRequest.link(), OffsetDateTime.now());
     }

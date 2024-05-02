@@ -32,14 +32,14 @@ public class KafkaBotUpdateSenderTest extends IntegrationTest {
         );
         // When
         ApplicationConfig applicationConfig = new ApplicationConfig(
-                null,
-                null,
-                new ApplicationConfig.KafkaProperties(new ApplicationConfig.KafkaProperties.Topic(
-                        "topic-name",
-                        1,
-                        1
-                )),
-                true
+            null,
+            null,
+            new ApplicationConfig.KafkaProperties(new ApplicationConfig.KafkaProperties.Topic(
+                "topic-name",
+                1,
+                1
+            )),
+            true
         );
         KafkaBotUpdateSender kafkaBotUpdateSender = new KafkaBotUpdateSender(kafkaTemplate, applicationConfig);
         kafkaBotUpdateSender.sendUpdate(linkUpdateRequest);

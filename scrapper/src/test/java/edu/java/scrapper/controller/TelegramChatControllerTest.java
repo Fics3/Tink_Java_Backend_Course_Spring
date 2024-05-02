@@ -5,6 +5,7 @@ import edu.java.exception.BadRequestScrapperException;
 import edu.java.exception.DuplicateRegistrationScrapperException;
 import edu.java.exception.InternalServerScrapperException;
 import edu.java.service.ChatService;
+import io.micrometer.core.instrument.Counter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,6 +29,9 @@ public class TelegramChatControllerTest {
     @MockBean
     private ChatService chatService;
 
+    @MockBean
+    private Counter messageCounter;
+
     @Test
     public void testRegisterChat() throws Exception {
         // Arrange
@@ -41,6 +45,7 @@ public class TelegramChatControllerTest {
 
         // Assert
         verify(chatService).add(chatId);
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -56,6 +61,8 @@ public class TelegramChatControllerTest {
 
         // Assert
         verify(chatService).remove(chatId);
+        verify(messageCounter).increment();
+
     }
 
     @Test
@@ -69,6 +76,7 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isInternalServerError());
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -79,6 +87,8 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+
+        verify(messageCounter).increment();
     }
 
     @Test
@@ -90,5 +100,6 @@ public class TelegramChatControllerTest {
         mockMvc.perform(post("/tg-chat/{id}", chatId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
+        verify(messageCounter).increment();
     }
 }
