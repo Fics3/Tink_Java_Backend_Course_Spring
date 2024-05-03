@@ -75,7 +75,7 @@ class KafkaNotificationProcessorServiceTest extends KafkaIntegrationTest {
         testKafkaTemplate.send("topic1", linkUpdateRequest);
 
         // Assert
-        await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> verify(updateService, times(2)).processUpdate(any(), anyLong()));
+        await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> verify(updateService, times(2)).processUpdate(any(), anyLong()));
         verifyNoInteractions(kafkaTemplateDlq);
     }
 

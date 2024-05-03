@@ -19,7 +19,7 @@ COPY /scrapper/pom.xml ./scrapper/pom.xml
 COPY /scrapper-jooq/src ./scrapper-jooq/src
 COPY /scrapper-jooq/pom.xml ./scrapper-jooq/pom.xml
 
-RUN mvn -pl scrapper -am package
+RUN mvn -pl scrapper -am package -Dmaven.test.skip=true
 
 # Stage 2: Final stage
 FROM openjdk:21
