@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.example.dto.LinkUpdateRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +37,11 @@ public class WebServerControllerTest {
 
     @MockBean
     private Counter messageCounter;
+
+    @BeforeAll
+    public static void setUpBeforeAll() {
+        System.setProperty("SERVER_PORT", "8090");
+    }
 
     @Test
     public void testProcessUpdate_Success() throws Exception {
